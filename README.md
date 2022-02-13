@@ -15,5 +15,3 @@ $ TO BE ADDED
 TO BE ADDED
 
 # Lisence
-
-TO BE ADDED
