@@ -1,0 +1,51 @@
+.footer {
+  position: relative;
+  display: flex;
+  font-family: 'Lato', sans-serif;
+  height: 20vh;
+  background: #fafafa;
+  align-items: center;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  margin: 1% 0%;
+  padding: 0.6% 0%;
+  font-size: 1rem;
+  z-index: 2;
+  color: black;
+}
+
+.rights {
+  height: max-content;
+  align-self: center;
+}
+
+footer .row a i {
+  font-size: 2.5em;
+}
+
+footer .row > a > i {
+  margin-left: 1.4rem;
+  transition: all ease-in-out .2s;
+}
+
+footer .row > a > i:hover {
+  color: orange;
+}
+
+footer .row ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+footer .row ul li {
+  display: inline-block;
+  margin: 0em 1em;
+  height: auto;
+}

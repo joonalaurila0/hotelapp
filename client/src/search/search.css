@@ -1,0 +1,138 @@
+.search {
+  position: relative;
+  width: 47rem;
+  height: 3.5rem;
+  transition: 1s;
+  z-index: 9999;
+}
+
+.search__wrapper {
+  position: relative;
+  height: inherit;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.search__wrapper__left {
+  position: relative;
+  height: 100%;
+  flex-grow: 1;
+  border-radius: 4px;
+}
+
+.search__wrapper input[type=search] {
+  opacity: 0.85;
+  border: 1px solid #e8e8e8;
+  height: 100%;
+  width: 100%;
+  transition: width .5s;
+  outline: white;
+  border-radius: 4px;
+  transition: 1s;
+  border-radius: 24px;
+}
+
+.search__wrapper input[type=search]:focus {
+  opacity: 1;
+  background-color: white;
+  width: 100%;
+  -webkit-box-shadow: 4px 4px 15px 2px rgba(0,0,0,0.65); 
+  box-shadow: 4px 4px 15px 2px rgba(0,0,0,0.65);
+}
+
+#searching-icon {
+  position: absolute;
+  font-size: 2.5rem;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 9999999;
+  color: gray;
+}
+
+#searchInput {
+  font-size: 1.3rem;
+  color: black;
+  background-color: #E8E8E8;
+  padding: 8px 20px 8px 55px;
+}
+
+#searchInput:focus {
+  border: 1px solid white;
+  background-color: white;
+}
+
+#search-icon {
+  position: absolute;
+  top: .8rem;
+  right: 18px;
+  font-size: 1.4rem;
+  color: #fffffe;
+}
+
+.search__suggestions {
+  position: absolute;
+  top: 57.5px;
+  left: 80%;
+  transform: translateX(-50%);
+  width: 40.625rem;
+  height: 0rem;
+  background: #38242c;
+  transition: .5s;
+  overflow-y: scroll;
+  scrollbar-width: none; 
+  border-radius: 4px;
+}
+
+.search__suggestions section ol li:last-child {
+  border-bottom: none;
+}
+
+.search__suggestions section ol li {
+  position: relative;
+  font-family: 'Montserrat';
+  font-size: 1.4em;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid beige;
+  cursor: pointer;
+  color: beige;
+}
+
+.search__suggestions section ol li img {
+  width: 160px;
+  height: 140px;
+}
+
+.search__suggestions section ol li .search__suggestions__product-info {
+  font-size: 1.2em;
+  flex-grow: 1;
+  display: grid;
+  place-items: center center;
+}
+
+.search__suggestions section ol li .search__suggestions__product-info h2:hover {
+  text-decoration: underline;
+}
+
+.search__suggestions section ol li button {
+  font-size: 1.4em;
+  color: #fffe;
+  background-color: #594a4e;
+  outline: none;
+  border: 1px solid #594a4e;
+  width: 5rem;
+  cursor: pointer;
+  transition: 1s;
+}
+
+.search__suggestions section ol li button:hover {
+  background: #271c19;
+}
+
+@media (max-width: 1000px) {
+  .search {
+    display: none;
+  }
+}

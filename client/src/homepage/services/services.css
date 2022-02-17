@@ -1,0 +1,28 @@
+.services {
+  font-family: 'Lato', sans-serif;
+  position: relative;
+  height: 100vh;
+  display: grid;
+  justify-content: center;
+  background: #778899;
+  overflow: hidden;
+}
+
+.services h1 {
+  margin-top: 5rem;
+  text-align: center;
+  color: #fffffe;
+  font-size: 3rem;
+  font-weight: 300;
+}
+
+.servicebox {
+  display: grid;
+  height: 100%;
+  width: 100vw;
+  background-image: url("../../../html/static/bookings.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  grid-template-rows: 25% 1fr;
+}

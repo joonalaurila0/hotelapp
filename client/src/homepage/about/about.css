@@ -1,0 +1,29 @@
+.about {
+  display: grid;
+  height: 100vh;
+  justify-content: center;
+  background: #8c7851;
+}
+
+.about h1 {
+  margin-top: 5rem;
+  text-align: center;
+  font-size: 4rem;
+  font-weight: 300;
+  color: beige;
+}
+
+.aboutblock {
+  height: min-content;
+  width: 95vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: blue;
+}
+
+.aboutblock p {
+  font-size: 1.7rem;
+  font-weight: 300;
+  color: beige;
+}

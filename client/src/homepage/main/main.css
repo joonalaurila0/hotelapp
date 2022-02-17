@@ -1,0 +1,159 @@
+.main {
+  display: grid;
+  grid-auto-rows: 1fr 1fr; 
+  grid-template-columns: repeat(3, 1fr); 
+  grid-template-rows: repeat(4, 1fr);
+  height: 100vh;
+  background: rgb(249,244,239);
+  background: linear-gradient(90deg, rgba(249,244,239,1) 9%, rgba(249,244,239,1) 21%, rgba(249,244,239,1) 41%, rgba(249,244,239,1) 50%, rgba(175,167,162,1) 71%); 
+  z-index: -2;
+}
+
+.imageColumn {
+  display: grid;
+  grid-area: 1 / 3 / 6 / 4;
+  background-image: url("./../../../html/static/columndog.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 1;
+  place-items: end end;
+}
+
+.imageColumn_LANG_SELECT {
+  padding: 0 2.5rem;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.imageColumn_LANG_SELECT >* {
+  display: flex;
+  font-size: 1.1rem;
+  margin: 1rem;
+
+  cursor: pointer;
+  transition: ease-in-out .3s;
+}
+
+.imageColumn_LANG_SELECT >*:hover {
+  color: orange;
+}
+
+.imageColumn_LANG_SELECT >* >* {
+  margin-left: 0.5rem;
+}
+
+#finflag {
+  height: 25px;
+  width: 35px;
+  background-image: url("./../../../html/static/finland.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.85;
+}
+
+#enflag {
+  height: 25px;
+  width: 35px;
+  background-image: url("./../../../html/static/eng.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.85;
+}
+
+.imageColumn p {
+  color: white;
+}
+
+.squaresfirst {
+  display: grid;
+  grid-row: 1;
+  grid-column: 1 / 4;
+  z-index: 2;
+}
+
+.squares {
+  display: grid;
+  grid-row: 2;
+  grid-column: 1 / 4;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.squares h1 {
+  font-family: 'Lato', sans-serif;
+  font-size: 2.6rem;
+  font-style: italic;
+  font-weight: 300;
+  color: #716040;
+  height: 3.6rem;
+}
+
+.squares2 {
+  display: grid;
+  grid-row: 3;
+  grid-column: 1 / 4;
+  justify-content: start;
+  align-items: center;
+}
+
+.innerSquare2 {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  z-index: 2;
+}
+
+.squares2 a {
+  font-family: 'Lato', sans-serif;
+  background-color: #266888;
+  box-shadow: 0 5px 0 #183848;
+  color: white;
+  padding: 1em 1.5em;
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  width: fit-content;
+  height: 4rem;
+  cursor: pointer;
+  transition: all ease-in-out .5s;
+  z-index: 2;
+}
+
+.squares2 a:hover {
+  background: #164257;
+}
+
+.squares3 {
+  display: grid;
+  grid-row: 4;
+  grid-column: 1 / 4;
+  place-items: end;
+  z-index: 2;
+}
+
+.squares3 p {
+  display: flex;
+  align-items: center;
+  font-size: 2.7rem;
+  color: white;
+  margin-right: 1rem;
+  transition: all ease-in-out .5s;
+}
+
+.squares3 p:hover {
+  cursor: pointer;
+  color: black;
+}
+
+.contact__text {
+  display: flex;
+  align-items: center;
+  height: 40%;
+  margin-right: 15rem;
+}
