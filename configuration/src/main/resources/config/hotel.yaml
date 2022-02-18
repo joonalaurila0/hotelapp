@@ -1,0 +1,33 @@
+test:
+  data: 111
+  data2: 420 
+
+#--
+# Casandra configuration
+spring:
+  config:
+    import:
+      file:tokenClient.yml
+  cloud:
+    vault:
+      host: 127.0.0.1
+      port: 8200
+      uri: http://localhost:8200
+      scheme: http
+      authentication: TOKEN
+      token: myroot
+      defaultKey: application
+  data:
+    cassandra:
+      local-datacenter: "datacenter1"
+      port: 9042
+      contact-points: "127.0.0.1:9042"
+      schema-action: "CREATE_IF_NOT_EXISTS"
+      username: "cassandra"
+      password: "cassandra"
+      keyspace-name: "hotelapp"
+      request:
+        timeout: 10s
+      connection:
+        connect-timeout: 10s
+        init-query-timeout: 10s

@@ -1,0 +1,47 @@
+test:
+  data: '[{ "name": "John", "age": 30, "car": null }]'
+  data2: 420
+
+#server:
+#  address: 127.0.0.1
+#  compression:
+#    enabled: 'true'
+#  port: '8000'
+#  http2:
+#    enabled: 'true'
+
+spring:
+  config:
+    import:
+      file:tokenClient.yml
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      uri: http://localhost:8200
+      scheme: http
+      authentication: TOKEN
+      token: "myroot"
+  # DB setup
+  datasource:
+    driver-class-name: "org.mariadb.jdbc.Driver"
+    url: "jdbc:mariadb://localhost:3306/hotelapp"
+    username: "root"
+    password: "32"
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: "org.hibernate.dialect.MariaDB103Dialect"
+    show-sql: true
+    # Adjust the schema on the fly
+    hibernate:
+      ddl-auto: "update"
+  application:
+    name: "customer"
+  profiles:
+    active: native, vault
+
+logging.level.root: "warn"
+logging.level.org.springframework.web: "DEBUG"
+logging.level.org.hibernate: "ERROR"
