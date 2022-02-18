@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 
 token.yml
+tokenClient.yml
 
 ### STS ###
 .apt_generated
