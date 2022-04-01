@@ -1,0 +1,33 @@
+version: '3.9'
+
+networks:
+  perunanetti:
+    driver: overlay
+    driver_opts:
+      encrypted: 'true'
+    attachable: true
+    external: true
+
+services:
+  vault:
+    image: vault:1.9.2
+    container_name: "vault192"
+    networks:
+      - perunanetti
+    volumes:
+      - ./vault/config:/vault/config
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_ADDR: 'http://127.0.0.1:8200'
+      VAULT_API_ADDR: 'http://127.0.0.1:8200'
+      VAULT_FORMAT: 'json'
+    cap_add:
+      - IPC_LOCK
+    command: vault server -config=./vault/config/config.hcl
+    healthcheck:
+      test: ["CMD", "vault", "kv", "get", "/sys/health"]
+      interval: 25s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
