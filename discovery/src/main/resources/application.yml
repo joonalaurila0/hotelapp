@@ -1,0 +1,38 @@
+test:
+  data: 222
+  data2: 987 
+#------#
+server:
+  port: 8761
+#------#
+swarmhost: 192.168.1.107
+#------#
+spring:
+  application:
+    name: eureka
+  config:
+    import: configserver:http://${swarmhost}:8888
+  profiles:
+    active: "default"
+  cloud:
+    config:
+      enabled: true
+      profile: "default"
+      uri: ${swarmhost}:8888
+      import: config:http://${swarmhost}:8888
+#------#
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+  server:
+    waitTimeInMsWhenSyncEmpty: 0
+#------#
+logging.level.com.netflix.eureka: OFF
+logging.level.com.netflix.discovery: OFF
+#------#
+management:
+  endspoints:
+    web:
+      exposure:
+        include: "*"

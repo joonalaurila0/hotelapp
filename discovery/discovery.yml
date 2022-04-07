@@ -1,0 +1,38 @@
+# Docker Compose file reference: https://docs.docker.com/compose/compose-file/
+version: '3.9'
+
+networks:
+  perunanetti:
+    driver: overlay
+    driver_opts:
+      encrypted: 'true'
+    attachable: true
+    external: true
+
+services:
+  discovery:
+    image: hotelapp/discovery:1.0
+    depends_on:
+      - vault
+      - config-server
+    networks:
+      - perunanetti
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD", "curl", "http://127.0.0.1:8761/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == tau
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      update_config:
+        order: 'stop-first'
+      rollback_config:
+        order: 'stop-first'
