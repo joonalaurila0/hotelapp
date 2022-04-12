@@ -1,0 +1,91 @@
+# THIS IS ONLY MEANT FOR DEVELOPMENT USE
+version: '3.9'
+
+networks:
+  perunanetti:
+    driver: overlay
+    attachable: true
+    external: true
+
+volumes:
+  mariadb_data:
+    external: true
+
+services:
+  mariadb:
+    image: mariadb:10.3
+    networks:
+      - perunanetti
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_USER: 'eliza'
+      MARIADB_PASSWORD: 'meow'
+      MARIADB_DATABASE: 'hotelapp'
+      MARIADB_ROOT_PASSWORD: 32
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test:  bash -c 'mysqladmin -p"$MARIADB_ROOT_PASSWORD" ping -h localhost'
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == x220
+
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:17.0.0
+#    networks:
+#      - perunanetti
+#    ports:
+#      - "8080:8080"
+#      - "8443:8443"
+#    environment:
+#      KEYCLOAK_ADMIN: 'admin'
+#      KEYCLOAK_ADMIN_PASSWORD: 'admin'
+#      #KC_DB: 'mariadb'
+#      #KC_DB_USERNAME: 'root'
+#      #KC_DB_PASSWORD: '32'
+#    depends_on:
+#      - mariadb
+#    command: start-dev
+#    healthcheck:
+#      test: ["CMD", "curl", "http://127.0.0.1:8080/health"]
+#      interval: 15s
+#      timeout: 10s
+#      retries: 10
+#    deploy:
+#      mode: global
+#      placement:
+#        constraints:
+#          - node.hostname == tau
+#      restart_policy:
+#        condition: on-failure
+#        max_attempts: 3
+#      update_config:
+#        order: 'stop-first'
+#      rollback_config:
+#        order: 'stop-first'
+#  phpmyadmin:
+#    image: phpmyadmin:5.1.3-apache
+#    networks:
+#      - perunanetti
+#    ports:
+#      - "8080:80"
+#    environment:
+#      - PMA_ARBITRARY=1
+#      - PMA_HOST=mariadb
+#    deploy:
+#      mode: global
+#      placement:
+#        constraints:
+#          - node.hostname == tau
+#      restart_policy:
+#        condition: on-failure
+#        max_attempts: 3
+#      update_config:
+#        order: 'stop-first'
+#      rollback_config:
+#        order: 'stop-first'
