@@ -1,0 +1,47 @@
+version: '3.9'
+
+networks:
+  perunanetti:
+    attachable: true
+
+volumes:
+  cass_data:
+    external: true
+
+services:
+  cassandra:
+    image: cassandra:4.0.1
+    networks:
+      - perunanetti
+    environment:
+      MAX_HEAP_SIZE: '2G'
+      HEAP_NEWSIZE: '200M'
+      CASSANDRA_USER: 'cassandra'
+      CASSANDRA_PASSWORD: 'cassandra'
+      CASSANDRA_DC: 'datacenter1'
+      CASSANDRA_BROADCAST_ADDRESS: "192.168.1.107"
+#      CASSANDRA_BROADCAST_ADDRESS: "192.168.1.105"
+      CASSANDRA_KEYSPACE_CQL: "CREATE KEYSPACE hotelapp WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1}"
+    ports:
+      - "9042:9042"
+      - "7000:7000"
+    volumes:
+      - cass_data:/var/lib/casssandra/data
+    healthcheck:
+      test: ["CMD", "nodetool", "status"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    deploy:
+      placement:
+        constraints:
+          - node.labels.cass-node == true
+          - node.hostname == x220
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      update_config:
+        order: 'stop-first'
+      rollback_config:
+        order: 'stop-first'
