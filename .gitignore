@@ -1,3 +1,7 @@
+!*.jar
+!*.tar
+!*.zip
+
 .gradle
 **/build/
 !src/**/build/

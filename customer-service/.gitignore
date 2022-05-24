@@ -1,9 +1,12 @@
 # Ignore env files
+!*.tar
+!*.zip
 .env
 **/.env
 .gradle
 **/build/
 !src/**/build/
+!*.jar
 
 # Ignore Gradle GUI config
 gradle-app.setting
