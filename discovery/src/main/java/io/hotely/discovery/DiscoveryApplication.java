@@ -23,6 +23,7 @@ public class DiscoveryApplication {
       System.out.println("   Profile: " + env.getProperty("spring.profiles.active"));
       System.out.println("   Eureka instance hostname: " + env.getProperty("eureka.instance.hostname"));
       System.out.println("   Eureka default zone: " + env.getProperty("eureka.client.serviceUrl.defaultZone"));
+      System.out.println("   Eureka dashboard: " + "http://" + env.getProperty("swarmhost") + ":" + env.getProperty("server.port"));
       System.out.println("/* ***************************************** */");
       System.out.println("   Test for config values: " + env.getProperty("test.data"));
       System.out.println("   Test for config values: " + env.getProperty("test.data2"));

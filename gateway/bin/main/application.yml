@@ -1,0 +1,60 @@
+server:
+  port: 8072
+
+#-----------------------------------------------#
+
+swarmhost: 192.168.1.107
+spring:
+#  config:
+#    import: configserver:http://${swarmhost}:8888/
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods: "*"
+      discovery.locator:
+        enabled: true
+        lowerCaseServiceId: true
+      routes:
+        - id: customer
+          uri: http://${swarmhost}:8000/
+          predicates:
+            - Path=/customer/**
+        - id: hotel
+          uri: http://${swarmhost}:8001/ 
+          predicates:
+            - Path=/hotel/**
+    config:
+      enabled: false
+      uri: http://${swarmhost}:8888
+#-----------------------------------------------#
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://${swarmhost}:8761/eureka/
+      #defaultZone: ${EUREKA_URI:http://${swarmhost}:8761/eureka}
+#-----------------------------------------------#
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+logging:
+  level:
+    io.hotely: DEBUG
+    io.netflix: WARN
+    org.springframework.web: WARN
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.ipc.netty: DEBUG
+    reactor.netty: DEBUG

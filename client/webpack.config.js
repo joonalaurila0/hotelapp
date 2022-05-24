@@ -10,6 +10,7 @@ module.exports = (env) => {
     mode: 'development',
     devtool: 'eval-cheap-module-source-map',
     devServer: {
+      historyApiFallback: true,
       static: './dist',
       hot: true,
       port: process.env.port,
@@ -63,10 +64,10 @@ module.exports = (env) => {
       },
       plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, './html/index.html'),
+      template: path.resolve(__dirname, './public/index.html'),
       title: 'Hotely | Find excellent hotels',
       filename: 'index.html',
-      favicon: path.resolve(__dirname, './html/static/fierce.jpg'),
+      favicon: path.resolve(__dirname, './public/static/fierce.jpg'),
       cache: true
     }),
       ],

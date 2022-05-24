@@ -1,3 +1,4 @@
+STACK := hotelapp
 IMAGE := cassandra:4.0.1
 TAG := 1.0
 NET := perunanetti
@@ -13,10 +14,16 @@ volume:
 local:
 	docker-compose -d -f cassandra.yml up
 
-remote:
-	docker stack deploy --compose-file cassandra.yml cluster-test
+master:
+	docker stack deploy --compose-file cassandra.yml $(STACK)
+
+pair:
+	docker stack deploy --compose-file second_node.yml $(STACK)
 
 clean:
+	docker stack rm $(STACK)
+
+rmimg:
 	docker rmi $(IMAGE):$(TAG)
 
-.PHONY: clean build run run-dev run-prod rund
+.PHONY: clean build run run-dev run-prod rund pair master rming

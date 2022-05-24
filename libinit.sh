@@ -36,6 +36,17 @@ resolve_cid() {
   docker ps --filter "ancestor=$image" -q
 }
 
+resolve_cid_by_name() {
+  name=$1
+  docker ps --filter "name=$name" -q
+}
+
+# Stack name $1
+# Name of the container $2
+resolve_cid_stack_by_name() {
+  docker stack ps $1 --filter "name=$2" -q
+}
+
 # Sleeps until container health is healthy
 wait_until_healthy() {
   wait_time=0

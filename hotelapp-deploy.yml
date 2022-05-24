@@ -10,70 +10,66 @@ networks:
     external: true
 
 secrets:
-  hotelapp-MARIADB_PASSWORD: 
-    external: true
   hotelapp-CASSANDRA_PASSWORD: 
     external: true
 
 volumes:
   cass_data:
     external: true
-  mariadb_data:
-    external: true
 #  keycloak_data:
 #    external: true
 
 services:
-  cassandra:
-    image: cassandra:4.0.1
-    networks:
-      - perunanetti
-    environment:
-      # From Bitnami's docker-compose-cluster.yml -- https://github.com/bitnami/bitnami-docker-cassandra/blob/master/docker-compose-cluster.yml
-      # By default, Cassandra autodetects the available host memory and takes as much as it can.
-      # Therefore, memory options are mandatory if multiple Cassandras are launched in the same node.
-      MAX_HEAP_SIZE: '2G'
-      # This setting determines the amount of heap memory allocated to newer objects or young generation.
-      HEAP_NEWSIZE: '200M'
-      CASSANDRA_PASSWORD_FILE: '/run/secrets/CASSANDRA_PASSWORD'
-      CASSANDRA_USER: 'cassandra'
-      CASSANDRA_PASSWORD: 'cassandra'
-      CASSANDRA_DC: 'datacenter1'
-      # This sets BROADCAST_ADDRESS and BROADCAST_RPC_ADDRESS in cassandra.yaml
-      # Set this to the Private IP of the host machine
-      CASSANDRA_BROADCAST_ADDRESS: "192.168.1.105"
-      # simple db init: bash -c 'cqlsh -e "$CASSANDRA_KEYSPACE_CQL"'
-      CASSANDRA_KEYSPACE_CQL: "CREATE KEYSPACE hotelapp WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1}"
-    ports:
-      - "9042:9042"
-      - "7000:7000"
-    volumes:
-      - cass_data:/var/lib/casssandra/data
-      #- ${PWD}/cassandra/config:/etc/cassandra
-    secrets:
-      - source: hotelapp-CASSANDRA_PASSWORD
-        target: CASSANDRA_PASSWORD
-        uid: '999'
-        gid: '999'
-        mode: 0400
-    healthcheck:
-      test: ["CMD", "nodetool", "status"]
-      interval: 15s
-      timeout: 10s
-      retries: 10
-    deploy:
-      placement:
-        constraints:
-          - node.labels.cass-node == true
-          - node.hostname == x220
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-        max_attempts: 3
-      update_config:
-        order: 'stop-first'
-      rollback_config:
-        order: 'stop-first'
+#  cassandra:
+#    image: cassandra:4.0.1
+#    networks:
+#      - perunanetti
+#    environment:
+#      # From Bitnami's docker-compose-cluster.yml -- https://github.com/bitnami/bitnami-docker-cassandra/blob/master/docker-compose-cluster.yml
+#      # By default, Cassandra autodetects the available host memory and takes as much as it can.
+#      # Therefore, memory options are mandatory if multiple Cassandras are launched in the same node.
+#      MAX_HEAP_SIZE: '2G'
+#      # This setting determines the amount of heap memory allocated to newer objects or young generation.
+#      HEAP_NEWSIZE: '200M'
+#      CASSANDRA_PASSWORD_FILE: '/run/secrets/CASSANDRA_PASSWORD'
+#      CASSANDRA_USER: 'cassandra'
+#      CASSANDRA_PASSWORD: 'cassandra'
+#      CASSANDRA_DC: 'datacenter1'
+#      # This sets BROADCAST_ADDRESS and BROADCAST_RPC_ADDRESS in cassandra.yaml
+#      # Set this to the Private IP of the host machine
+#      CASSANDRA_BROADCAST_ADDRESS: "192.168.1.105"
+#      # simple db init: bash -c 'cqlsh -e "$CASSANDRA_KEYSPACE_CQL"'
+#      CASSANDRA_KEYSPACE_CQL: "CREATE KEYSPACE hotelapp WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1}"
+#    ports:
+#      - "9042:9042"
+#      - "7000:7000"
+#    volumes:
+#      - cass_data:/var/lib/casssandra/data
+#      #- ${PWD}/cassandra/config:/etc/cassandra
+#    secrets:
+#      - source: hotelapp-CASSANDRA_PASSWORD
+#        target: CASSANDRA_PASSWORD
+#        uid: '999'
+#        gid: '999'
+#        mode: 0400
+#    healthcheck:
+#      test: ["CMD", "nodetool", "status"]
+#      interval: 15s
+#      timeout: 10s
+#      retries: 10
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.labels.cass-node == true
+#          - node.hostname == x220
+#      replicas: 1
+#      restart_policy:
+#        condition: on-failure
+#        max_attempts: 3
+#      update_config:
+#        order: 'stop-first'
+#      rollback_config:
+#        order: 'stop-first'
 
   vault:
     image: vault:1.9.2
@@ -102,66 +98,66 @@ services:
           - node.hostname == tau
       replicas: 1
 
-  mariadb:
-    image: mariadb:10.3
-    networks:
-      - perunanetti
-    ports:
-      - "3306:3306"
-    environment:
-      MARIADB_USER: 'newuser'
-      MARIADB_DATABASE: 'hotelapp'
-      MARIADB_PASSWORD_FILE: '/run/secrets/MARIADB_PASSWORD'
-      MARIADB_ROOT_PASSWORD_FILE: '/run/secrets/MARIADB_PASSWORD'
-    secrets:
-      - source: hotelapp-MARIADB_PASSWORD
-        target: MARIADB_PASSWORD
-        uid: '999'
-        gid: '999'
-        mode: 0400
-    volumes:
-      - mariadb_data:/var/lib/mysql
-      #- ${PWD}/mariadb/init:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: bash -c 'mysqladmin -p"$$(< /run/secrets/MARIADB_PASSWORD)" ping -h localhost'
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == x220
+#  mariadb:
+#    image: mariadb:10.3
+#    networks:
+#      - perunanetti
+#    ports:
+#      - "3306:3306"
+#    environment:
+#      MARIADB_USER: 'eliza'
+#      MARIADB_DATABASE: 'hotelapp'
+#      MARIADB_PASSWORD_FILE: '/run/secrets/MARIADB_PASSWORD'
+#      MARIADB_ROOT_PASSWORD_FILE: '/run/secrets/MARIADB_PASSWORD'
+#    secrets:
+#      - source: hotelapp-MARIADB_PASSWORD
+#        target: MARIADB_PASSWORD
+#        uid: '999'
+#        gid: '999'
+#        mode: 0400
+#    volumes:
+#      - mariadb_data:/var/lib/mysql
+#      #- ${PWD}/mariadb/init:/docker-entrypoint-initdb.d
+#    healthcheck:
+#      test: bash -c 'mysqladmin -p"$$(< /run/secrets/MARIADB_PASSWORD)" ping -h localhost'
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.hostname == x220
 
-            #  keycloak:
-            #    image: quay.io/keycloak/keycloak:17.0.0
-            #    networks:
-            #      - perunanetti
-            #    ports:
-            #      - "8080:8080"
-            #      - "8443:8443"
-            #    environment:
-            #      KEYCLOAK_ADMIN: 'admin'
-            #      KEYCLOAK_ADMIN_PASSWORD: 'admin'
-            #      #KC_DB: 'mariadb'
-            #      #KC_DB_USERNAME: 'root'
-            #      #KC_DB_PASSWORD: '32'
-            #    depends_on:
-            #      - mariadb
-            #    command: start-dev
-            #    healthcheck:
-            #      test: ["CMD", "curl", "http://127.0.0.1:8080/health"]
-            #      interval: 15s
-            #      timeout: 10s
-            #      retries: 10
-            #    deploy:
-            #      mode: global
-            #      placement:
-            #        constraints:
-            #          - node.hostname == tau
-            #      restart_policy:
-            #        condition: on-failure
-            #        max_attempts: 3
-            #      update_config:
-            #        order: 'stop-first'
-            #      rollback_config:
-            #        order: 'stop-first'
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:17.0.0
+#    networks:
+#      - perunanetti
+#    ports:
+#      - "8080:8080"
+#      - "8443:8443"
+#    environment:
+#      KEYCLOAK_ADMIN: 'admin'
+#      KEYCLOAK_ADMIN_PASSWORD: 'admin'
+#      #KC_DB: 'mariadb'
+#      #KC_DB_USERNAME: 'root'
+#      #KC_DB_PASSWORD: '32'
+#    depends_on:
+#      - mariadb
+#    command: start-dev
+#    healthcheck:
+#      test: ["CMD", "curl", "http://127.0.0.1:8080/health"]
+#      interval: 15s
+#      timeout: 10s
+#      retries: 10
+#    deploy:
+#      mode: global
+#      placement:
+#        constraints:
+#          - node.hostname == tau
+#      restart_policy:
+#        condition: on-failure
+#        max_attempts: 3
+#      update_config:
+#        order: 'stop-first'
+#      rollback_config:
+#        order: 'stop-first'

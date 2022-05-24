@@ -9,7 +9,6 @@ secret:
 		&& echo 'cassandra' | docker secret create $(STACK_NAME)-CASSANDRA_PASSWORD -
 
 clear:
-	docker secret rm $(STACK_NAME)-MARIADB_PASSWORD
 	docker secret rm $(STACK_NAME)-CASSANDRA_PASSWORD
 	docker network prune -f
 
@@ -43,33 +42,33 @@ deploy-java:
 	sleep 10
 	docker stack deploy -c discovery/discovery.yml $(STACK_NAME)
 	@echo "Waiting a moment for the state to converge..."
-	sleep 10
+	sleep 15
 	docker stack deploy -c customer-service/customer-service.yml $(STACK_NAME)
 	@echo "Waiting a moment for the state to converge..."
-	sleep 8
+	sleep 15
 	docker stack deploy -c hotel-service/hotel-service.yml $(STACK_NAME)
 	@echo "Waiting a moment for the state to converge..."
-	sleep 5
+	sleep 15
 	docker stack deploy -c gateway/gateway.yml $(STACK_NAME)
 	@echo "Waiting a moment for the state to converge..."
 
 # Builds all the java services
 build-java:
-	$(MAKE) mvnbuild -C config-server
+	cd config-server && gradle clean build
 	$(MAKE) build -C config-server
 	$(MAKE) run-detached -C config-server
-	@echo "Configuration Server built."
-	$(MAKE) mvnbuild -C discovery
+	@echo "Configuration Server built and up."
+	cd discovery && gradle clean build
 	$(MAKE) build -C discovery
 	$(MAKE) run-detached -C discovery
-	@echo "Service Discovery built."
-	$(MAKE) mvnbuild -C customer-service 
+	@echo "Service Discovery built and up."
+	cd customer-service && gradle clean build
 	$(MAKE) build -C customer-service
 	@echo "Customer service built."
-	$(MAKE) mvnbuild -C hotel-service
+	cd hotel-service && gradle clean build
 	$(MAKE) build -C hotel-service
 	@echo "Hotel service built."
-	$(MAKE) mvnbuild -C gateway
+	cd gateway && gradle clean build
 	$(MAKE) build -C gateway
 	$(MAKE) run-detached -C gateway
 	@echo "Service Gateway built."
@@ -77,22 +76,52 @@ build-java:
 	$(MAKE) stop-detached -C discovery
 	$(MAKE) stop-detached -C gateway
 
-# This is to test vault and configuration server
-local-test:
+#
+# Deploys only the specified application
+#
+deploy-cfg:
+	$(MAKE) deploy -C config-server
+
+deploy-discovery:
+	$(MAKE) deploy -C discovery
+
+deploy-gateway:
+	$(MAKE) deploy -C gateway
+
+deploy-hotel:
+	$(MAKE) deploy -C hotel-service
+
+deploy-customer:
+	$(MAKE) deploy -C customer-service
+
+hcpvault:
+	@echo "Initializing vault..."
+	sh vault/startup.sh --swarm --auto-init
+
+hcpvault-local:
 	sh vault/startup.sh -c -i
 	@echo "Vault deployed."
-	$(MAKE) mvnbuild -C config-server
-	$(MAKE) build -C config-server
-	@echo "Deploying Configuration Server..."
-	$(MAKE) run-detached -C config-server
 
-local-dbtest:
-	docker network create -d overlay --attachable perunanetti --opt encrypted=true
-	cd mariadb && docker-compose up -d
-	docker run --rm --name phpmyadmin -d -p 8080:80 --network perunanetti -e PMA_ARBITRARY=1 -e PMA_HOST=mariadb phpmyadmin:5.1.3-apache
+casinit:
+	$(MAKE) volume network -C cassandra
 
-local-keycloak:
-	docker network create -d overlay --attachable perunanetti --opt encrypted=true
+casmaster:
+	@echo "Initializing cassandra..."
+	$(MAKE) master -C cassandra
+	@echo "Sleeping 10 seconds so Swarm can converge its state..."
+	sleep 10
+	sh cassandra/startup.sh -h x220 --swarm --stack $(STACK) \
+		--name cas-master --schema ${PWD}/cassandra/schema-init/schema.cql \
+		--data ${PWD}/cassandra/schema-init/data.cql --database hotelapp
+
+caspair:
+	@echo "Initializing second node for cassandra..."
+	$(MAKE) pair -C cassandra
+	@echo "Sleeping 10 seconds so Swarm can converge its state..."
+	sleep 10
+	sh cassandra/startup.sh -h x220 --swarm --stack $(STACK) \
+		--name cas-slave --schema ${PWD}/cassandra/schema-init/schema2.cql \
+		--data ${PWD}/cassandra/schema-init/data2.cql --database hotelapp2
 
 clean:
 	@echo "Removing $(STACK_NAME) stack..."

@@ -20,7 +20,7 @@ services:
     ports:
       - "8072:8072"
     healthcheck:
-      test: ["CMD", "curl", "http://127.0.0.1:8072/actuator/health"]
+      test: curl http://127.0.0.1:8072/actuator/health || exit 1
       interval: 15s
       timeout: 10s
       retries: 10

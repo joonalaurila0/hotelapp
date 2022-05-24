@@ -1,4 +1,4 @@
-import Boat from '../html/static/404.png';
+import Boat from '../public/static/404.png';
 
 function NotFoundPage() {
   return (

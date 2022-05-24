@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
+/* Encapsulates common functionality used by all filters. */
 @Component
 public class FilterUtils {
 

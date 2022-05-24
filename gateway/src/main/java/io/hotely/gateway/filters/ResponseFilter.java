@@ -23,8 +23,10 @@ public class ResponseFilter {
     return (exchange, chain) -> {
       return chain.filter(exchange).then(Mono.fromRunnable(() -> {
         HttpHeaders requestHeaders = exchange.getRequest().getHeaders();
+
         String correlationId = filterUtils.getCorrelationId(requestHeaders);
         logger.debug("Adding the correlation id to the outbound headers. {}", correlationId);
+
         exchange.getResponse().getHeaders().add(FilterUtils.CORRELATION_ID, correlationId);
         logger.debug("Completing outgoing request for {}.", exchange.getRequest().getURI());
       }));

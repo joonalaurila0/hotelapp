@@ -53,7 +53,7 @@ COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 # curl for healthcheck
 RUN apt-get update && apt-get install -y --no-install-recommends curl
 
-EXPOSE 8888
+EXPOSE 8072
 
 # Execute the application
 ENTRYPOINT ["java", "-cp", "app:app/lib/*", "io.hotely.gateway.GatewayApplication"]

@@ -1,6 +1,7 @@
 APP := gateway
+STACK := hotelapp
 JAVA_IMAGE := hotelapp/gateway
-JAR_FILE := gateway-0.0.1-SNAPSHOT.jar
+JAR_FILE := gateway.jar
 IMAGES := openjdk:17-slim-bullseye
 TAG := 1.0
 TIME := 3
@@ -24,6 +25,12 @@ endif
 
 .PHONY: metadata
 
+findjar:
+	find build/ -iname '*.jar'
+
+classpath:
+	ag -G .java 'public static void main' src 
+
 metadata:
 	@echo Git is $(GIT_STATUS)
 	@echo BUILD_TIME_EPOCH: $(BUILD_TIME_EPOCH)
@@ -43,8 +50,8 @@ save:
 	@echo "Saving image into a tar file..."
 	docker save $(JAVA_IMAGE):$(TAG) -o $(JAVA_IMAGE).tar
 
-build: target/$(JAR_FILE)
-	docker build -t $(JAVA_IMAGE):$(TAG) --build-arg JAR_FILE=target/$(JAR_FILE) .
+build: build/libs/$(JAR_FILE)
+	docker build -t $(JAVA_IMAGE):$(TAG) --build-arg JAR_FILE=build/libs/$(JAR_FILE) .
 	@echo "Removing dangling images"
 	docker image prune -f
 
@@ -59,7 +66,7 @@ build-with-metadata: $(GIT_PRESENT)
 
 build-debug:
 	docker build -t $(JAVA_IMAGE)-debug:$(TAG) \
-		--build-arg JAR_FILE=target/$(JAR_FILE) \
+		--build-arg JAR_FILE=build/libs/$(JAR_FILE) \
 		--target=debug-image .
 	@echo "Debug image for the $(JAVA_IMAGE):$(TAG) built: $(JAVA_IMAGE)-debug:$(TAG)"
 
@@ -69,7 +76,7 @@ mvnbuild:
 run:
 	@echo "Running a testing container for the $(APP)..."
 	docker run --rm --name $(APP) -p 8072:8072 --network perunanetti \
-		--health-cmd='curl http://127.0.0.1:8072/actuator/health' \
+		--health-cmd='curl http://127.0.0.1:8072/actuator/health || exit 1' \
 		--health-interval=15s \
 		--health-timeout=10s \
 		--health-retries=10 \
@@ -87,19 +94,20 @@ runtime-debug:
 run-detached:
 	@echo "Running a testing container for the $(APP)..."
 	docker run -d --rm --name $(APP) -p 8072:8072 --network perunanetti \
-		--health-cmd='curl http://127.0.0.1:8072/actuator/health' \
+		--health-cmd='curl http://127.0.0.1:8072/actuator/health || exit 1' \
 		--health-interval=15s \
 		--health-timeout=10s \
 		--health-retries=10 \
 		--health-start-period=5s \
 		$(JAVA_IMAGE):$(TAG)
 
-
-
 stop-detached:
 	docker stop $(shell docker ps -f ancestor=hotelapp/gateway:1.0 -q)
 
 deploy:
+	docker stack deploy --compose-file $(APP).yml $(STACK)
+
+deploy-with-time:
 	docker stack deploy --compose-file $(APP).yml \
 		$(APP)-$(shell date +"%Y%m%d_%H_%M")
 

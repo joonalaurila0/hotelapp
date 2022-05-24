@@ -1,0 +1,10 @@
+{
+  "mariadb": {
+    "username": "root",
+    "password": "32"
+  },
+  "cassandra": {
+    "username": "cassandra",
+    "password": "cassandra"
+  }
+}

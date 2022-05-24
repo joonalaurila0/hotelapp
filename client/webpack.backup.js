@@ -59,7 +59,7 @@ module.exports = (env) => {
     },
     plugins: [
   new HtmlWebpackPlugin({
-    template: path.resolve(__dirname, './html/index.html'),
+    template: path.resolve(__dirname, './public/index.html'),
     title: 'I like chocolate',
     filename: 'index.html',
     favicon: path.resolve(__dirname, './src/fierce.jpg'),

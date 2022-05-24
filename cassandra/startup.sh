@@ -1,7 +1,14 @@
 #!/bin/sh
 #
 # For initializing cassandra 4.0.1
-# Example: sh cassandra/startup.sh -h x220 -i cassandra:4.0.1 -f ${PWD}/cassandra/schema-init/init.cql
+# Example 1: sh cassandra/startup.sh -h x220 -i cassandra:4.0.1 -f ${PWD}/cassandra/schema-init/init.cql -c
+# Example 2: sh cassandra/startup.sh -h x220 --stack cluster-test --swarm \
+#                 --name cas-master --schema ${PWD}/cassandra/schema-init/schema.cql
+#                 --data ${PWD}/cassandra/schema-init/data.cql --database hotelapp
+#
+# Cluster service naming convention: <cluster name>_<service_name>
+# Example: Cluster: test-cluster, service: cas-master. Service name in stack: test-cluster_cas-master
+
 
 set -e
 set -u
@@ -11,7 +18,7 @@ set -x
 command -v find >/dev/null 2>&1 || { echo >&2 "find is required for this script to run, but it's not installed. Aborting."; exit 1; }
 
 # Defines project root
-project_root="/home/$USER/Desktop/projects/java/hotelapp"
+project_root="/home/$USER/Desktop/projects/java/hotelapp-final"
 
 # locates libinit.sh
 libinit_location=$(find $project_root -type f -iname '*.sh' -regex '.*libinit.*')
@@ -47,6 +54,11 @@ help_text() {
   -s, --swarm                     Run as part of a swarm.
   -i, --image                     Define image to use.
   -f, --file                      Define file to feed to cassandra.
+  --database                      Define database for the data and/or schema file (used by import_file function).
+  --schema                        Define schema.cql file to feed to the cassandra database.
+  --data                          Define data.cql file to feed to the cassandra database (Insertation data).
+  --stack                         Specifies the stack.
+  --name                          Specifies the name of a container. Note: You should use context-local names, script changes contexts.
 EOF
 exit 0
 }
@@ -79,7 +91,23 @@ parse_args() {
 			"--file" | "-f") 
         file="$2"
 				;;
-                    "") help_text && exit 0
+			"--stack")
+        stack=$2
+				;;
+			"--name")
+        [ -z "$stack" ] && echo "Error: --stack argument must be set for --name to work, aborting..." && exit 1;
+        name=$2
+				;;
+			"--schema")
+        schema_file=$2
+				;;
+			"--data")
+        data_file=$2
+				;;
+			"--database")
+        database=$2
+				;;
+      "") help_text && exit 0
         ;;
 		esac
 		shift
@@ -90,8 +118,8 @@ parse_args $# $@
 
 sleep 2 # Wait a moment for the state to converge.
 
-if [ -z "${image-}" ]; then
-  echo "WARNING! Image must be defined for this program to be run, as there is no default image set. Aborting..."
+if [ -z "${image-}" ] && [ -z "${name-}" ]; then
+  echo "WARNING! Image or name must be defined for this program to be run, as there is no default image nor name set. Aborting..."
   exit 1
 fi
 
@@ -118,14 +146,6 @@ fi
 # Queries for localhost as the "master node".
 original_host="$(get_current_ctx)"
 
-echo "------------------DEBUG------------------"
-echo "CURRENT CONTEXT: $original_host"
-echo "------------------DEBUG------------------"
-
-echo "------------------DEBUG------------------"
-echo "HOST: $host"
-echo "------------------DEBUG------------------"
-
 # Check for prerequisite programs.
 prog_exists docker
 prog_exists ssh
@@ -144,41 +164,40 @@ if [ "$host" != "default" ]; then
   test_host_connection $host
 fi
 
-if [ $? -ne 0 ]; then
-  echo "Host could not be reached"
-  exit 1
-fi
-
-echo "------------------DEBUG------------------"
-echo "CURRENT CONTEXT AFTER SSH: $(get_current_ctx)"
-echo "------------------DEBUG------------------"
-
-echo "------------------DEBUG------------------"
-echo "CURRENT CONTEXT: $(docker ps -f "ancestor=$image" -q)"
-echo "------------------DEBUG------------------"
-
 sleep 2
 
-#cid=$(docker ps -f "ancestor=$image" -q)
-cid=$(resolve_cid $image)
+cid=$(resolve_cid_by_name $name)
 container_health=$(docker inspect $cid --format "{{ .State.Health.Status }}")
 cache=$container_health
 count=0
 
+# args: container_id, wait_time
 wait_until_healthy $cid 2 
 
 # Switch back to master node.
 #[ "$(get_current_ctx)" != $host ] && docker context use $original_host
 
-# Import schema
-# sh init.sh -h x220 -i cassandra:4.0.1 -f ${PWD}/cassandra/schema-init/init.cq
-if [ "$container_health" = "healthy" ]; then
-  cid=$(resolve_cid $image)
-  echo "Copying init.cql from local directory into other container root..."
-  docker cp $file $(docker ps -f "ancestor=$image" -q):/ >/dev/null 2>&1 \
-    && docker exec -t $(docker ps -f "ancestor=$image" -q) cqlsh -f 'init.cql' >/dev/null 2>&1 \
-    && docker exec -t $(docker ps -f "ancestor=$image" -q) cqlsh -e 'describe keyspaces; use hotelapp; describe tables;'
-fi
+import_file() {
+  ctx=$host
+  og_ctx=$original_host
+  schema_file_with_location=$schema_file
+  data_file_with_location=$data_file
+  schema_file_bare=$(basename $schema_file)
+  data_file_bare=$(basename $data_file)
+  cid=$cid
+  db=$database
+  [ $(get_current_ctx) != "$host" ] && echo "Host is incorrect, aborting.." && exit 1;
+  if [ "$(docker inspect $cid --format "{{ .State.Health.Status }}")" = "healthy" ]; then
+    #cid=$(resolve_cid $name)
+    docker cp $schema_file_with_location $cid:/ >/dev/null 2>&1 \
+      && docker cp $data_file_with_location $cid:/ >/dev/null 2>&1 \
+      && docker exec -t $cid cqlsh -f "$schema_file_bare" >/dev/null 2>&1 \
+      && docker exec -t $cid cqlsh -f "$data_file_bare" >/dev/null 2>&1 \
+      && docker exec -t $cid cqlsh -e "describe keyspaces; use $db; describe tables;"
+  fi
+}
+
+[ ! -z "${database-}" ] && import_file
 
 # Switch back to master node.
 if [ "$(get_current_ctx)" != "default" ]; then

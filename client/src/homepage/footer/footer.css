@@ -3,7 +3,7 @@
   display: flex;
   font-family: 'Lato', sans-serif;
   height: 20vh;
-  background: #fafafa;
+  background: #1b1d1e;
   align-items: center;
 }
 
@@ -16,7 +16,7 @@
   padding: 0.6% 0%;
   font-size: 1rem;
   z-index: 2;
-  color: black;
+  color: white;
 }
 
 .rights {

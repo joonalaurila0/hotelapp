@@ -3,16 +3,35 @@
 set -e
 set -u
 set -o pipefail
-#set -x
+set -x
 
 # Saves Vault's unseal tokens into the token_dir variable file.
 # This file is used by the unseal.sh file to unseal the vault,
 # by parsing through the unseal keys using jq.
 
+command -v find >/dev/null 2>&1 || { echo >&2 "find is required for this script to run, but it's not installed. Aborting."; exit 1; }
+
+# Defines project root
+project_root="/home/$USER/Desktop/projects/java/hotelapp-final"
+
+# locates libinit.sh
+libinit_location=$(find $project_root -type f -iname '*.sh' -regex '.*libinit.*')
+
+# Bring in common initialization utilities
+. $libinit_location
+
+# Move shell execution environment to the directory where shell script is being executed.
+localize_to_dir
+
+# Check for needed programs
+prog_exists docker
+prog_exists jq
+
+# Preset variables
 token_dir="vault/data/tokens.json"
-dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 swarm_mode=0
 autoinit_mode=0
+stack="hotelapp"
 
 help_text() {
  cat << EOF
@@ -27,6 +46,7 @@ help_text() {
   -h, --help                 display this help and exit
   -c, --service                   run with docker-compose
   -s, --swarm                     run as part of a swarm
+  --stack                         optional parameter to name the stack
   -i, --auto-init                 automatically initialize
 EOF
 exit 0
@@ -66,6 +86,7 @@ query() {
   done
 }
 
+# Checks for commandline arguments.
 parse_args() {
   local argc=$#
   local argv=$@
@@ -75,13 +96,17 @@ parse_args() {
 		case "$1" in
 			--help | -h) help_text && exit 0
         ;;
+      --stack) stack=$1
+        ;;
 			--compose | -c)
 				echo "Initializing Vault with docker-compose..." \
-					&& docker-compose up -d # starts up the vault using docker-compose
+					&& docker-compose -d -f vault-deploy.yml up # starts up the vault using docker-compose
 				;;
 			--swarm | -s) 
 				echo "Initializing Vault as part of a swarm service..." \
-					&& swarm_mode=1
+					&& swarm_mode=1 \
+          && docker stack deploy --compose-file vault-deploy.yml $stack \
+          && sleep 3 # Wait a bit for the state to converge
 				;;
       --auto-init | -i) 
         autoinit_mode=1 && break # skips query and startups vault operator init
@@ -93,20 +118,17 @@ parse_args() {
 	done
 }
 
-command -v docker >/dev/null 2>&1 || { echo >&2 "Docker is required for this script to run, but it's not installed. Aborting."; exit 1; }
-command -v jq >/dev/null 2>&1 || { echo >&2 "jq is required for this script to run, but it's not installed. Aborting."; exit 1; }
-command -v yq >/dev/null 2>&1 || { echo >&2 "jq is required for this script to run, but it's not installed. Aborting."; exit 1; }
-
-cd $dir #&& echo "Setting current working directory to $dir ..."
-
+# If no commandline arguments were given, give help text.
 if [ $# -eq 0 ]; then
   help_text
 fi
 
 parse_args $# $@
 
+sleep 2 # Wait a moment for state convergence.
+
 image="vault:1.9.2"
-cid=$(docker ps --filter "ancestor=$image" -q)
+cid=$(resolve_cid $image)
 
 if [ -z $cid ]; then
   echo "Something went wrong, couldn't find the Vault container!"
@@ -119,10 +141,6 @@ case "$autoinit_mode" in
   0) query "Are you ready to initalize HashiCorp Vault? [Y]es/[N]o? "
     ;;
 esac
-
-#if [ $autoinit_mode -ne 1 ]; then
-#  query "Are you ready to initalize HashiCorp Vault? [Y]es/[N]o? "
-#fi
 
 if test -f "$token_dir"; then
   echo "Starting unsealing process..."

@@ -131,8 +131,37 @@
   background: #271c19;
 }
 
+.search_button_wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.search_button_wrapper button {
+  font-family: 'Lato', sans-serif;
+  background-color: #266888;
+  box-shadow: 0 5px 0 #183848;
+  color: white;
+  padding: 1em 1.5em;
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  width: fit-content;
+  height: 4rem;
+  cursor: pointer;
+  border: none;
+  transition: all ease-in-out .5s;
+  z-index: 2;
+}
+
+.search_button_wrapper button:hover {
+  background: #164257;
+}
+
 @media (max-width: 1000px) {
   .search {
     display: none;
   }
 }
+

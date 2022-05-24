@@ -1,13 +1,36 @@
 import './style.css';
 import Homepage from './homepage/homepage';
 import { Route, Routes } from 'react-router-dom';
+import Results from './results/results';
+import State from './state';
+import Api from './api/api';
 
 const App = () => {
-  console.group(makeState('hello'))
+
+  // If state can't find hotels by key
+  async function gibCities() {
+    let cache = [];
+    let calls = 0;
+    // Checks for a key: 'cities' in localStorage
+    if (!State.fetchStateByKey('cities') && cache.length == 0 && calls < 1) {
+      const cities = await Api.findCities()
+      const response = await cities.json()
+      calls++
+      cache.push(response);
+      State.storeStateToLocalStorage('cities', response);
+    }
+  }
+
+  // Attempts to fetch cities json from localStorage
+  !State.fetchStateByKey('cities') 
+    ? gibCities().catch((err) => new Error("Request could not be made, " + err)) 
+    : null;
+  
   return (
     <>
       <Routes>
         <Route path='/' element={<Homepage />} />
+        <Route path='results' element={<Results />} />
       </Routes>
     </>
   )
