@@ -1,3 +1,7 @@
+# Ignore config and data directories
+config/
+data/
+
 # Ignore env files
 .env
 **/.env

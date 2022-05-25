@@ -1,6 +1,12 @@
-# About
+# About Gateway
+
+Service routing is done through Spring Cloud Gateway, to provide single entry point for all of the services. Implements API Gateway pattern, all the traffic routes through API Gateway and the gateway will route the requests to the appropriate services.
 
 Acts as the centralized Policy Enforment Point of the project, that handles inbound traffic to microservice calls. Essentially operates as a reverse proxy between the client and the services.
+
+# Security implementation
+
+Gateway enforces OAuth 2.0 as the security protocol to secure the APIs it exposes at the edge. Only authenticated clients are granted access to the services.
 
 Note that gateway creates automated route mappings based on the eureka service ids, but if no service instances are running, teh gateway will not exposes the routes.
 [More about automated mappings](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#the-discoveryclient-route-definition-locator)

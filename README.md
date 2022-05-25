@@ -1,20 +1,17 @@
-# Example: Multi-tier Application
-
-This repository contains the multi-tier application example used in Chapter 13 of Docker in Action, 2ed.  The application has an api server and postgres database that is deployable to Swarm.
-
 # How do I deploy this application?
 
-If you try to deploy this app with: `docker stack deploy --compose-file docker-compose.yml multi-tier-app`, you will most likely be greeted by "secret not found error". Swarm requires that all cluster-level resources that a service depends on exist prior to proceeding wi th the deployment. So Docker halted the application deployment when it determined a resource dependency was missing.
+If you try to deploy this app with: `docker stack deploy --compose-file docker-compose.yml multi-tier-app`, you will most likely be greeted by "secret not found error". Swarm requires that all cluster-level resources that a service depends on exist prior to proceeding with the deployment. So Docker halted the application deployment when it determined a resource dependency was missing.
 
 The missing cluster-level resource that this application depends on is the POSTGRES\_PASSWORD secret. Recall that the application’s reference to that secret said that it was defined externally, if you look at the compose file `secrets` property. In this context, external means defined outside the application deployment definition and provided by Swarm.
 
 To view secrets you can use `docker secret ls`
 
+**Note! Directory names are used by the deployment and build scripts to a significant enough extent, so that changing names of them may break functionality of some of the scripts.**
+
 # Ports
 
 * Cassandra 9042, 7000
 * Vault 8200
-* MariaDB 3306
 
 * Configuration-server 8888
 * Service-Discovery 8761
@@ -64,16 +61,13 @@ When you have all the prerequisites, run `make deploy` to deploy the application
   <li>Client inputs the country and city, Customer-service calls to geoservice to fetch hotels from that area</li>
 </ol>
 
-
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Outline
 
 * Client (Typescript, React)
 
 <p>The client for the application.</p>
 
-* Config Server (Spring Cloud Config Server)
+* Configuration Server (Spring Cloud Config Server)
 
 <p>Segregates and centralizes application configuration data from the application. Maintains appliation properties for all the services, acts as a centralized configuration. Allows to set up the application properties with environment-specific values, uses Hashicorp Vault configuration repository to store the applicatoin properties and encrypts the sensitive property files using symmetric encryption.</p>
 
@@ -89,17 +83,9 @@ When you have all the prerequisites, run `make deploy` to deploy the application
 
 <p>Service discovery is implemented through Spring Cloud Eureka. Services register themselves to the registry, other services can obtain the location of a service instance by querying the service registry, which knows locations of all service instances.</p>
 
-* API Gateway (Spring Cloud Gateway)
-
-<p>Service routing is done through Spring Cloud Gateway, to provide single entry point for all of the services. Implements API Gateway pattern, all the traffic routes through API Gateway and the gateway will route the requests to the appropriate services.</p>
-
 * Distributed Tracing Server (Zipkin)
 
 <p>Distributed tracing is implemented through Zipkin, Spring Cloud Sleuth and ELK Stack to provide log correlation, log aggregation and tracing. server for the application, provides monitoring across all of the microservices.</p>
-
-* Payment Service
-
-<p>Handles payments, cancels reservations if payment fails, completes if payment succeeds.</p>
 
 * Hotel Service (Apache Cassandra)
 
