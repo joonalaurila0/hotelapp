@@ -26,6 +26,8 @@ const Results = () => {
         <h1 className='logo' style={{ justifyContent: 'center', fontWeight: 300 }}>Hotely</h1>
         <div>
           <h4 style={{ color: 'white', fontSize: '1.6rem', fontWeight: 300 }}>Results found: {state?.length}</h4>
+          <h4 style={{ color: 'white', fontSize: '1.6rem', fontWeight: 300, textDecorationLine: 'underline' }}><a href='/'>Back to homepage</a></h4>
+          <h4 style={{ color: 'beige', fontSize: '1.8rem', fontWeight: 300, textDecorationLine: 'underline', fontFamily: 'smooch' }}><a href='/profile'>My Profile</a></h4>
         </div>
       </div>
       <div className='results_main'>

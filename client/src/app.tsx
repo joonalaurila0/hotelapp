@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import Results from './results/results';
 import State from './state';
 import Api from './api/api';
+import Profile from './profile/profile';
 
 const App = () => {
 
@@ -19,7 +20,7 @@ const App = () => {
       cache.push(response);
       State.storeStateToLocalStorage('cities', response);
     }
-  }
+  };
 
   // Attempts to fetch cities json from localStorage
   !State.fetchStateByKey('cities') 
@@ -31,14 +32,15 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Homepage />} />
         <Route path='results' element={<Results />} />
+        <Route path='profile' element={<Profile/>} />
       </Routes>
     </>
-  )
-}
+  );
+};
 
 /* i was just testing type checking */
 function makeState<S extends number | string = number>(arg: S) {
   return { arg }
-}
+};
 
 export default App;

@@ -3,17 +3,18 @@ class Api {
   private static host = window.location.host || process.env.host
   private static url = `http://${this.host}`;
 
-  private static hotel_service_api = `http://localhost:8001`;
+  // Makes Calls to the API Gateway that routes calls to the services.
+  private static GatewayURI = `http://localhost:8072`;
 
   public static async findHotels() {
-    return fetch(this.hotel_service_api + '/hotels/all', { 
+    return fetch(this.GatewayURI + '/hotel-service/hotels/all', { 
       method: 'GET', 
       headers: { 'Content-Type': 'application/json' }  
     });
   }
 
   public static async findCities() {
-    return fetch(this.hotel_service_api + '/cities/all', {
+    return fetch(this.GatewayURI + '/hotel-service/cities/all', {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     });
