@@ -1,0 +1,7 @@
+certs/
+auth.sh
+keycloak.yml
+Makefile
+README.md
+realm-export.json
+startup.sh
