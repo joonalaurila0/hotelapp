@@ -1,5 +1,5 @@
 import { Hotel } from '../hotelview/hotelview';
-import { ISO8601Date, TimestampNow } from '../util';
+import { ISO8601Date } from '../util';
 import State from '../state';
 
 class Api {

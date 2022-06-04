@@ -14,7 +14,7 @@ class State {
   /**
    * NOTE: JSON.stringify() is used once implicitly on the keyValue, 
    * meaning there is no need to turn the objects into strings unless multiple passes is needed.
-   * @see [Storage.setItem()](https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem)
+   * @see [Storage.setItem()](https://html.spec.whatwg.org/multipage/webstorage.html#dom-storage-setitem-dev)
    * @param key keyName for Storage.getItem()
    * @param value keyValue for Storage.setItem()
    */
@@ -25,7 +25,7 @@ class State {
   /**
    * NOTE: JSON.parse() is used once implicitly on the return value, 
    * meaning there is no need to parse the objects into unless multiple passes is needed.
-   * @see [Storage.getItem()](https://developer.mozilla.org/en-US/docs/Web/API/Storage/getItem)
+   * @see [Storage.getItem()](https://html.spec.whatwg.org/multipage/webstorage.html#dom-storage-getitem-dev)
    * @param key keyName for Storage.getItem()
    */
   public static fetchStateByKey(key: string) {
