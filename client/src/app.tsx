@@ -10,12 +10,6 @@ import RoomView from './hotelview/roomview';
 
 const App = () => {
 
-  console.log("keycloak initialized ::", keycloak.onReady);
-  console.log("keycloak authenticated ::", keycloak.authenticated);
-  console.log("keycloak profile ::", State.fetchStateByKey('profile'));
-  console.log("keycloak token ::", keycloak.token);
-  console.log("keycloak parsed token ::", keycloak.tokenParsed);
-
   // TOKEN EXPIRATION IS 5 MINUTES
   Api.temporaryTokenLogger();
   
