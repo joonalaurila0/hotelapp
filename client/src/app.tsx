@@ -31,16 +31,11 @@ const App = () => {
     <>
       <Routes>
         <Route path='/' element={<Homepage />} />
-        <Route path='results' element={<Results />} />
+        <Route path='results' element={<HotelView />} />
         <Route path='profile' element={<Profile/>} />
       </Routes>
     </>
   );
-};
-
-/* i was just testing type checking */
-function makeState<S extends number | string = number>(arg: S) {
-  return { arg }
 };
 
 export default App;

@@ -70,6 +70,10 @@ module.exports = (env) => {
       favicon: path.resolve(__dirname, './public/static/fierce.jpg'),
       cache: true
     }),
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, './public/silent-check-sso.html'),
+      filename: 'silent-check-sso.html',
+    }),
       ],
       stats: {
         env: true,

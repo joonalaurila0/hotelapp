@@ -2,10 +2,18 @@ import { AiOutlineFileSearch } from "react-icons/ai";
 import { AiOutlineMail } from "react-icons/ai";
 import { VscAccount } from 'react-icons/vsc';
 import { GoHome } from 'react-icons/go';
+import State from "../state";
+import { KeycloakProfile } from "keycloak-js";
+import React from "react";
 
 
 const ProfileHeader = () => {
   const scrollDir = () => true;
+  const fetchProfileJSON = (): KeycloakProfile => State.fetchStateByKey('profile');
+  const [state, setState] = React.useState<KeycloakProfile | null>(null);
+  if (State.fetchStateByKey('profile') && !state) {
+    setState(fetchProfileJSON())
+  }
   return (
     <div className='profile_header'>
       <div className='profile_header_info'>
@@ -15,11 +23,11 @@ const ProfileHeader = () => {
         </div>
         <div>
           <AiOutlineMail style={{ color: 'white', fontSize: '1.8rem', marginRight: '0.5rem' }}/>
-          <p style={{ color: 'white' }}>Email: {} </p>
+          <p style={{ color: 'white' }}>Email: {state?.email} </p>
         </div>
         <div>
           <VscAccount style={{ color: 'white', fontSize: '1.8rem', marginRight: '0.5rem' }}/>
-          <p style={{ color: 'white' }}>ID: {} </p>
+          <p style={{ color: 'white' }}>ID: {state?.id} </p>
         </div>
       </div>
       <div className='profile_header_search'>
