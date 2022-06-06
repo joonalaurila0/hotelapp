@@ -9,6 +9,12 @@ spring:
 #    import: configserver:http://${swarmhost}:8888/
   application:
     name: gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/master
+          jwk-set-uri: http://localhost:8080/realms/master/protocol/openid-connect/certs 
   cloud:
     gateway:
       globalcors:
@@ -31,10 +37,13 @@ spring:
             - Path=/hotel/**
     config:
       enabled: false
+      fail-fast: true
+      profile: default
       uri: http://${swarmhost}:8888
 #-----------------------------------------------#
 eureka:
   instance:
+    hostname: ${swarmhost}
     preferIpAddress: true
   client:
     preferIpAddress: true
@@ -51,11 +60,13 @@ management:
         include: "*"
 logging:
   level:
-    io.hotely: DEBUG
-    io.netflix: WARN
-    org.springframework.web: WARN
-    org.springframework.cloud.gateway: TRACE
-    org.springframework.http.server.reactive: DEBUG
-    org.springframework.web.reactive: DEBUG
-    reactor.ipc.netty: DEBUG
-    reactor.netty: DEBUG
+    io.hotely: TRACE
+#    org.springframework.security.oauth2.jwt: TRACE
+#    reactor.netty: TRACE
+#    reactor.ipc.netty: DEBUG
+#    io.netflix: WARN
+#    org.springframework.web: WARN
+#    org.springframework.cloud.gateway: WARN
+#    org.springframework.security.web: WARN
+#    org.springframework.http.server.reactive: WARN
+#    org.springframework.web.reactive: WARN

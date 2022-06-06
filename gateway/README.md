@@ -23,8 +23,8 @@ To make a call to the Hotel-service to get all the cities as an example: `curl h
 
 ## More examples:
 
-* `curl http://localhost:8072/customer/customers/all | jq .`
-* `curl http://localhost:8072/hotel/cities/all | jq .`
+* `curl http://localhost:8072/customer-service/customers/all | jq .`
+* `curl http://localhost:8072/hotel-service/cities/all | jq .`
 
 # How to see all the mapped routes?
 
