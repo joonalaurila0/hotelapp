@@ -52,8 +52,8 @@ public class ReviewController {
   public Review update(@PathVariable("id") UUID id, @RequestBody Review review) {
     Review res = reviewRepository.findById(id)
       .orElseThrow(() -> new ReviewNotFoundException(id));
-    res.setCustomer_id(review.getCustomer_id());
-    res.setHotel_id(review.getHotel_id());
+    res.setCustomerId(review.getCustomerId());
+    res.setHotelId(review.getHotelId());
     res.setRating(review.getRating());
     res.setDescription(review.getDescription());
     return reviewRepository.save(res);

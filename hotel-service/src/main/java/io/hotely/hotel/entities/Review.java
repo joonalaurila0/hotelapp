@@ -44,13 +44,13 @@ public class Review {
   @Column("customer_id")
   @CassandraType(type = CassandraType.Name.UUID)
   @JsonProperty("customer_id")
-  private UUID customer_id;
+  private UUID customerId;
 
   @NonNull
   @Column("hotel_id")
   @CassandraType(type = CassandraType.Name.INT)
   @JsonProperty("hotel_id")
-  private Long hotel_id;
+  private Long hotelId;
 
   @NonNull
   @Column("rating")
@@ -96,8 +96,8 @@ public class Review {
 
     builder.append(this.getClass().getName() + " {" + newline);
     builder.append(" Id: " + id + newline);
-    builder.append(" Customer ID: " + customer_id + newline);
-    builder.append(" Hotel ID: " + hotel_id + newline);
+    builder.append(" Customer ID: " + customerId + newline);
+    builder.append(" Hotel ID: " + hotelId + newline);
     builder.append(" rating: " + rating + newline);
     builder.append(" description: " + description + newline);
     builder.append("}");

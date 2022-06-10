@@ -16,9 +16,9 @@ public class SecurityConfig {
     http.authorizeHttpRequests((auth) -> auth
         .anyRequest()
         .permitAll()
-        )
-      .formLogin(withDefaults())
-      .logout(withDefaults());
+        ).cors().and().csrf().disable();
+      //.formLogin(withDefaults())
+      //.logout(withDefaults());
 
     return http.build();
   }

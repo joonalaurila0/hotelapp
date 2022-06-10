@@ -1,6 +1,6 @@
 package io.hotely.hotel.entities;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,14 +26,8 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public class Booking {
 
-  public enum BookingStatus {
-    Pending,
-    Confirmed,
-    Canceled,
-    Checkedin,
-    Checkedout
-  };
-
+  /* ID Field is not required for the runtime, this is handled Controller separately,
+   * So that the ID Field does not have to be specified by the consumer itself. */
   @PrimaryKey
   @PrimaryKeyColumn(name = "id", ordinal = 2, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
   @CassandraType(type = CassandraType.Name.UUID)
@@ -44,36 +38,37 @@ public class Booking {
   @Column(value = "customer_id")
   @CassandraType(type = CassandraType.Name.UUID)
   @JsonProperty("customer_id")
-  private UUID customer_id;
+  private UUID customerId;
 
+  @NonNull
   @Column("hotel_id")
   @CassandraType(type = CassandraType.Name.INT)
   @JsonProperty("hotel_id")
-  private Long hotel_id;
+  private Long hotelId;
 
   @NonNull
   @Column(value = "room_id")
   @CassandraType(type = CassandraType.Name.INT)
   @JsonProperty("room_id")
-  private Long room_id;
+  private Long roomId;
 
   @NonNull
   @Column(value = "booking_status")
   @CassandraType(type = CassandraType.Name.TEXT)
-  @JsonProperty("bookingStatus")
+  @JsonProperty("booking_status")
   private BookingStatus bookingStatus;
 
   @NonNull
   @Column(value = "start_date")
   @CassandraType(type = CassandraType.Name.DATE)
-  @JsonProperty("startDate")
-  private Date startDate;
+  @JsonProperty("start_date")
+  private LocalDate startDate;
 
   @NonNull
   @Column(value = "end_date")
   @CassandraType(type = CassandraType.Name.DATE)
-  @JsonProperty("endDate")
-  private Date endDate;
+  @JsonProperty("end_date")
+  private LocalDate endDate;
 
   @Override
   public int hashCode() {
@@ -107,9 +102,9 @@ public class Booking {
 
     builder.append(this.getClass().getName() + " {" + newline);
     builder.append(" Id: " + id + newline);
-    builder.append(" Customer ID: " + customer_id + newline);
-    builder.append(" Hotel ID: " + hotel_id + newline);
-    builder.append(" Room ID: " + room_id + newline);
+    builder.append(" Customer ID: " + customerId + newline);
+    builder.append(" Hotel ID: " + hotelId + newline);
+    builder.append(" Room ID: " + roomId + newline);
     builder.append(" Booking Status: " + bookingStatus + newline);
     builder.append(" Start Date: " + startDate + newline);
     builder.append(" End Date: " + endDate + newline);

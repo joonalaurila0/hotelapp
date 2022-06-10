@@ -44,11 +44,11 @@ install:
 
 load:
 	@echo "Exporting image from tar file..."
-	docker load < $(JAVA_IMAGE).tar
+	docker load < $(APP).tar
 
 save:
 	@echo "Saving image into a tar file..."
-	docker save $(JAVA_IMAGE):$(TAG) -o $(JAVA_IMAGE).tar
+	docker save $(JAVA_IMAGE):$(TAG) -o $(APP).tar
 
 build: build/libs/$(JAR_FILE)
 	docker build -t $(JAVA_IMAGE):$(TAG) --build-arg JAR_FILE=build/libs/$(JAR_FILE) .
