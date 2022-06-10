@@ -20,7 +20,7 @@
   display: grid;
   height: 100%;
   width: 100vw;
-  background-image: url("../../../public/static/bookings.jpg");
+  background-image: url("../../../public/static/bookings.webp");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -49,28 +49,28 @@
 }
 
 .services #service-1 {
-  background-image: url('../../../public/static/hotelli_2.jpg');
+  background-image: url('../../../public/static/hotelli_2.webp');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 .services #service-2 {
-  background-image: url('../../../public/static/hotelli_3.jpg');
+  background-image: url('../../../public/static/hotelli_3.webp');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 .services #service-3 {
-  background-image: url('../../../public/static/hotelli_4.jpg');
+  background-image: url('../../../public/static/hotelli_4.webp');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 .services #service-4 {
-  background-image: url('../../../public/static/hotelli_1.jpg');
+  background-image: url('../../../public/static/hotelli_1.webp');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

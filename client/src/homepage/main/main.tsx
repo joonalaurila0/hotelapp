@@ -9,8 +9,6 @@ import State from '../../state';
 import { ISO8601Date } from '../../util';
 
 const Main = () => {
-  const [scrollDir, setScrollDir] = React.useState(false);
-
   const mockLogin = () => {
     keycloak.login();
   };
@@ -168,7 +166,7 @@ const Main = () => {
       </div>
       <div className='squares2' style={{ justifyContent: 'center' }}>
         <div className='innerSquare2'>
-          <Search scrollEvent={scrollDir} />
+          <Search scrollEvent={true} />
         </div>
       </div>
       <div className='squares3'>

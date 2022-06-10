@@ -7,7 +7,6 @@ import { KeycloakProfile } from 'keycloak-js';
 import React from 'react';
 
 const ProfileHeader = () => {
-  const scrollDir = () => true;
   const fetchProfileJSON = (): KeycloakProfile => State.fetchStateByKey('profile');
   const [state, setState] = React.useState<KeycloakProfile | null>(null);
   if (State.fetchStateByKey('profile') && !state) {

@@ -12,7 +12,7 @@
 .imageColumn {
   display: grid;
   grid-area: 1 / 3 / 6 / 4;
-  background-image: url("./../../../public/static/columndog.jpg");
+  background-image: url("./../../../public/static/column.webp");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

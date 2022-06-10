@@ -1,6 +1,6 @@
 import { KeycloakProfile } from 'keycloak-js';
 import { useNavigate } from 'react-router';
-import kuva from '../../../public/static/placeholder.jpg';
+import kuva from '../../../public/static/placeholder.webp';
 import Api, { Booking, BookingStatus, Invoice } from '../../api/api';
 import State from '../../state';
 import { ISO8601Date, TimestampNow } from '../../util';
