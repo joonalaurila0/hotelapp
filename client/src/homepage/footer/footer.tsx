@@ -1,9 +1,8 @@
-import './footer.css'
+import './footer.css';
 import { SiFacebook } from 'react-icons/si';
 import { SiInstagram } from 'react-icons/si';
 import { SiYoutube } from 'react-icons/si';
 import { SiTwitter } from 'react-icons/si';
-
 
 const Footer = () => {
   return (
@@ -30,7 +29,9 @@ const Footer = () => {
           </i>
         </a>
       </div>
-      <div className='row'><p className='rights'>All rights reserved</p></div>
+      <div className='row'>
+        <p className='rights'>All rights reserved</p>
+      </div>
       <div className='row'>
         <ul>
           <li>
@@ -48,7 +49,7 @@ const Footer = () => {
         </ul>
       </div>
     </footer>
-  )
-}
+  );
+};
 
 export default Footer;

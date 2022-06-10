@@ -5,7 +5,6 @@ import Api from '../api/api';
 import State from '../state';
 import { useNavigate } from 'react-router';
 
-
 // Button defines whether component includes a button or not.
 interface ISearch {
   scrollEvent: boolean;
@@ -22,7 +21,6 @@ interface City {
 }
 
 const Search = ({ scrollEvent, button = true }: ISearch): JSX.Element => {
-
   const ref = useRef<HTMLDivElement>(null);
   const ref2 = useRef<HTMLInputElement>(null);
   const [isOpen, setOpen] = useState(false);
@@ -52,10 +50,10 @@ const Search = ({ scrollEvent, button = true }: ISearch): JSX.Element => {
     data ? setOpen(true) : null;
     // fetches client state for matching keywords
     function fetchState() {
-      let results = State.fetchStateByKey('cities')
+      let results = State.fetchStateByKey('cities');
       let output = results.filter((elem: City) => {
         return elem.name.match(new RegExp(input.search.trim(), 'gi'));
-      })
+      });
       return output ? output : null;
     }
     fetchState() ? setData(fetchState()) : null;
@@ -67,17 +65,21 @@ const Search = ({ scrollEvent, button = true }: ISearch): JSX.Element => {
     e.preventDefault();
     // Stores the response from API to client state if 'hotels' key does not exists on LocalStorage.
     if (!State.fetchStateByKey('hotels')) {
-      Api.findHotels().then((res) => {
-        res.json().then((hotels) => 
-          State.storeStateToLocalStorage('hotels', hotels)).then(() => navigate('/results'))
-      }).then(() => {
-        // Stores rooms for the state.
-        Api.findRooms().then((res) => {
-          res.json().then((rooms) => {
-            State.storeStateToLocalStorage('rooms', rooms)
-          })
+      Api.findHotels()
+        .then((res) => {
+          res
+            .json()
+            .then((hotels) => State.storeStateToLocalStorage('hotels', hotels))
+            .then(() => navigate('/results'));
         })
-      })
+        .then(() => {
+          // Stores rooms for the state.
+          Api.findRooms().then((res) => {
+            res.json().then((rooms) => {
+              State.storeStateToLocalStorage('rooms', rooms);
+            });
+          });
+        });
     }
     if (input.search && State.fetchStateByKey('hotels')) {
       navigate('/results');
@@ -109,19 +111,25 @@ const Search = ({ scrollEvent, button = true }: ISearch): JSX.Element => {
             maxLength={75}
           />
           <datalist id='city-list'>
-            {data && data.length > 0 ? (data.map((city: City) => {
-              return (
-                <option key={city.id} value={city.name}>{city.name}</option>
-              );
-            })) : (null)}
+            {data && data.length > 0
+              ? data.map((city: City) => {
+                  return (
+                    <option key={city.id} value={city.name}>
+                      {city.name}
+                    </option>
+                  );
+                })
+              : null}
           </datalist>
         </div>
       </div>
       {button ? (
-      <div className='search_button_wrapper'>
-        <button style={{ justifySelf: 'center', fontSize: '1.2rem', padding: '1.1rem 2.5rem' }}>Search for hotels</button>
-      </div>) : null
-      }
+        <div className='search_button_wrapper'>
+          <button style={{ justifySelf: 'center', fontSize: '1.2rem', padding: '1.1rem 2.5rem' }}>
+            Search for hotels
+          </button>
+        </div>
+      ) : null}
     </form>
   );
 };

@@ -1,5 +1,4 @@
 class State {
-
   private static instance: State;
   private constructor() {}
 
@@ -12,18 +11,18 @@ class State {
   }
 
   /**
-   * NOTE: JSON.stringify() is used once implicitly on the keyValue, 
+   * NOTE: JSON.stringify() is used once implicitly on the keyValue,
    * meaning there is no need to turn the objects into strings unless multiple passes is needed.
    * @see [Storage.setItem()](https://html.spec.whatwg.org/multipage/webstorage.html#dom-storage-setitem-dev)
    * @param key keyName for Storage.getItem()
    * @param value keyValue for Storage.setItem()
    */
   public static storeStateToLocalStorage(key: string, value: any) {
-    window.localStorage.setItem(key, JSON.stringify(value))
+    window.localStorage.setItem(key, JSON.stringify(value));
   }
 
   /**
-   * NOTE: JSON.parse() is used once implicitly on the return value, 
+   * NOTE: JSON.parse() is used once implicitly on the return value,
    * meaning there is no need to parse the objects into unless multiple passes is needed.
    * @see [Storage.getItem()](https://html.spec.whatwg.org/multipage/webstorage.html#dom-storage-getitem-dev)
    * @param key keyName for Storage.getItem()

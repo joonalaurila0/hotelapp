@@ -9,36 +9,30 @@ import HotelView from './hotelview/hotelview';
 import RoomView from './hotelview/roomview';
 
 const App = () => {
-
   // TOKEN EXPIRATION IS 5 MINUTES
   Api.temporaryTokenLogger();
-  
+
   // Is keycloak initialized?
-  !keycloak.onReady 
-    ? keycloakInit() 
-    : null;
+  !keycloak.onReady ? keycloakInit() : null;
 
-  // If state can't find hotels by key
-  async function gibCities() {
-    // Checks for a key: 'cities' in localStorage
-    if (!State.fetchStateByKey('cities')) {
-      Api.findCities()
-        .then((res) => res.json()
-          .then(cities => State.storeStateToLocalStorage('cities', cities)));
-    }
-  };
+  console.log('State::fetchStateByKey ', State.fetchStateByKey('cities'));
+  console.log('State.fetchStateByKey :: boolean -> ', State.fetchStateByKey('cities') === null);
 
-  !State.fetchStateByKey('cities') 
-    ? gibCities().catch((err) => new Error("Request could not be made to fetch the cities, " + err)) 
-    : null;
-  
+  if (State.fetchStateByKey('cities') === null) {
+    (async () => {
+      Api.findCities().then((res) =>
+        res.json().then((cities) => State.storeStateToLocalStorage('cities', cities))
+      );
+    })();
+  }
+
   return (
     <>
       <Routes>
         <Route path='/' element={<Homepage />} />
         <Route path='results' element={<HotelView />} />
-        <Route path='results/rooms/:hotelid' element={<RoomView/>} />
-        <Route path='profile' element={<Profile/>} />
+        <Route path='results/rooms/:hotelid' element={<RoomView />} />
+        <Route path='profile' element={<Profile />} />
       </Routes>
     </>
   );

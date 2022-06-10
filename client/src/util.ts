@@ -5,17 +5,11 @@
 /**
  * @returns Short ISO8601 Date string.
  */
-const ISO8601Date = (
-  day: number = 0,
-  month: number = 0,
-  year: number = 0
-): string => {
+const ISO8601Date = (day: number = 0, month: number = 0, year: number = 0): string => {
   const now = new Date();
-  return new Date(
-    now.getFullYear() + year,
-    now.getMonth() + month,
-    now.getDate() + day
-  ).toISOString().split('T')[0]
+  return new Date(now.getFullYear() + year, now.getMonth() + month, now.getDate() + day)
+    .toISOString()
+    .split('T')[0];
 };
 
 /**
@@ -23,19 +17,19 @@ const ISO8601Date = (
  * @returns Date string that conforms to a timestamp in yyyy-mm-dd hh:mm:ss format.
  */
 const TimestampNow = (): string => {
-  return new Date()
-    .toLocaleDateString("en-US", { year: 'numeric' })
-    + "-" + new Date()
-    .toLocaleDateString("en-US", { month: '2-digit' })
-    + "-" +
-    new Date()
-    .toLocaleDateString("en-US", { day: '2-digit' })
-    + " " +
-    new Date().getHours().toLocaleString()
-    + ":" +
-    new Date().getMinutes().toLocaleString()
-    + ":" +
-    new Date().getSeconds().toLocaleString();
+  return (
+    new Date().toLocaleDateString('en-US', { year: 'numeric' }) +
+    '-' +
+    new Date().toLocaleDateString('en-US', { month: '2-digit' }) +
+    '-' +
+    new Date().toLocaleDateString('en-US', { day: '2-digit' }) +
+    ' ' +
+    new Date().getHours().toLocaleString() +
+    ':' +
+    new Date().getMinutes().toLocaleString() +
+    ':' +
+    new Date().getSeconds().toLocaleString()
+  );
 };
 
 export { ISO8601Date, TimestampNow };

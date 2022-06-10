@@ -1,5 +1,5 @@
-import './hotelview.css'
-import ResultHeader from './header/header'
+import './hotelview.css';
+import ResultHeader from './header/header';
 import HotelCard from './hotelcard/hotelcard';
 import State from '../state';
 import Footer from '../homepage/footer/footer';
@@ -11,15 +11,15 @@ export type Hotel = {
   name: string;
   email: string;
   phone: string;
-}
+};
 
 enum RoomStatus {
   Available,
-    Reserved,
-    Occupied,
-    NotAvailable,
-    BeingServiced,
-    Other
+  Reserved,
+  Occupied,
+  NotAvailable,
+  BeingServiced,
+  Other,
 }
 export type Room = {
   id: number;
@@ -29,7 +29,7 @@ export type Room = {
   capacity: number;
   room_area: number;
   room_status: RoomStatus;
-}
+};
 
 /* View of the hotels */
 const HotelView = () => {
@@ -38,31 +38,56 @@ const HotelView = () => {
     <div className='results_container'>
       <ResultHeader results={hotels ? hotels.length : 0} description='Hotels' />
       <div className='results_sidebar'>
-        <h1 className='logo' style={{ justifyContent: 'center', fontWeight: 300 }}>Hotely</h1>
+        <h1 className='logo' style={{ justifyContent: 'center', fontWeight: 300 }}>
+          Hotely
+        </h1>
         <div>
-          <h4 style={{ color: 'white', fontSize: '1.6rem', fontWeight: 300 }}>Results found: {hotels && hotels.length}</h4>
-          <h4 style={{ color: 'white', fontSize: '1.6rem', fontWeight: 300, textDecorationLine: 'underline' }}><a href='/'>Back to homepage</a></h4>
-          <h4 style={{ color: 'beige', fontSize: '1.8rem', fontWeight: 300, textDecorationLine: 'underline', fontFamily: 'smooch' }}><a href='/profile'>My Profile</a></h4>
+          <h4 style={{ color: 'white', fontSize: '1.6rem', fontWeight: 300 }}>
+            Results found: {hotels && hotels.length}
+          </h4>
+          <h4
+            style={{
+              color: 'white',
+              fontSize: '1.6rem',
+              fontWeight: 300,
+              textDecorationLine: 'underline',
+            }}
+          >
+            <a href='/'>Back to homepage</a>
+          </h4>
+          <h4
+            style={{
+              color: 'beige',
+              fontSize: '1.8rem',
+              fontWeight: 300,
+              textDecorationLine: 'underline',
+              fontFamily: 'smooch',
+            }}
+          >
+            <a href='/profile'>My Profile</a>
+          </h4>
         </div>
       </div>
       <div className='results_main'>
         {hotels?.map((hotel: Hotel) => {
-          return (<HotelCard 
-            key={hotel.id}
-            id={hotel.id} 
-            img={hotel.img} 
-            location={hotel.location}
-            name={hotel.name}
-            email={hotel.email}
-            phone={hotel.phone}
-          />)
+          return (
+            <HotelCard
+              key={hotel.id}
+              id={hotel.id}
+              img={hotel.img}
+              location={hotel.location}
+              name={hotel.name}
+              email={hotel.email}
+              phone={hotel.phone}
+            />
+          );
         })}
       </div>
       <div className='results_footer'>
         <Footer />
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default HotelView;
