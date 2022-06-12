@@ -17,7 +17,7 @@ spring:
           searchLocations: ['classpath:/config']
         vault:
           authentication: TOKEN
-          token: "s.IuN1p4LVLHwm7lUQUDFg6JVX"
+          token: "s.I97ADzGUryMRAJB44NpjPxPL"
           host: 192.168.1.107
           port: 8200
           scheme: http
@@ -28,11 +28,6 @@ spring:
 #--
 
 # Enable all Spring Boot Actuator endpoints.
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: "*"
 management:
   endpoints:
   restart:

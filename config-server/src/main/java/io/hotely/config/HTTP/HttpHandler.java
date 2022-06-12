@@ -14,7 +14,6 @@ import java.net.URISyntaxException;
 
 public class HttpHandler {
 
-  @CrossOrigin(origins = "192.168.1.107")
   public static HttpResponse<String> rawRequest(String host, int port) throws URISyntaxException, IOException, InterruptedException {
     HttpClient client = HttpClient.newHttpClient();
     HttpRequest request = HttpRequest.newBuilder()

@@ -33,7 +33,7 @@ public class ConfigApplication {
       System.out.println("/* ***************************************** */");
       System.out.println("   Configuration Server running at " + env.getProperty("server.port"));
       System.out.println("   Profile: " + env.getProperty("spring.profiles.active"));
-      System.out.println("   Vault status: " + HttpHandler.simpleStatus(hostenv));
+      //System.out.println("   Vault status: " + HttpHandler.simpleStatus(hostenv)); // This does not work properly
       System.out.println("   Vault port: " + env.getProperty("spring.cloud.config.server.vault.port"));
       System.out.println("   Vault host: " + hostenv);
       System.out.println("   Vault backend: " + env.getProperty("spring.cloud.config.server.vault.backend"));

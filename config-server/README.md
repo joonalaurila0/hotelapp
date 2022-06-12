@@ -1,4 +1,8 @@
-# About
+# About Configuration Servber
+
+**Permissions error with configuration server? Note about deployment onto other hosts and the image file**: You most likely have outdated vault keys due to image being built on older jar than what HCP Vault was deployed on.
+
+Current deployment model is pretty rough around the edges to say the least, currently HCP Vault is distributing the keys for the applications through program called [yq](https://github.com/mikefarah/yq/), (similar to jq) to import the keys for the java apps. This is used by the `import_tokens` function from the libvault.sh, to be found in `/vault` directory.
 
 IN MIDDLE OF DEVELOPMENT !
 
