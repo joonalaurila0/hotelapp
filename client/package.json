@@ -1,8 +1,8 @@
 {
-  "name": "webpackv3",
+  "name": "Hotelapp client",
   "private": true,
   "version": "2",
-  "description": "",
+  "description": "Client SPA for the Hotelapp microservices",
   "scripts": {
     "types": "tsc --noEmit",
     "dev": "node server.js",
@@ -15,14 +15,12 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@babel/runtime": "^7.17.9",
-    "formik": "^2.2.9",
     "keycloak-js": "^18.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
     "react-router": "^6.2.1",
-    "react-router-dom": "^6.2.1",
-    "yup": "^0.32.11"
+    "react-router-dom": "^6.2.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.8",
