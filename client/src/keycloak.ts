@@ -49,10 +49,10 @@ const keycloakInit = () => {
 
   // On succesfull authentication, calls state to store the user information as JSON string to LocalStorage.
   keycloak.onAuthSuccess = () => {
-    console.info('Authenticated successfully with Keycloak');
+    //console.debug('Authenticated successfully with Keycloak');
     keycloak.loadUserProfile().then((profile) => {
       State.storeStateToLocalStorage('token', keycloak.token ?? null);
-      console.info('KC Profile: ', profile);
+      //console.debug('KC Profile: ', profile);
       State.storeStateToLocalStorage('profile', profile);
     });
   };

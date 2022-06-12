@@ -181,13 +181,6 @@ class Api {
       });
     }
   }
-
-  public static async signUp(credentials: string) {
-    return fetch(this.url + credentials, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
 }
 
 export type Booking = {

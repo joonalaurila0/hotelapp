@@ -20,7 +20,6 @@ const HotelCard = ({ id, img, location, name, email, phone }: Hotel) => {
     if (rooms) {
       const profile: KeycloakProfile | null= State.fetchStateByKey('profile');
       const foundRooms = rooms.filter((room) => room.hotel_id == selected_hotel?.id);
-      console.log('Found rooms :: ', foundRooms);
 
       profile == null ? alert('Sign in to do bookings') : null
 
