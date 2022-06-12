@@ -29,10 +29,13 @@ const RoomView = () => {
     e.preventDefault();
     const { room } = e.currentTarget.dataset;
     const selected_room = room ? (JSON.parse(room) as Room) : null;
+
     if (selected_room && profile && profile.id && hotelid) {
+
       (async (profileid) => {
         return (
           window.confirm('Are you sure you want to book this room?') &&
+          /* Creates a booking for the user, which returns an invoice */
           Api.createBooking({
             customer_id: profileid,
             hotel_id: parseInt(hotelid),
@@ -40,11 +43,23 @@ const RoomView = () => {
             booking_status: BookingStatus.Pending,
             start_date: new Date().toISOString(),
             end_date: ISO8601Date(7),
-          }).then((res) =>
-            res.json().then((invoice) => State.storeStateToLocalStorage('invoices', invoice))
+          }).then((res) => res.json()
+            .then((invoice) => {
+              /*
+               * NOTE: This evaluates whether there is previous invoices,
+               *        if there is, then we cache the current invoices and
+               *        set the new invoice into an array with the old ones.
+              */
+              const invoices = State.fetchStateByKey('invoices');
+              invoices == null 
+                ? State.storeStateToLocalStorage('invoices', invoice)
+                : State.storeStateToLocalStorage('invoices', [...invoices, invoice])
+            })
+            .then(() => alert("Booking made."))
           )
         );
       })(profile.id);
+
     }
   };
 

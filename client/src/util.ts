@@ -32,4 +32,15 @@ const TimestampNow = (): string => {
   );
 };
 
-export { ISO8601Date, TimestampNow };
+// Evaluates to Array<Type> if true
+/** @returns true if is Array type AND not null. */
+const evalArray = (array: any): boolean => {
+  return Array.isArray(array) && array != null;
+};
+
+/** @returns true if is NOT Array type AND not null. */
+const evalObject = (obj: any): boolean => {
+  return !Array.isArray(obj) && obj != null;
+};
+
+export { ISO8601Date, TimestampNow, evalObject, evalArray };

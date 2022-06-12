@@ -1,3 +1,4 @@
+/** Used to manage state from localStorage */
 class State {
   private static instance: State;
   private constructor() {}
@@ -13,6 +14,7 @@ class State {
   /**
    * NOTE: JSON.stringify() is used once implicitly on the keyValue,
    * meaning there is no need to turn the objects into strings unless multiple passes is needed.
+   * THIS OVERWRITES THE CURRENT STATE ON PURPOSE (TO REFRESH THE STATE).
    * @see [Storage.setItem()](https://html.spec.whatwg.org/multipage/webstorage.html#dom-storage-setitem-dev)
    * @param key keyName for Storage.getItem()
    * @param value keyValue for Storage.setItem()

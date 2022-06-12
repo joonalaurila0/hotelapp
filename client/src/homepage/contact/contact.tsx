@@ -1,39 +1,29 @@
 import './contact.css';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { RowField, ColumnRow, InputField, TextareaField } from '../form-components/form-components';
 
-interface FormValues {
-  email: string;
-  name: string;
-  message: string;
-}
-
-const validationSchema = Yup.object({
-  name: Yup.string().required('Required'),
-  email: Yup.string().email('Invalid email').required('Required'),
-  message: Yup.string().required('Required'),
-});
+// This was for form evaluation.
+//interface FormValues {
+//  firstname: string;
+//  lastname: string;
+//  email: string;
+//  street: string;
+//  zipcode: string;
+//  city: string;
+//  additionalinfo: string;
+//}
 
 const Contact = () => {
-  const formik = useFormik<FormValues>({
-    initialValues: {
-      email: '',
-      name: '',
-      message: '',
-    },
-    validationSchema: validationSchema,
-    onSubmit: (values: FormValues) => {
-      alert(JSON.stringify(values, null, 2));
-    },
-  });
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    alert('Submit succesful, thank you contact.')
+  }
   return (
     <div className='contact' id='contact'>
       <h1>Contact and Customer Support</h1>
       <div />
       <div className='contactform' style={{ justifySelf: 'center' }}>
         <div className='container'>
-          <form action=''>
+          <form onSubmit={onSubmit}>
             <RowField>
               <ColumnRow>
                 <InputField field={'First name'} />
@@ -65,6 +55,7 @@ const Contact = () => {
             </RowField>
             <input
               className='container__submit'
+              name='submit_button'
               type='submit'
               value='Submit'
               style={{

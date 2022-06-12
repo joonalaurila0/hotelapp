@@ -1,10 +1,11 @@
 import { KeycloakProfile } from 'keycloak-js';
 import { useNavigate } from 'react-router';
-import kuva from '../../../public/static/placeholder.webp';
-import Api, { Booking, BookingStatus, Invoice } from '../../api/api';
 import State from '../../state';
-import { ISO8601Date, TimestampNow } from '../../util';
 import { Hotel, Room } from '../hotelview';
+import hotelli1 from '../../../public/static/hotelli_1.webp';
+import hotelli2 from '../../../public/static/hotelli_2.webp';
+import hotelli3 from '../../../public/static/hotelli_3.webp';
+import hotelli4 from '../../../public/static/hotelli_4.webp';
 
 const HotelCard = ({ id, img, location, name, email, phone }: Hotel) => {
   const navigate = useNavigate();
@@ -17,30 +18,31 @@ const HotelCard = ({ id, img, location, name, email, phone }: Hotel) => {
 
     // If rooms were found proceed...
     if (rooms) {
-      const profile: KeycloakProfile = State.fetchStateByKey('profile');
+      const profile: KeycloakProfile | null= State.fetchStateByKey('profile');
       const foundRooms = rooms.filter((room) => room.hotel_id == selected_hotel?.id);
       console.log('Found rooms :: ', foundRooms);
 
+      profile == null ? alert('Sign in to do bookings') : null
+
       // If hotel and hotel.id was found proceed..
       // Ensure existence of profile.id, hotel, hotel.id and foundRooms has more than 0 items.
-      if (selected_hotel && selected_hotel.id && profile.id && foundRooms.length > 0) {
-        const args = {
-          profileId: profile.id,
-          hotel: selected_hotel,
-          roomId: foundRooms[0].id,
-          roomPrice: foundRooms[0].booking_price,
-        };
+      if (selected_hotel && selected_hotel.id 
+        && profile && profile.id 
+        && foundRooms.length > 0) {
         (() => {
-          console.log('handleSubmit ::', selected_hotel);
           navigate(`/results/rooms/${selected_hotel.id}`);
         })();
-        //(() => {
-        //  return window.confirm("Are you sure you want to book hotel?")
-        //    && true;
-        //})() && Api.createBookingAndInvoice(args);
       }
     }
   }
+  // Keeps a relative path reference to the hotel pictures.
+  // This is kept to randomize how they are selected for the hotels.
+  const hotelPictures = [
+    hotelli1,
+    hotelli2,
+    hotelli3,
+    hotelli4
+  ];
 
   const hotel = { id, img, location, name, email, phone };
   return (
@@ -50,7 +52,7 @@ const HotelCard = ({ id, img, location, name, email, phone }: Hotel) => {
       key={id}
       data-hotel={JSON.stringify(hotel)}
     >
-      <img src={kuva} className='results_main_frame_img' />
+      <img src={hotelPictures[Math.floor(Math.random() * hotelPictures.length)]} className='results_main_frame_img' />
       <div className='results_main_frame_info'>
         <h4>{name}</h4>
         <p>Location: {location}</p>

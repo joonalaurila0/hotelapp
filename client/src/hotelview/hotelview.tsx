@@ -3,6 +3,8 @@ import ResultHeader from './header/header';
 import HotelCard from './hotelcard/hotelcard';
 import State from '../state';
 import Footer from '../homepage/footer/footer';
+import { KeycloakProfile } from 'keycloak-js';
+import { Link } from 'react-router-dom';
 
 export type Hotel = {
   id: number;
@@ -34,6 +36,7 @@ export type Room = {
 /* View of the hotels */
 const HotelView = () => {
   const hotels: Hotel[] | null = State.fetchStateByKey('hotels');
+  const profile: KeycloakProfile = State.fetchStateByKey('profile');
   return (
     <div className='results_container'>
       <ResultHeader results={hotels ? hotels.length : 0} description='Hotels' />
@@ -64,7 +67,7 @@ const HotelView = () => {
               fontFamily: 'smooch',
             }}
           >
-            <a href='/profile'>My Profile</a>
+            {profile && <Link to={'/profile'}>My Profile</Link>}
           </h4>
         </div>
       </div>

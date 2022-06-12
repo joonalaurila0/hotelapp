@@ -11,6 +11,9 @@ const keycloak = new Keycloak({
 
 // Simple initialization function.
 const keycloakInit = () => {
+  // To keep track of keycloak initialization
+  State.storeStateToLocalStorage('KC_INITIALIZED', true);
+
   keycloak
     .init({
       onLoad: 'check-sso',

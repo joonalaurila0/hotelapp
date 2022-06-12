@@ -1,17 +1,14 @@
-import * as React from 'react';
 import './main.css';
 import Header from '../header/header';
 import Search from '../../search/search';
 import { keycloak } from '../../keycloak';
-import { KeycloakProfile, KeycloakPromise } from 'keycloak-js';
+import { KeycloakProfile } from 'keycloak-js';
 import Api, { BookingStatus } from '../../api/api';
 import State from '../../state';
 import { ISO8601Date } from '../../util';
 
 const Main = () => {
-  const mockLogin = () => {
-    keycloak.login();
-  };
+  const signIn = () => keycloak.login();
 
   async function setUserState() {
     keycloak.loadUserProfile().then((profile) => {
@@ -175,7 +172,7 @@ const Main = () => {
       <div className='imageColumn'>
         <div className='imageColumn_WRAPPER'>
           <div className='imageColumn_AUTH'>
-            <a style={{ cursor: 'pointer' }} onClick={() => mockLogin()} title='Sign in'>
+            <a style={{ cursor: 'pointer' }} onClick={() => signIn()} title='Sign in'>
               Sign in
             </a>
             <a style={{ cursor: 'pointer' }} onClick={() => mockTest()} title='Test keycloak'>

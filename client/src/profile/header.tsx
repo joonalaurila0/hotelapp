@@ -1,4 +1,3 @@
-import { AiOutlineFileSearch } from 'react-icons/ai';
 import { AiOutlineMail } from 'react-icons/ai';
 import { VscAccount } from 'react-icons/vsc';
 import { GoHome } from 'react-icons/go';
@@ -9,7 +8,7 @@ import React from 'react';
 const ProfileHeader = () => {
   const fetchProfileJSON = (): KeycloakProfile => State.fetchStateByKey('profile');
   const [state, setState] = React.useState<KeycloakProfile | null>(null);
-  if (State.fetchStateByKey('profile') && !state) {
+  if (State.fetchStateByKey('profile') != null && !state) {
     setState(fetchProfileJSON());
   }
   return (

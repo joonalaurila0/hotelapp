@@ -1,9 +1,9 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-require('dotenv').config({ path: '../.env' })
+require('dotenv').config({ path: '../.env' });
 const webpack = require('webpack');
 
-const ASSET_PATH = process.env.asset_path || '/'
+const ASSET_PATH = process.env.asset_path || '/';
 
 module.exports = (env) => {
   const developmentConfig = {
@@ -29,55 +29,55 @@ module.exports = (env) => {
         },
       },
     },
-  }
+  };
   const productionConfig = {
     mode: 'production',
-      entry: {
-        index: path.resolve(__dirname, './src/index.tsx'),
-      },
-      output: {
-        filename: '[name].[contenthash].bundle.js',
-          path: path.resolve(__dirname, './dist'),
-          clean: true,
-          publicPath: ASSET_PATH,
-      },
-      resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
-      },
-      devtool: 'source-map',
-      module: {
-        rules: [
+    entry: {
+      index: path.resolve(__dirname, './src/index.tsx'),
+    },
+    output: {
+      filename: '[name].[contenthash].bundle.js',
+      path: path.resolve(__dirname, './dist'),
+      clean: true,
+      publicPath: ASSET_PATH,
+    },
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js'],
+    },
+    devtool: 'source-map',
+    module: {
+      rules: [
         {
           test: /\.tsx?$/,
           loader: 'babel-loader',
           exclude: /node_modules/,
         },
-          {
-            test: /\.css$/i,
-            use: ['style-loader', 'css-loader'],
-          },
-          {
-            test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
-            type: 'asset/resource',
-          },
-        ],
-      },
-      plugins: [
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, './public/index.html'),
-      title: 'Hotely | Find excellent hotels',
-      filename: 'index.html',
-      favicon: path.resolve(__dirname, './public/static/fierce.jpg'),
-      cache: true
-    }),
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, './public/silent-check-sso.html'),
-      filename: 'silent-check-sso.html',
-    }),
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
+          type: 'asset/resource',
+        },
       ],
-      stats: {
-        env: true,
-      },
-  }
-  return env.production ? productionConfig : { ...productionConfig, ...developmentConfig }
-}
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: path.resolve(__dirname, './public/index.html'),
+        title: 'Hotely | Find excellent hotels',
+        filename: 'index.html',
+        favicon: path.resolve(__dirname, './public/static/favicon-32x32.png'),
+        cache: true,
+      }),
+      new HtmlWebpackPlugin({
+        template: path.resolve(__dirname, './public/silent-check-sso.html'),
+        filename: 'silent-check-sso.html',
+      }),
+    ],
+    stats: {
+      env: true,
+    },
+  };
+  return env.production ? productionConfig : { ...productionConfig, ...developmentConfig };
+};
