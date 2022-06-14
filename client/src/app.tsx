@@ -11,7 +11,10 @@ import RoomView from './hotelview/roomview';
 const App = () => {
   // Initialize keycloak
   keycloakInit();
-  
+
+  console.log('dodi?', process.env.swarmhost);
+  console.log('window.location.host:', window.location.host);
+
   if (State.fetchStateByKey('cities') === null) {
     (async () => {
       Api.findCities().then((res) =>

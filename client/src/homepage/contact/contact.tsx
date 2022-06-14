@@ -15,8 +15,8 @@ import { RowField, ColumnRow, InputField, TextareaField } from '../form-componen
 const Contact = () => {
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    alert('Submit succesful, thank you contact.')
-  }
+    alert('Submit succesful, thank you contact.');
+  };
   return (
     <div className='contact' id='contact'>
       <h1>Contact and Customer Support</h1>

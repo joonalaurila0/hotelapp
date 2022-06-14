@@ -56,7 +56,7 @@ const HotelView = () => {
               textDecorationLine: 'underline',
             }}
           >
-            <a href='/'>Back to homepage</a>
+            <Link to={'/'}>Back to homepage</Link>
           </h4>
           <h4
             style={{

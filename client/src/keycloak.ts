@@ -4,7 +4,7 @@ import State from './state';
 // Keycloak configuration
 // src/homepage/main/main.tsx has functions for keycloak.
 const keycloak = new Keycloak({
-  url: 'http://localhost:8080/',
+  url: `http://${process.env.swarmhost}:8080/`,
   realm: 'master',
   clientId: 'hotelapp-client',
 });
@@ -22,7 +22,7 @@ const keycloakInit = () => {
       adapter: 'default',
       enableLogging: true,
       useNonce: true,
-      redirectUri: 'http://localhost:8081',
+      redirectUri: `http://${process.env.swarmhost}:8081`,
       pkceMethod: 'S256',
     })
     .then((auth) => {

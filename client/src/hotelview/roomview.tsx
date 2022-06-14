@@ -18,6 +18,7 @@ import huone12 from '../../public/static/hotelroom12.webp';
 import Api, { BookingStatus } from '../api/api';
 import { useParams } from 'react-router';
 import { ISO8601Date } from '../util';
+import { Link } from 'react-router-dom';
 
 /* View of the rooms */
 const RoomView = () => {
@@ -31,7 +32,6 @@ const RoomView = () => {
     const selected_room = room ? (JSON.parse(room) as Room) : null;
 
     if (selected_room && profile && profile.id && hotelid) {
-
       (async (profileid) => {
         return (
           window.confirm('Are you sure you want to book this room?') &&
@@ -43,23 +43,25 @@ const RoomView = () => {
             booking_status: BookingStatus.Pending,
             start_date: new Date().toISOString(),
             end_date: ISO8601Date(7),
-          }).then((res) => res.json()
-            .then((invoice) => {
-              /*
-               * NOTE: This evaluates whether there is previous invoices,
-               *        if there is, then we cache the current invoices and
-               *        set the new invoice into an array with the old ones.
-              */
-              const invoices = State.fetchStateByKey('invoices');
-              invoices == null 
-                ? State.storeStateToLocalStorage('invoices', invoice)
-                : State.storeStateToLocalStorage('invoices', [...invoices, invoice])
-            })
-            .then(() => alert("Booking made."))
+          }).then((res) =>
+            res
+              .json()
+              .then((invoice) => {
+                /*
+                 * NOTE: This evaluates whether there is invoices are more than,
+                 *        one, by evaluating whether it is an array, if it is,
+                 *        set the new invoice into an array with the old ones.
+                 *        Otherwise, the single invoice is pushed to state.
+                 */
+                const invoices = State.fetchStateByKey('invoices');
+                Array.isArray(invoices)
+                  ? State.storeStateToLocalStorage('invoices', [...invoices, invoice])
+                  : State.storeStateToLocalStorage('invoices', invoice);
+              })
+              .then(() => alert('Booking made.'))
           )
         );
       })(profile.id);
-
     }
   };
 
@@ -98,7 +100,7 @@ const RoomView = () => {
               textDecorationLine: 'underline',
             }}
           >
-            <a href='/'>Back to homepage</a>
+            <Link to={'/'}>Back to homepage</Link>
           </h4>
           <h4
             style={{
@@ -108,7 +110,7 @@ const RoomView = () => {
               textDecorationLine: 'underline',
             }}
           >
-            <a href='/results'>Back to hotels</a>
+            <Link to={'/hotels'}>Back to hotels</Link>
           </h4>
           <h4
             style={{
@@ -119,7 +121,7 @@ const RoomView = () => {
               fontFamily: 'smooch',
             }}
           >
-            <a href='/profile'>My Profile</a>
+            {profile && <Link to={'/profile'}>My Profile</Link>}
           </h4>
         </div>
       </div>

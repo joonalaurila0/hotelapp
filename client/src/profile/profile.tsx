@@ -9,10 +9,12 @@ import { evalArray, evalObject } from '../util';
 const Profile = () => {
   const profile: KeycloakProfile | null = State.fetchStateByKey('profile');
 
-  if (profile && profile.id && 
-    State.fetchStateByKey('invoices') == null 
-    && State.fetchStateByKey('bookings') == null) {
-
+  if (
+    profile &&
+    profile.id &&
+    State.fetchStateByKey('invoices') == null &&
+    State.fetchStateByKey('bookings') == null
+  ) {
     (async (profileId: string) => {
       const res: Response = await Api.findInvoices(profileId);
       const invoices: Array<Invoice> = await res.json();
@@ -27,7 +29,7 @@ const Profile = () => {
   const invoices: Array<Invoice> | Invoice | null = State.fetchStateByKey('invoices');
   const bookings: Array<Booking> | Booking | null = State.fetchStateByKey('bookings');
 
-  console.log("Evaluation evalArray ::", evalArray((bookings)))
+  console.log('Evaluation evalArray ::', evalArray(bookings));
 
   // The evalArray and evalObject is used to evaluate type information to be
   // able to set the invoices and bookings to the profile page. This is evaluated
@@ -43,114 +45,120 @@ const Profile = () => {
       <div className='profile_sidebar'>
         <h3 style={{ color: 'white', justifySelf: 'center', fontWeight: 300 }}>Your Bookings:</h3>
         <div style={{ display: 'grid', overflow: 'scroll' }}>
-          {(evalArray(bookings) === true) ? ((bookings as Booking[]).map((booking: Booking) => {
-              return (
-                <div
-                  key={booking.id}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    fontSize: '1em',
-                    color: 'white',
-                    borderTop: '1px solid #a67b5b',
-                    borderBottom: '1px solid #a67b5b',
-                    paddingLeft: '.5em',
-                  }}
-                >
-                  <p style={{ lineHeight: 0, fontSize: '1em' }}>Booking ID: {booking.id}</p>
-                  <p style={{ lineHeight: 0, fontSize: '1em' }}>Hotel ID: {booking.hotel_id}</p>
-                  <p style={{ lineHeight: 0, fontSize: '1em' }}>Room booked: {booking.room_id}</p>
-                  <p style={{ lineHeight: 0, fontSize: '1em' }}>
-                    Booking status: {booking.booking_status}
-                  </p>
-                  <p style={{ lineHeight: 0, fontSize: '1em' }}>
-                    Booking start-end dates: {booking.start_date + ' - ' + booking.end_date}
-                  </p>
-                </div>
-              );
-          })) : (evalObject(bookings) === true) ? ((Array.of(bookings as Booking).map((booking: Booking) => {
-              return (
-                <div
-                  key={booking.id}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    fontSize: '1em',
-                    color: 'white',
-                    borderTop: '1px solid #a67b5b',
-                    borderBottom: '1px solid #a67b5b',
-                    paddingLeft: '.5em',
-                  }}
-                >
-                  <p style={{ lineHeight: 0, fontSize: '1em' }}>Booking ID: {booking.id}</p>
-                  <p style={{ lineHeight: 0, fontSize: '1em' }}>Hotel ID: {booking.hotel_id}</p>
-                  <p style={{ lineHeight: 0, fontSize: '1em' }}>Room booked: {booking.room_id}</p>
-                  <p style={{ lineHeight: 0, fontSize: '1em' }}>
-                    Booking status: {booking.booking_status}
-                  </p>
-                  <p style={{ lineHeight: 0, fontSize: '1em' }}>
-                    Booking start-end dates: {booking.start_date + ' - ' + booking.end_date}
-                  </p>
-                </div>
-              );
-          }))) : (null)}
+          {evalArray(bookings) === true
+            ? (bookings as Booking[]).map((booking: Booking) => {
+                return (
+                  <div
+                    key={booking.id}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      fontSize: '1em',
+                      color: 'white',
+                      borderTop: '1px solid #a67b5b',
+                      borderBottom: '1px solid #a67b5b',
+                      paddingLeft: '.5em',
+                    }}
+                  >
+                    <p style={{ lineHeight: 0, fontSize: '1em' }}>Booking ID: {booking.id}</p>
+                    <p style={{ lineHeight: 0, fontSize: '1em' }}>Hotel ID: {booking.hotel_id}</p>
+                    <p style={{ lineHeight: 0, fontSize: '1em' }}>Room booked: {booking.room_id}</p>
+                    <p style={{ lineHeight: 0, fontSize: '1em' }}>
+                      Booking status: {booking.booking_status}
+                    </p>
+                    <p style={{ lineHeight: 0, fontSize: '1em' }}>
+                      Booking start-end dates: {booking.start_date + ' - ' + booking.end_date}
+                    </p>
+                  </div>
+                );
+              })
+            : evalObject(bookings) === true
+            ? Array.of(bookings as Booking).map((booking: Booking) => {
+                return (
+                  <div
+                    key={booking.id}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      fontSize: '1em',
+                      color: 'white',
+                      borderTop: '1px solid #a67b5b',
+                      borderBottom: '1px solid #a67b5b',
+                      paddingLeft: '.5em',
+                    }}
+                  >
+                    <p style={{ lineHeight: 0, fontSize: '1em' }}>Booking ID: {booking.id}</p>
+                    <p style={{ lineHeight: 0, fontSize: '1em' }}>Hotel ID: {booking.hotel_id}</p>
+                    <p style={{ lineHeight: 0, fontSize: '1em' }}>Room booked: {booking.room_id}</p>
+                    <p style={{ lineHeight: 0, fontSize: '1em' }}>
+                      Booking status: {booking.booking_status}
+                    </p>
+                    <p style={{ lineHeight: 0, fontSize: '1em' }}>
+                      Booking start-end dates: {booking.start_date + ' - ' + booking.end_date}
+                    </p>
+                  </div>
+                );
+              })
+            : null}
         </div>
       </div>
       <div className='profile_main'>
         <h3 style={{ color: 'white', justifySelf: 'center', fontWeight: 300 }}>Your Invoices:</h3>
-        {(evalArray(invoices) == true) ? ((invoices as Invoice[])
-          .map((invoice: Invoice) => {
-            return (
-              <div
-                key={invoice.id}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  fontSize: '1em',
-                  color: 'white',
-                  borderTop: '1px solid #a67b5b',
-                  borderBottom: '1px solid #a67b5b',
-                  paddingLeft: '.5em',
-                }}
-              >
-                <p style={{ lineHeight: 0, fontSize: '1em' }}>Invoice ID: {invoice.id}</p>
-                <p style={{ lineHeight: 0, fontSize: '1em' }}>Issued: {invoice.issued}</p>
-                <p style={{ lineHeight: 0, fontSize: '1em' }}>Invoice total: ${invoice.total}</p>
-                <p style={{ lineHeight: 0, fontSize: '1em' }}>
-                  Invoice paid: {invoice.paid ? 'Paid' : 'Not paid'}
-                </p>
-                <p style={{ lineHeight: 0, fontSize: '1em' }}>
-                  Invoice payment date: {invoice.payment_date}
-                </p>
-              </div>
-            );
-          })) 
-          : (evalObject(invoices) === true) ? (Array.of(invoices as Invoice).map((invoice: Invoice) => {
-            return (
-              <div
-                key={invoice.id}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  fontSize: '1em',
-                  color: 'white',
-                  borderTop: '1px solid #a67b5b',
-                  borderBottom: '1px solid #a67b5b',
-                  paddingLeft: '.5em',
-                }}
-              >
-                <p style={{ lineHeight: 0, fontSize: '1em' }}>Invoice ID: {invoice.id}</p>
-                <p style={{ lineHeight: 0, fontSize: '1em' }}>Issued: {invoice.issued}</p>
-                <p style={{ lineHeight: 0, fontSize: '1em' }}>Invoice total: ${invoice.total}</p>
-                <p style={{ lineHeight: 0, fontSize: '1em' }}>
-                  Invoice paid: {invoice.paid ? 'Paid' : 'Not paid'}
-                </p>
-                <p style={{ lineHeight: 0, fontSize: '1em' }}>
-                  Invoice payment date: {invoice.payment_date}
-                </p>
-              </div>
-          )})
-            ) : null}
+        {evalArray(invoices) == true
+          ? (invoices as Invoice[]).map((invoice: Invoice) => {
+              return (
+                <div
+                  key={invoice.id}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    fontSize: '1em',
+                    color: 'white',
+                    borderTop: '1px solid #a67b5b',
+                    borderBottom: '1px solid #a67b5b',
+                    paddingLeft: '.5em',
+                  }}
+                >
+                  <p style={{ lineHeight: 0, fontSize: '1em' }}>Invoice ID: {invoice.id}</p>
+                  <p style={{ lineHeight: 0, fontSize: '1em' }}>Issued: {invoice.issued}</p>
+                  <p style={{ lineHeight: 0, fontSize: '1em' }}>Invoice total: ${invoice.total}</p>
+                  <p style={{ lineHeight: 0, fontSize: '1em' }}>
+                    Invoice paid: {invoice.paid ? 'Paid' : 'Not paid'}
+                  </p>
+                  <p style={{ lineHeight: 0, fontSize: '1em' }}>
+                    Invoice payment date: {invoice.payment_date}
+                  </p>
+                </div>
+              );
+            })
+          : evalObject(invoices) === true
+          ? Array.of(invoices as Invoice).map((invoice: Invoice) => {
+              return (
+                <div
+                  key={invoice.id}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    fontSize: '1em',
+                    color: 'white',
+                    borderTop: '1px solid #a67b5b',
+                    borderBottom: '1px solid #a67b5b',
+                    paddingLeft: '.5em',
+                  }}
+                >
+                  <p style={{ lineHeight: 0, fontSize: '1em' }}>Invoice ID: {invoice.id}</p>
+                  <p style={{ lineHeight: 0, fontSize: '1em' }}>Issued: {invoice.issued}</p>
+                  <p style={{ lineHeight: 0, fontSize: '1em' }}>Invoice total: ${invoice.total}</p>
+                  <p style={{ lineHeight: 0, fontSize: '1em' }}>
+                    Invoice paid: {invoice.paid ? 'Paid' : 'Not paid'}
+                  </p>
+                  <p style={{ lineHeight: 0, fontSize: '1em' }}>
+                    Invoice payment date: {invoice.payment_date}
+                  </p>
+                </div>
+              );
+            })
+          : null}
       </div>
       <div className='profile_footer'>
         <Footer />

@@ -18,16 +18,14 @@ const HotelCard = ({ id, img, location, name, email, phone }: Hotel) => {
 
     // If rooms were found proceed...
     if (rooms) {
-      const profile: KeycloakProfile | null= State.fetchStateByKey('profile');
+      const profile: KeycloakProfile | null = State.fetchStateByKey('profile');
       const foundRooms = rooms.filter((room) => room.hotel_id == selected_hotel?.id);
 
-      profile == null ? alert('Sign in to do bookings') : null
+      profile == null ? alert('Sign in to do bookings') : null;
 
       // If hotel and hotel.id was found proceed..
       // Ensure existence of profile.id, hotel, hotel.id and foundRooms has more than 0 items.
-      if (selected_hotel && selected_hotel.id 
-        && profile && profile.id 
-        && foundRooms.length > 0) {
+      if (selected_hotel && selected_hotel.id && profile && profile.id && foundRooms.length > 0) {
         (() => {
           navigate(`/results/rooms/${selected_hotel.id}`);
         })();
@@ -36,12 +34,7 @@ const HotelCard = ({ id, img, location, name, email, phone }: Hotel) => {
   }
   // Keeps a relative path reference to the hotel pictures.
   // This is kept to randomize how they are selected for the hotels.
-  const hotelPictures = [
-    hotelli1,
-    hotelli2,
-    hotelli3,
-    hotelli4
-  ];
+  const hotelPictures = [hotelli1, hotelli2, hotelli3, hotelli4];
 
   const hotel = { id, img, location, name, email, phone };
   return (
@@ -51,7 +44,10 @@ const HotelCard = ({ id, img, location, name, email, phone }: Hotel) => {
       key={id}
       data-hotel={JSON.stringify(hotel)}
     >
-      <img src={hotelPictures[Math.floor(Math.random() * hotelPictures.length)]} className='results_main_frame_img' />
+      <img
+        src={hotelPictures[Math.floor(Math.random() * hotelPictures.length)]}
+        className='results_main_frame_img'
+      />
       <div className='results_main_frame_info'>
         <h4>{name}</h4>
         <p>Location: {location}</p>

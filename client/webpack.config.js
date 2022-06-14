@@ -1,18 +1,27 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({ path: './.env' });
 const webpack = require('webpack');
+const dotenv = require('dotenv-webpack');
 
 const ASSET_PATH = process.env.asset_path || '/';
+const host = process.env.host || '127.0.0.1';
 
 module.exports = (env) => {
   const developmentConfig = {
     mode: 'development',
+    target: 'web',
     devtool: 'eval-cheap-module-source-map',
     devServer: {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+        'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
+      },
       historyApiFallback: true,
       static: './dist',
       hot: true,
+      host: host,
       port: process.env.port,
       open: true,
     },
@@ -32,6 +41,7 @@ module.exports = (env) => {
   };
   const productionConfig = {
     mode: 'production',
+    target: 'web',
     entry: {
       index: path.resolve(__dirname, './src/index.tsx'),
     },
@@ -63,6 +73,7 @@ module.exports = (env) => {
       ],
     },
     plugins: [
+      new dotenv(),
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, './public/index.html'),
         title: 'Hotely | Find excellent hotels',

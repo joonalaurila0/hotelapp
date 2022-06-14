@@ -3,6 +3,7 @@ import Header from '../header/header';
 import Search from '../../search/search';
 import { keycloak } from '../../keycloak';
 const Main = () => {
+  console.log('Token parsed ::', keycloak.idTokenParsed);
   return (
     <div className='main'>
       <div className='squaresfirst'>
@@ -30,7 +31,7 @@ const Main = () => {
           </div>
           <div className='imageColumn_LANG_SELECT'>
             <div className='langbox' id='finflag'>
-              <p>Suomeksi </p>
+              <p onClick={() => console.log(keycloak.tokenParsed)}>Suomeksi </p>
             </div>
             <div className='langbox' id='enflag'>
               <p>English</p>

@@ -1,11 +1,11 @@
 {
-  "name": "Hotelapp client",
+  "name": "webpackv3",
   "private": true,
   "version": "2",
-  "description": "Client SPA for the Hotelapp microservices",
+  "description": "",
   "scripts": {
     "types": "tsc --noEmit",
-    "dev": "node server.js",
+    "prod": "node server.js",
     "serve": "npx webpack-cli server",
     "build": "webpack --env production --progress --config webpack.config.js",
     "format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json}\"",
@@ -34,6 +34,7 @@
     "babel-loader": "^8.2.3",
     "css-loader": "^6.5.1",
     "dotenv": "^11.0.0",
+    "dotenv-webpack": "^7.1.0",
     "express": "^4.17.2",
     "html-webpack-plugin": "^5.5.0",
     "prettier": "^2.6.2",

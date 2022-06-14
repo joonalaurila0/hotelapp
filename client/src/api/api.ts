@@ -4,10 +4,9 @@ import State from '../state';
 
 class Api {
   private static host = window.location.host || process.env.host;
-  private static url = `http://${this.host}`;
 
   // Makes Calls to the API Gateway that routes calls to the services.
-  private static GatewayURI = `http://localhost:8072`;
+  private static GatewayURI = `http://${process.env.swarmhost}:8072`;
 
   // Maintains the keycloak session.
   // TOKEN EXPIRATION IS 5 MINUTES
@@ -108,7 +107,11 @@ class Api {
   public static async findCities() {
     return fetch(this.GatewayURI + '/hotel-service/cities/all', {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'OPTIONS, GET, POST, PUT, PATCH, DELETE',
+      },
     });
   }
 
