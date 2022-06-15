@@ -77,7 +77,14 @@ private_ip=$(/sbin/ip -o -4 addr list eno1 | awk '{print $4}' | cut -d/ -f1)
 import_data_to_vault "secret" "customer-service" "@cass2.json" $cid
 import_data_to_vault "secret" "hotel-service" "@cassandra.json" $cid
 
-# overwrites the tokens for the yaml files
+# Overwrites the tokens for the yaml files.
 import_tokens "../config-server/src/main/resources" $root_token
+
+# Overwrites the current build's resources for the jar.
+# This assures the application wont have to be rebuild each time tokens are changed.
+# Unfortunately this only goes for the local deployment, since if the deployment
+# is across multiple hosts, the application jar needs to be rebuilt for the
+# docker images that get deployed to the other hosts.
+import_tokens "../config-server/build/resources/main" $root_token
 
 docker ps -a && echo "Succesful deployment of Vault :)"

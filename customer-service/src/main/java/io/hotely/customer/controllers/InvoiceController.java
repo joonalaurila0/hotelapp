@@ -1,6 +1,6 @@
 package io.hotely.customer.controllers;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,16 +45,20 @@ public class InvoiceController {
       .orElseThrow(() -> new InvoiceNotFoundException(id));
   }
 
+  @GetMapping("/customer/{id}")
+  public Iterable<Invoice> fetchByCustomerId(@PathVariable("id") UUID customerId) {
+    return invoiceRepository.findCustomerInvoces(customerId);
+  }
+
   @PostMapping("/create")
-  public Invoice create(@RequestParam("booking_id") UUID booking_id, @RequestParam("customer_id") UUID customer_id, @RequestParam("total") Float total, @RequestParam("issued") Timestamp issued, @RequestParam("paid") Boolean paid, @RequestParam("paymentDate") Date paymentDate, @RequestParam("cancelled") Boolean cancelled) {
-    Invoice obj = new Invoice(booking_id, customer_id, total, issued, paid, paymentDate, cancelled);
-    log.debug(this.getClass().getSimpleName());
-    log.debug("Here's the object: " + obj);
-    return invoiceRepository.save(obj);
+  public Invoice create(@RequestBody Invoice invoice) {
+    log.debug("Here's the object: " + invoice);
+    invoice.setId(UUID.randomUUID());
+    return invoiceRepository.save(invoice);
   }
 
   @PutMapping("/update/{id}")
-  public Invoice update(@RequestParam("id") UUID id, @RequestParam("total") Float total, @RequestParam("issued") Timestamp issued, @RequestParam("paid") Boolean paid, @RequestParam("paymentDate") Date paymentDate, @RequestParam("cancelled") Boolean cancelled) {
+  public Invoice update(@RequestParam("id") UUID id, @RequestParam("total") Float total, @RequestParam("issued") Timestamp issued, @RequestParam("paid") Boolean paid, @RequestParam("paymentDate") LocalDate paymentDate, @RequestParam("cancelled") Boolean cancelled) {
     Invoice res = invoiceRepository.findById(id)
       .orElseThrow(() -> new InvoiceNotFoundException(id));
     res.setTotal(total);

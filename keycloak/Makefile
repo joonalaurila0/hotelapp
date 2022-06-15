@@ -18,7 +18,7 @@ deploy:
 init:
 	sh startup.sh --host default -i quay.io/keycloak/keycloak:17.0.0 -s
 
-build:
+build-with-mariadb:
 	docker build -t $(IMAGE):$(TAG) -f Dockerfile \
 		--build-arg KEYCLOAK_ADMIN=admin \
 		--build-arg KEYCLOAK_ADMIN_PASSWORD=admin \
@@ -36,13 +36,31 @@ build:
 	@echo "Pruning intermediate images.."
 	docker image prune -f
 
+# Default
+build:
+	docker build -t $(IMAGE):$(TAG) -f Dockerfile \
+		--build-arg KEYCLOAK_ADMIN=admin \
+		--build-arg KEYCLOAK_ADMIN_PASSWORD=admin \
+		--build-arg KC_HOSTNAME=$(SWARMHOST):8080 \
+		--build-arg KC_HTTP_HOST=$(SWARMHOST):8080 \
+		--build-arg KC_HTTP_ENABLED=true \
+		--build-arg KC_HTTP_PORT=8080 \
+		--build-arg KC_HOSTNAME_STRICT_HTTPS=false \
+		--build-arg KC_METRICS_ENABLED=true \
+		--build-arg KC_HEALTH_ENABLED=true \
+		--build-arg KC_FEATURES=token-exchange \
+		.
+	@echo "Pruning intermediate images.."
+	docker image prune -f
+
+
 run:
 	docker run --rm --name keycloak \
 		-p 8443:8443 -p 8080:8080 --network $(NET) \
 		$(IMAGE):$(TAG)
 
 rundev:
-	docker run -d --rm --name keycloak \
+	docker run --rm --name keycloak \
 		-p 8080:8080 -p 8443:8443 \
 		--network perunanetti \
 		-e KEYCLOAK_ADMIN=admin \
@@ -53,16 +71,12 @@ rundev:
 		--health-retries=10 \
 		--health-start-period=10s \
 		$(OG_IMAGE):$(OG_TAG) \
-		start-dev
+		start-dev --help-all > helptext.txt
 
 runprod:
 	docker run --rm --name keycloak \
 		-e KEYCLOAK_ADMIN=admin \
 		-e KEYCLOAK_ADMIN_PASSWORD=admin \
-		-e KC_DB=mariadb \
-		-e KC_DB_URL=jdbc:mariadb://localhost:3306/keycloak \
-		-e KC_DB_USERNAME=eliza \
-		-e KC_DB_PASSWORD=meow \
 		-p 8080:8080 --network $(NET) \
 		$(OG_IMAGE):$(OG_TAG) \
 		start \

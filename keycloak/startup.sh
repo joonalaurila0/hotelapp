@@ -37,13 +37,6 @@ swarm_mode=0
 prog_exists docker
 prog_exists ssh
 
-debug_img() {
-  echo "------------------DEBUG------------------"
-  echo "CURRENT CONTEXT: "
-  docker ps -f "ancestor=$image"
-  echo "------------------DEBUG------------------"
-}
-
 help_text() {
  cat << EOF
 
@@ -105,14 +98,6 @@ sleep 2 # Wait for a bit for the state to converge
 # Queries for localhost as the "master node".
 original_host=$(get_current_ctx)
 
-echo "------------------DEBUG------------------"
-echo "HOST set: $host"
-echo "------------------DEBUG------------------"
-
-echo "------------------DEBUG------------------"
-echo "CURRENT CONTEXT: $original_host"
-echo "------------------DEBUG------------------"
-
 # Changes to the host that is set from the command line arguments.
 if [ "$(get_current_ctx)" != "$host" ]; then
   echo "Host is different from current context"
@@ -127,13 +112,7 @@ if [ "$host" != "default" ]; then
   test_host_connection $host
 fi
 
-echo "------------------DEBUG------------------"
-echo "CURRENT CONTEXT AFTER SSH: $(get_current_ctx)"
-echo "------------------DEBUG------------------"
-
 sleep 2
-
-debug_img
 
 # Container ID
 cid=$(resolve_cid $image)
@@ -143,18 +122,6 @@ container_health=$(docker inspect $cid --format "{{ .State.Health.Status }}")
 cache=$container_health
 # For counting.
 count=0
-
-echo
-echo "------------------DEBUG------------------"
-echo "CID: $cid"
-echo "------------------DEBUG------------------"
-echo
-
-echo
-echo "------------------DEBUG------------------"
-echo "CONTAINER HEALTH: $container_health"
-echo "------------------DEBUG------------------"
-echo
 
 wait_until_healthy $cid 2
 

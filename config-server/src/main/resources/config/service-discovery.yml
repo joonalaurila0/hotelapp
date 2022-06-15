@@ -17,7 +17,7 @@ spring:
     config:
       enabled: false
     vault:
-      token: s.I97ADzGUryMRAJB44NpjPxPL
+      token: s.eFykp4q7Aj3SXQgrxoC4Uizw
 #-----------------------------------------------#
 eureka:
   datacenter: cloud

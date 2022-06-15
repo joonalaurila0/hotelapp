@@ -10,7 +10,7 @@ spring:
       uri: http://localhost:8200
       scheme: http
       authentication: TOKEN
-      token: s.I97ADzGUryMRAJB44NpjPxPL
+      token: s.eFykp4q7Aj3SXQgrxoC4Uizw
       defaultKey: application
   data:
     # Casandra configuration

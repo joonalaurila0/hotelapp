@@ -115,6 +115,13 @@ deploy-local:
 inspect:
 	docker image inspect --format '{{ json .Config.Labels }}' $(JAVA_IMAGE):$(TAG)
 
+importimg:
+	sh import-image.sh \
+		-h x200 \
+		-i hotelapp/config-server:1.0 \
+		-l /home/efc/docker-images/ \
+		-t config-server.tar
+
 # lints the Dockerfile in the current directory
 lint:
 	@echo "Linting Dockerfile"

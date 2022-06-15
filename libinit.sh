@@ -4,6 +4,8 @@
 set -e
 set -u
 set -o pipefail
+
+# DEBUG
 #set -x
 
 prog_exists() {

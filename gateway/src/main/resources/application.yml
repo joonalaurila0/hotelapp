@@ -3,6 +3,9 @@ server:
 
 #-----------------------------------------------#
 
+# https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
+kc-provider-conf: 'http://192.168.1.107:8080/realms/master/.well-known/openid-configuration'
+
 swarmhost: 192.168.1.107
 spring:
 #  config:
@@ -13,8 +16,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/master
-          jwk-set-uri: http://localhost:8080/realms/master/protocol/openid-connect/certs 
+          issuer-uri: http://${swarmhost}:8080/realms/master
+          jwk-set-uri: http://${swarmhost}:8080/realms/master/protocol/openid-connect/certs 
   cloud:
     gateway:
       globalcors:
@@ -61,7 +64,7 @@ management:
 logging:
   level:
     io.hotely: TRACE
-#    org.springframework.security.oauth2.jwt: TRACE
+    org.springframework.security.oauth2.jwt: TRACE
 #    reactor.netty: TRACE
 #    reactor.ipc.netty: DEBUG
 #    io.netflix: WARN

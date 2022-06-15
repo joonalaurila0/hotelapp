@@ -1,12 +1,14 @@
 #!/bin/sh
 
 # This file contains some functions for handling HashiCorp Vault
-# Written 2022
+# Written 2022-03-18
 # HashiCorp Vault 1.9.2
 
 set -e
 set -u
 set -o pipefail
+
+# DEBUG
 #set -x
 
 show_curdir() {

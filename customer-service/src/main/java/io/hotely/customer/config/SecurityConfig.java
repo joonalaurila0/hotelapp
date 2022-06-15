@@ -17,6 +17,8 @@ public class SecurityConfig {
         .anyRequest()
         .permitAll()
         )
+      .cors().disable()
+      .csrf().disable()
       .formLogin(withDefaults())
       .logout(withDefaults());
 

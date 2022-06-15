@@ -1,4 +1,5 @@
 #!/bin/sh
+# Generates a join token for the swarm.
 
 tokenfile="token.txt"
 dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)

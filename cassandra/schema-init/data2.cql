@@ -31,4 +31,3 @@ insert into hotelapp2.customers (id, email, password, role, userstatus) values (
 insert into hotelapp2.customers (id, email, password, role, userstatus) values (2ea2433b-2aff-49c7-b1cb-354ce46c817d, 'kwordsleyr@is.gd', 'AI6rDEQel7', 'USER', 'ACTIVE');
 insert into hotelapp2.customers (id, email, password, role, userstatus) values (52c4f900-9b01-4bfe-b894-c1e799fc097f, 'scolquytes@acquirethisname.com', 'hNexC0ZCY', 'USER', 'ACTIVE');
 insert into hotelapp2.customers (id, email, password, role, userstatus) values (b41df1a4-72db-48ff-942f-622ecbc57c51, 'arowlsont@instagram.com', 'MJbN2oSpZJ', 'USER', 'ACTIVE');
-

@@ -23,14 +23,15 @@ else
 	GIT_STATUS := "is not present"
 endif
 
-.PHONY: metadata
-
+.PHONY: findjar
 findjar:
 	find build/ -iname '*.jar'
 
+.PHONY: classpath
 classpath:
 	ag -G .java 'public static void main' src 
 
+.PHONY: metadata
 metadata:
 	@echo Git is $(GIT_STATUS)
 	@echo BUILD_TIME_EPOCH: $(BUILD_TIME_EPOCH)
@@ -44,11 +45,11 @@ install:
 
 load:
 	@echo "Exporting image from tar file..."
-	docker load < $(JAVA_IMAGE).tar
+	docker load < $(APP).tar
 
 save:
 	@echo "Saving image into a tar file..."
-	docker save $(JAVA_IMAGE):$(TAG) -o $(JAVA_IMAGE).tar
+	docker save $(JAVA_IMAGE):$(TAG) -o $(APP).tar
 
 build: build/libs/$(JAR_FILE)
 	docker build -t $(JAVA_IMAGE):$(TAG) --build-arg JAR_FILE=build/libs/$(JAR_FILE) .

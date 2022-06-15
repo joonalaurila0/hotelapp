@@ -80,22 +80,6 @@ public class HotelApplication {
       } catch (IOException e) { e.printStackTrace(); }
       System.out.println("Bean initialized: " + bean); 
     }
-
-    //CqlSession cqlSession = CqlSession.builder().withKeyspace("hotelapp").build();
-
-    //CassandraOperations template = new CassandraTemplate(cqlSession);
-
-    //Example jonDoe = template.insert(newExample("Jon Doe", 40));
-
-    //log.info(template.selectOne(Query.query(Criteria.where("id").is(jonDoe.getId())), Example.class).getId().toString());
-    //template.truncate(Example.class);
-
-    //cqlSession.close();
-	}
-
-  @Bean
-  public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
-    return restTemplateBuilder.build();
   }
 
   @Bean

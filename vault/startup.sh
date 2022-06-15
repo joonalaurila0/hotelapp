@@ -3,7 +3,9 @@
 set -e
 set -u
 set -o pipefail
-set -x
+
+# DEBUG
+#set -x
 
 # Saves Vault's unseal tokens into the token_dir variable file.
 # This file is used by the unseal.sh file to unseal the vault,

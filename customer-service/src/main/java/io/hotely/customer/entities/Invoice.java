@@ -1,7 +1,7 @@
 package io.hotely.customer.entities;
 
 import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.core.mapping.CassandraType;
@@ -37,22 +37,24 @@ public class Invoice {
   @Column(value = "booking_id")
   @CassandraType(type = CassandraType.Name.UUID)
   @JsonProperty("booking_id")
-  private UUID booking_id;
+  private UUID bookingId;
 
   @NonNull
   @Column(value = "customer_id")
   @CassandraType(type = CassandraType.Name.UUID)
   @JsonProperty("customer_id")
-  private UUID customer_id;
+  private UUID customerId;
 
   @NonNull
-  @CassandraType(type = CassandraType.Name.UUID)
+  @CassandraType(type = CassandraType.Name.FLOAT)
   @Column(value = "total")
+  @JsonProperty("total")
   private Float total;
 
   @NonNull
   @Column(value = "issued")
   @CassandraType(type = CassandraType.Name.TIMESTAMP)
+  @JsonProperty("issued")
   private Timestamp issued;
 
   @NonNull
@@ -63,11 +65,13 @@ public class Invoice {
   @NonNull
   @Column(value = "payment_date")
   @CassandraType(type = CassandraType.Name.DATE)
-  private Date paymentDate;
+  @JsonProperty("payment_date")
+  private LocalDate paymentDate;
 
   @NonNull
   @Column(value = "cancelled")
   @CassandraType(type = CassandraType.Name.BOOLEAN)
+  @JsonProperty("cancelled")
   private Boolean cancelled;
 
   @Override
@@ -101,11 +105,14 @@ public class Invoice {
     String newline = System.getProperty("line.separator");
 
     builder.append(this.getClass().getName() + " {" + newline);
-    builder.append(" Id: " + id + newline);
-    builder.append(" Total: " + total + newline);
-    builder.append(" Paid: " + paid + newline);
-    builder.append(" Payment Date: " + paymentDate + newline);
-    builder.append(" Cancelled: " + cancelled + newline);
+    builder.append(" id: " + id + newline);
+    builder.append(" bookingId: " + bookingId + newline);
+    builder.append(" customerId: " + customerId + newline);
+    builder.append(" total: " + total + newline);
+    builder.append(" issued: " + issued + newline);
+    builder.append(" paid: " + paid + newline);
+    builder.append(" paymentDate: " + paymentDate + newline);
+    builder.append(" cancelled: " + cancelled + newline);
     builder.append("}");
 
     return builder.toString();

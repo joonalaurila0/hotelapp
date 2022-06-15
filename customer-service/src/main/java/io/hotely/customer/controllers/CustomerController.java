@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.hotely.customer.entities.Customer;
@@ -44,6 +45,16 @@ public class CustomerController {
       .orElseThrow(() -> new CustomerNotFoundException(id));
   }
 
+  // with id
+  @PostMapping("/createwid")
+  public Customer create_with_id(@RequestParam("id") UUID id, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("role") Role role, @RequestParam("userstatus") UserStatus userstatus) {
+    Customer obj = new Customer(email, password, role, userstatus);
+    obj.setId(id);
+    log.debug("Here's the object: " + obj);
+    return customerRepository.save(obj);
+  }
+
+  // without id
   @PostMapping("/create")
   public Customer create(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("role") Role role, @RequestParam("userstatus") UserStatus userstatus) {
     Customer obj = new Customer(email, password, role, userstatus);

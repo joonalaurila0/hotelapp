@@ -7,6 +7,7 @@ set -o pipefail
 
 # kcadm executable path
 kcadm="/opt/keycloak/bin/kcadm.sh"
+swarmhost="192.168.1.107"
 
 login() {
   local url="http://localhost:8080"
@@ -40,11 +41,14 @@ login() {
 #  && $kcadm set-password -r master --username testuser --new-password meow \
 #  && $kcadm add-roles --uusername testuser --rolename hotelapp-user -r master
 
+redirectVar="[\"http://${swarmhost}:8080/*\", \"http://${swarmhost}:8081/*\"]"
+webOrigins="[\"http://${swarmhost}:8081\", \"http://${swarmhost}:8072\"]"
+
 # Master realm setup with one user for testing, uses email for usernames and public client
 login && $kcadm create roles -r master -s name=hotelapp-user -s 'description=Regular user with a limited set of permissions' \
   && $kcadm update realms/master -s registrationAllowed=true -s registrationEmailAsUsername=true -s rememberMe=true -s verifyEmail=false -s resetPasswordAllowed=true -s editUsernameAllowed=true -s accessTokenLifespan=300 \
   && $kcadm create roles -r master -s name=hotelapp-admin -s 'description=Admin role for hotelapp' \
-  && $kcadm create clients -r master -s clientId=hotelapp-client -s enabled=true -s protocol=openid-connect -s 'redirectUris=["http://localhost:8081/*"]' -s 'webOrigins=["*"]' -s publicClient=true
+  && $kcadm create clients -r master -s clientId=hotelapp-client -s enabled=true -s protocol=openid-connect -s "redirectUris=$redirectVar" -s "webOrigins=$webOrigins" -s publicClient=true
 
 ClientID=$($kcadm get clients -r master --fields clientId,id --format 'csv' | grep 'hotelapp-client' | grep -o -i -E '[0-9A-Fa-f]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}')
 

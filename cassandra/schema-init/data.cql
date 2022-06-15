@@ -87,6 +87,9 @@ insert into hotelapp.rooms (id, hotel_id, availability, booking_price, capacity,
 -- bookings
 -- Example:  insert into hotelapp.bookings (id, customer_id, hotel_id, room_id, booking_status, start_date, end_date) values (uuid(), CUSTOMER_ID, 2, 14, 'Confirmed', '2022-05-05');
 
+-- FETCHING FROM CQL EXAMPLE: select * from bookings where id = 26053ed7-29c3-4af1-b21e-b075d8c2f2ce;
+-- insert into hotelapp.bookings (id, customer_id, hotel_id, room_id, booking_status, start_date, end_date) values (uuid(), 91f7fd34-ce8c-4abc-955b-856e8c28c797, 6, 32, 'Confirmed', '2022-06-01T04:47:30', '2022-06-08T04:47:30');
+
 -- Creates 30 bookings for three different rooms in Hotelli Kotka
 insert into hotelapp.bookings (id, customer_id, hotel_id, room_id, booking_status, start_date, end_date) values (uuid(), 673d4aff-9c1d-4b69-bdc0-c2ab0aed12c9, 6, 31, 'Confirmed', '2021-05-22', '2022-03-29');
 insert into hotelapp.bookings (id, customer_id, hotel_id, room_id, booking_status, start_date, end_date) values (uuid(), 539c4da8-219b-4c89-afdb-99afbcbb3753, 6, 6, 'Confirmed', '2022-05-04', '2021-09-03');

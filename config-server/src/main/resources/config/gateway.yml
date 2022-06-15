@@ -19,7 +19,7 @@ spring:
         enabled: true
         lowerCaseServiceId: true
     vault:
-      token: s.I97ADzGUryMRAJB44NpjPxPL
+      token: s.eFykp4q7Aj3SXQgrxoC4Uizw
 #      routes:
 #        - id: customer
 #          uri: lb://customer
