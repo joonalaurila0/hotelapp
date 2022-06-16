@@ -43,22 +43,6 @@ public class BookingController {
   @Autowired
   private CustomerProxy customerProxy;
 
-  @GetMapping("/hey")
-  public String hey() {
-    return "hey";
-  }
-
-  @PostMapping("/hey2")
-  public Booking hey2(@RequestBody Booking booking) {
-    log.debug("Here's the object: " + booking);
-    return booking;
-  }
-
-  @PostMapping("/hey3")
-  public String hey3() {
-    return "hey 3";
-  }
-
   @GetMapping("/all")
   public ResponseEntity<List<Booking>> fetchAll() {
     List<Booking> res = bookingRepository.findAll();

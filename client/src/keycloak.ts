@@ -54,6 +54,8 @@ const keycloakInit = () => {
       State.storeStateToLocalStorage('token', keycloak.token ?? null);
       //console.debug('KC Profile: ', profile);
       State.storeStateToLocalStorage('profile', profile);
+
+      // Create profile for the customer-service
     });
   };
 };

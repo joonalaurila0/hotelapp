@@ -53,10 +53,14 @@ const RoomView = () => {
                  *        set the new invoice into an array with the old ones.
                  *        Otherwise, the single invoice is pushed to state.
                  */
-                const invoices = State.fetchStateByKey('invoices');
-                Array.isArray(invoices)
-                  ? State.storeStateToLocalStorage('invoices', [...invoices, invoice])
-                  : State.storeStateToLocalStorage('invoices', invoice);
+                 try {
+                   const invoices = State.fetchStateByKey('invoices');
+                   Array.isArray(invoices)
+                     ? State.storeStateToLocalStorage('invoices', [...invoices, invoice])
+                     : State.storeStateToLocalStorage('invoices', invoice);
+                 } catch (e) {
+                   console.error(e);
+                 }
               })
               .then(() => alert('Booking made.'))
           )

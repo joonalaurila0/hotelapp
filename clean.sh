@@ -1,8 +1,8 @@
 #!/bin/bash
+# Script for cleaning some docker volumes, secrets, networks and containers
 
 ns=hotelapp
 v="1.0"
-second_host="x220"
 
 secretclr() {
   for secret in $(docker secret ls -q); do
@@ -30,9 +30,3 @@ dkclr && secretclr && sleep 2 && imageclean && echo "Docker state cleaned" \
   && docker stack ls && docker ps -a && echo && echo \
   && docker service ls && echo && docker volume ls && echo \
   && docker network ls && echo && docker node ls
-
-docker context use $second_host \
-  && dkclr && sleep 2 \
-  && docker volume prune -f \
-  && docker network prune -f \
-  && docker context use default

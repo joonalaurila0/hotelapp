@@ -17,7 +17,7 @@ spring:
           searchLocations: ['classpath:/config']
         vault:
           authentication: TOKEN
-          token: "s.YYNCvN6yyWQiVK76xdk8wC5d"
+          token: "s.5ymlZAjKYIblv7YCLygCqVC3"
           host: 192.168.1.107
           port: 8200
           scheme: http

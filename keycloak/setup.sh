@@ -7,6 +7,8 @@ set -o pipefail
 
 # kcadm executable path
 kcadm="/opt/keycloak/bin/kcadm.sh"
+
+# Master node
 swarmhost="192.168.1.107"
 
 login() {
@@ -17,29 +19,6 @@ login() {
 
   $kcadm config credentials --server $url --realm master --user $user --password $password
 }
-
-# These commands will be useful:
-# /opt/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080/ --realm master --user admin --password admin
-# /opt/keycloak/bin/kcadm.sh get realms/master
-
-# Creates the "hotel-realm" realm and imports realm configuration overwriting the existing one. 
-# Creates a user for the realm and sets a password and role for it.
-# Generates a new secret for the "hotel-client" client.
-#login && $kcadm create realms -s realm=hotelapp -s enabled=true \
-#  && $kcadm create roles -r hotelapp -s name=user -s 'description=Regular user with a limited set of permissions' \
-#  && $kcadm create clients -r hotelapp -s clientId=customerapp -s enabled=true -s 'redirectUris=["http://localhost:8081/customer/*"]' -s 'webOrigins=["*"]' -s baseUrl=http://localhost:8081/customerapp -s adminUrl=http://localhost:8081/customer -s directAccessGrantsEnabled=true -s protocol=openid-connect -s publicClient=false -s clientAuthenticatorType=client-secret -s secret=zjpSKq1HEj2RRqiIpb -s bearerOnly=false -i \
-#  && $kcadm create users -r hotelapp -s username=testuser -s enabled=true \
-#  && $kcadm set-password -r hotelapp --username testuser --new-password meow \
-#  && $kcadm add-roles --uusername testuser --rolename user -r hotelapp
-
-# Creates a Master realm setup with one user for testing, uses usernames and a public client configuration
-#login && $kcadm create roles -r master -s name=hotelapp-user -s 'description=Regular user with a limited set of permissions' \
-#  && $kcadm update realms/master -s registrationAllowed=true -s rememberMe=true -s verifyEmail=false -s resetPasswordAllowed=true -s editUsernameAllowed=true \
-#  && $kcadm create roles -r master -s name=hotelapp-admin -s 'description=Admin role for hotelapp' \
-#  && $kcadm create clients -r master -s clientId=hotelapp -s enabled=true -s protocol=openid-connect -s 'redirectUris=["http://localhost:8081/*"]' -s 'webOrigins=["*"]' -s publicClient=true -i \
-#  && $kcadm create users -r master -s username=testuser -s enabled=true \
-#  && $kcadm set-password -r master --username testuser --new-password meow \
-#  && $kcadm add-roles --uusername testuser --rolename hotelapp-user -r master
 
 redirectVar="[\"http://${swarmhost}:8080/*\", \"http://${swarmhost}:8081/*\"]"
 webOrigins="[\"http://${swarmhost}:8081\", \"http://${swarmhost}:8072\"]"
@@ -56,7 +35,3 @@ $kcadm update clients/$ClientID -r master -b '{ "attributes": {"access.token.lif
   && $kcadm create users -r master -s email=testuser@meow.com -s enabled=true \
   && $kcadm set-password -r master --username testuser@meow.com --new-password meow \
   && $kcadm add-roles --uusername testuser@meow.com --rolename hotelapp-user -r master
-
-# Gets the client with key-value pair of "clientId:" "hotelapp-client" and returns the ID.
-#clientID=$kcadm get clients -r master | jq -r '.[] | select(.clientId=="hotelapp-client") | .id'
-

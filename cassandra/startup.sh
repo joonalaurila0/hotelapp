@@ -1,9 +1,9 @@
 #!/bin/sh
 #
 # For initializing cassandra 4.0.1
-# Example 1: sh cassandra/startup.sh -h x220 -i cassandra:4.0.1 -f ${PWD}/cassandra/schema-init/init.cql -c
-# Example 2: sh cassandra/startup.sh -h x220 --stack cluster-test --swarm \
-#                 --name cas-master --schema ${PWD}/cassandra/schema-init/schema.cql
+# Example 1: sh cassandra/startup.sh -h myuser@192.168.239.133 -i cassandra:4.0.1 -f ${PWD}/cassandra/schema-init/init.cql -c
+# Example 2: sh cassandra/startup.sh -h myuser@192.168.239.133 --stack cluster-test --swarm \
+#                 --name cas-master --schema ${PWD}/cassandra/schema-init/schema.cql \
 #                 --data ${PWD}/cassandra/schema-init/data.cql --database hotelapp
 #
 # Cluster service naming convention: <cluster name>_<service_name>

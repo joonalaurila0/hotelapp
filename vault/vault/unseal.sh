@@ -50,8 +50,7 @@ login_with_root_token "vault/data/login.json" $token_dir $cid
 docker exec -t $cid vault secrets enable database \
   && docker exec -t $cid vault secrets enable -path=kv -version=2 kv \
   && docker exec -t $cid vault secrets list \
-  && docker cp vault/policies/test-policy.hcl $cid:/ \
-  && docker cp vault/data/data.json $cid:/
+  && docker cp vault/policies/test-policy.hcl $cid:/
 
 #  && docker exec -t $cid vault secrets enable -path=secret/ kv \
 if [ $status -ne 0 ]; then
