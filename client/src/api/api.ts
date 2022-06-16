@@ -144,45 +144,17 @@ class Api {
     });
   }
 
-  public static async createBookingAndInvoice({
-    profileId,
-    hotel,
-    roomId,
-    roomPrice,
-  }: {
-    profileId: string;
-    hotel: Hotel;
-    roomId: number;
-    roomPrice: number;
-  }) {
-    // Create a booking for the user
-    const response: Response = await this.createBooking({
-      customer_id: profileId,
-      hotel_id: hotel.id,
-      room_id: roomId,
-      booking_status: BookingStatus.Pending,
-      start_date: new Date().toISOString(),
-      end_date: ISO8601Date(7),
+  /**
+   * Response body returns a number, 0 if customer does not exists, otherwise 1.
+   * */
+  public static async doesCustomerExists(customerId: string) {
+    return fetch(this.GatewayURI + `/hotel-service/to/assert-customer/${customerId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${this.authToken()}`,
+        'Content-Type': 'application/json',
+      },
     });
-    const booking = await response.json();
-    console.log('Booking made ::', booking);
-    booking ? window.alert(`Room ${roomId} booked from the ${hotel.name}!`) : null;
-
-    // If booking was made succesfully proceed..
-    if (booking) {
-      // Create an invoice upon succesful booking
-      this.createInvoice({
-        bookingId: booking.id,
-        customerId: profileId,
-        total: roomPrice,
-        issued: new Date().toJSON(),
-        payment_date: ISO8601Date(),
-        paid: false,
-        cancelled: false,
-      }).then((res) => {
-        console.log('Invoice succesfully created ::', res.json());
-      });
-    }
   }
 }
 

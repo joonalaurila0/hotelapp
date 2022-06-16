@@ -45,6 +45,17 @@ public class CustomerController {
       .orElseThrow(() -> new CustomerNotFoundException(id));
   }
 
+  // Explicitly meant not to fail
+  /** @return 0 if empty, 1 if not empty. */
+  @GetMapping("/ask/{id}")
+  public int askCustomerById(@PathVariable("id") UUID id) {
+    Optional<Customer> customer = customerRepository.findById(id);
+    if (customer.isEmpty())
+      return 0;
+
+    return 1;
+  }
+
   // with id
   @PostMapping("/createwid")
   public Customer create_with_id(@RequestParam("id") UUID id, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("role") Role role, @RequestParam("userstatus") UserStatus userstatus) {

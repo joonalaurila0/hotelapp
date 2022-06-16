@@ -3,7 +3,6 @@ import Header from '../header/header';
 import Search from '../../search/search';
 import { keycloak } from '../../keycloak';
 const Main = () => {
-  console.log('Token parsed ::', keycloak.idTokenParsed);
   return (
     <div className='main'>
       <div className='squaresfirst'>

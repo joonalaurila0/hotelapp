@@ -1,4 +1,5 @@
 import Keycloak from 'keycloak-js';
+import Api from './api/api';
 import State from './state';
 
 // Keycloak configuration
@@ -52,10 +53,25 @@ const keycloakInit = () => {
     //console.debug('Authenticated successfully with Keycloak');
     keycloak.loadUserProfile().then((profile) => {
       State.storeStateToLocalStorage('token', keycloak.token ?? null);
-      //console.debug('KC Profile: ', profile);
-      State.storeStateToLocalStorage('profile', profile);
 
+      console.debug('KC Profile: ', profile);
+      State.storeStateToLocalStorage('profile', profile);
       // Create profile for the customer-service
+      if (profile.id) {
+        Api.doesCustomerExists(profile.id).then((res) =>
+          res.json().then((body) => {
+            /* Test what the customer-service returned,
+             * creates the customer for the customer-service
+             * incase it does not already exists in there. */
+            console.log('Response from doesCustomerExists :: ', body);
+            body == 1
+              ? console.debug('Customer exists.')
+              : body == 0 && profile.id && profile.email
+              ? Api.createCustomer(profile.id, profile.email)
+              : console.error('Something went wrong', body);
+          })
+        );
+      }
     });
   };
 };

@@ -13,7 +13,7 @@ network:
 		--opt encrypted=true
 
 # Executes secret and network recipes
-initialize: secret casinit
+initialize: network secret casinit
 
 install:
 	docker pull $(IMAGES)
@@ -23,6 +23,13 @@ load:
 
 build:
 	docker build -t $(IMAGE_REPOSITORY):api -f api/Dockerfile .
+
+# Deploy keycloak
+keycloak:
+	$(MAKE) deploy -C keycloak
+	@echo "Waiting for the deployment to come up before Keycloak initialization..."
+	sleep 10
+	$(MAKE) init -C keycloak
 
 # Deploys "external" services
 deploy:
@@ -134,4 +141,4 @@ clear:
 	docker secret rm $(STACK_NAME)-CASSANDRA_PASSWORD
 	docker network prune -f
 
-.PHONY: clean clear initialize deploy build build-java load install secret deploy-vault
+.PHONY: clean clear initialize deploy build build-java load install secret deploy-vault keycloak

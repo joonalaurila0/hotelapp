@@ -1,5 +1,11 @@
 # How do I deploy this application?
 
+1. `$ make initialize` or `$ make network && make secret && make casinit`
+2. `$ make casmaster`
+3. `$ make caspair`
+4. `$ make hcpvault`
+
+
 Gateway guards the microservices and uses Keycloak as the STS into the application.
 
 If you try to deploy this app with: `docker stack deploy --compose-file docker-compose.yml multi-tier-app`, you will most likely be greeted by "secret not found error". Swarm requires that all cluster-level resources that a service depends on exist prior to proceeding with the deployment. So Docker halted the application deployment when it determined a resource dependency was missing.

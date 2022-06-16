@@ -9,6 +9,7 @@ import { evalArray, evalObject } from '../util';
 const Profile = () => {
   const profile: KeycloakProfile | null = State.fetchStateByKey('profile');
 
+  // HEY DUMBASS THIS DOES NOT FIRE EVER !
   if (
     profile &&
     profile.id &&
@@ -28,8 +29,6 @@ const Profile = () => {
 
   const invoices: Array<Invoice> | Invoice | null = State.fetchStateByKey('invoices');
   const bookings: Array<Booking> | Booking | null = State.fetchStateByKey('bookings');
-
-  console.log('Evaluation evalArray ::', evalArray(bookings));
 
   // The evalArray and evalObject is used to evaluate type information to be
   // able to set the invoices and bookings to the profile page. This is evaluated

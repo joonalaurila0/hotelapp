@@ -4,12 +4,23 @@ import { GoHome } from 'react-icons/go';
 import State from '../state';
 import { KeycloakProfile } from 'keycloak-js';
 import React from 'react';
+import Api, { Booking } from '../api/api';
 
 const ProfileHeader = () => {
   const fetchProfileJSON = (): KeycloakProfile => State.fetchStateByKey('profile');
   const [state, setState] = React.useState<KeycloakProfile | null>(null);
   if (State.fetchStateByKey('profile') != null && !state) {
     setState(fetchProfileJSON());
+  }
+
+  const refreshBookingsState = () => {
+    if (state && state.id) {
+      (async (profileId: string) => {
+        const res2: Response = await Api.findBookings(profileId);
+        const bookings: Array<Booking> = await res2.json();
+        bookings ? State.storeStateToLocalStorage('bookings', bookings) : null;
+      })(state.id);
+    }
   }
   return (
     <div className='profile_header'>
@@ -34,6 +45,10 @@ const ProfileHeader = () => {
         <div>
           <VscAccount style={{ color: 'white', fontSize: '1.8rem', marginRight: '0.5rem' }} />
           <p style={{ color: 'white' }}>ID: {state?.id} </p>
+        </div>
+        <div>
+          <VscAccount style={{ color: 'white', fontSize: '1.8rem', marginRight: '0.5rem' }} />
+          <button style={{ color: 'white' }} onClick={() => refreshBookingsState()}>Refresh the state</button>
         </div>
       </div>
       <div className='profile_header_search'></div>
