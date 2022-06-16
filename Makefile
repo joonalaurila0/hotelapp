@@ -8,13 +8,12 @@ secret:
 	echo '32' | docker secret create $(STACK_NAME)-MARIADB_PASSWORD - \
 		&& echo 'cassandra' | docker secret create $(STACK_NAME)-CASSANDRA_PASSWORD -
 
-clear:
-	docker secret rm $(STACK_NAME)-CASSANDRA_PASSWORD
-	docker network prune -f
-
 network:
 	docker network create -d overlay --attachable perunanetti \
 		--opt encrypted=true
+
+# Executes secret and network recipes
+initialize: secret casinit
 
 install:
 	docker pull $(IMAGES)
@@ -131,4 +130,8 @@ clean:
 	@echo "Starting to clean docker state..."
 	sh clean.sh
 
-.PHONY: clean deploy build build-java load install secret deploy-vault
+clear:
+	docker secret rm $(STACK_NAME)-CASSANDRA_PASSWORD
+	docker network prune -f
+
+.PHONY: clean clear initialize deploy build build-java load install secret deploy-vault

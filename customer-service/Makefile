@@ -6,6 +6,13 @@ IMAGES := openjdk:17-slim-bullseye
 TAG := 1.0
 TIME := 3
 
+# This variable is used for the import recipe.
+# Specify the host you wish to import the image into.
+REMOTE_HOST :=
+
+# This specifies the location that will be used to import the image
+REMOTE_HOST_LOCATION :=
+
 # see if directory has git by calling the branch
 ifeq ($(strip $(git branch --show-current 2> /dev/null)),)
 	GIT_PRESENT := $(shell git branch --show-current 2> /dev/null)
@@ -116,6 +123,15 @@ deploy-local:
 .PHONY: inspect
 inspect:
 	docker image inspect --format '{{ json .Config.Labels }}' $(JAVA_IMAGE):$(TAG)
+
+# NOTE: APP variable is named like the jar by convention, which is why it is used
+# 			in the tar argument. If you do not follow similar convention, take note.
+import:
+	sh ../image-importer.sh \
+		-h $(REMOTE_HOST) \
+		-l $(REMOTE_HOST_LOCATION) \
+		-t $(APP).tar \
+		-i $(JAVA_IMAGE):$(TAG)
 
 # lints the Dockerfile in the current directory
 .PHONY: lint

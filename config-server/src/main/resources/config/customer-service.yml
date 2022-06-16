@@ -13,7 +13,7 @@ spring:
       uri: http://localhost:8200
       scheme: http
       authentication: TOKEN
-      token: "s.eFykp4q7Aj3SXQgrxoC4Uizw"
+      token: "s.YYNCvN6yyWQiVK76xdk8wC5d"
   # DB setup
   data:
     cassandra:
