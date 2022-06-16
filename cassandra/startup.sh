@@ -13,7 +13,9 @@
 set -e
 set -u
 set -o pipefail
-set -x
+
+# DEBUG
+# set -x
 
 command -v find >/dev/null 2>&1 || { echo >&2 "find is required for this script to run, but it's not installed. Aborting."; exit 1; }
 
