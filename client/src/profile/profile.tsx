@@ -9,21 +9,52 @@ import { evalArray, evalObject } from '../util';
 const Profile = () => {
   const profile: KeycloakProfile | null = State.fetchStateByKey('profile');
 
-  // HEY DUMBASS THIS DOES NOT FIRE EVER !
+  /**
+   * Performs two requests to services for client bookings and invoices
+   * and overwrites the state with the request data conditionally.
+   * @param profileId - Identifier of the profile.
+   */
+  const fetchProfileData = async (profileId: string): Promise<void> => {
+    const res: Response = await Api.findInvoices(profileId);
+    const invoices: Array<Invoice> = await res.json();
+    invoices ? State.storeStateToLocalStorage('invoices', invoices) : null;
+
+    const res2: Response = await Api.findBookings(profileId);
+    const bookings: Array<Booking> = await res2.json();
+    bookings ? State.storeStateToLocalStorage('bookings', bookings) : null;
+  }
+
+  // Replace this with this instead:
+  //
+  // First checks from History API if this is the user's first time
+  // visiting this page, IF IT IS, run all the requests, IF IT IS NOT
+  // then do not run the requests.
+  //
+  // This could also have some kind of cooldown to clear the state 
+  // to make sure it does not get stale all the time.
   if (
     profile &&
-    profile.id &&
-    State.fetchStateByKey('invoices') == null &&
-    State.fetchStateByKey('bookings') == null
+    profile.id
   ) {
-    (async (profileId: string) => {
-      const res: Response = await Api.findInvoices(profileId);
-      const invoices: Array<Invoice> = await res.json();
-      invoices ? State.storeStateToLocalStorage('invoices', invoices) : null;
+    // NOTE: This function checks for the time difference 
+    // to be greater than or equal to 5 minutes for the state refresh/fetch.
+    ((profileId) => {
+      let lastVisit: string | null = window.localStorage.getItem('profile_lastVisited');
+      if (lastVisit == null) {
+        // Set time of last visiting this page.
+        window.localStorage.setItem('profile_lastVisited', JSON.stringify(Date.now()));
+        fetchProfileData(profileId);
+        return;
+      }
 
-      const res2: Response = await Api.findBookings(profileId);
-      const bookings: Array<Booking> = await res2.json();
-      bookings ? State.storeStateToLocalStorage('bookings', bookings) : null;
+      if (lastVisit != null) {
+        // Get the time difference of now and last visit in seconds.
+        const timeDifference = ((Date.now() - JSON.parse(lastVisit)) / 1000);
+        console.debug("Current time difference in seconds: ", timeDifference);
+        timeDifference >= 300 
+          ? fetchProfileData(profileId) // Time difference is equal to or greater than 5 minutes, perform state refresh for the profile page.
+          : null // Time difference is less than 5 minutes, then do nothing.
+      }
     })(profile.id);
   }
 

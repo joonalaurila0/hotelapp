@@ -62,7 +62,21 @@ const RoomView = () => {
                   console.error(e);
                 }
               })
-              .then(() => alert('Booking made.'))
+            .then(() => {
+              alert('Booking made.')
+              // Ductaping the bookings fetch here too, 
+              // so that the state gets the bookings too.
+              Api.findBookings(profileid).then(res => res.json().then(booking => {
+                try {
+                  const bookings = State.fetchStateByKey('bookings');
+                  Array.isArray(bookings)
+                    ? State.storeStateToLocalStorage('invoices', [...bookings, booking])
+                    : State.storeStateToLocalStorage('invoices', booking);
+                } catch (e) {
+                  console.error(e);
+                }
+              }))
+            })
           )
         );
       })(profile.id);
@@ -114,7 +128,7 @@ const RoomView = () => {
               textDecorationLine: 'underline',
             }}
           >
-            <Link to={'/hotels'}>Back to hotels</Link>
+            <Link to={'/results'}>Back to hotels</Link>
           </h4>
           <h4
             style={{

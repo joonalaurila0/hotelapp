@@ -4,7 +4,7 @@ import { GoHome } from 'react-icons/go';
 import State from '../state';
 import { KeycloakProfile } from 'keycloak-js';
 import React from 'react';
-import Api, { Booking } from '../api/api';
+import Api, { Booking, Invoice } from '../api/api';
 
 const ProfileHeader = () => {
   const fetchProfileJSON = (): KeycloakProfile => State.fetchStateByKey('profile');
@@ -13,9 +13,13 @@ const ProfileHeader = () => {
     setState(fetchProfileJSON());
   }
 
-  const refreshBookingsState = () => {
+  const refreshProfileState = () => {
     if (state && state.id) {
       (async (profileId: string) => {
+        const res: Response = await Api.findInvoices(profileId);
+        const invoices: Array<Invoice> = await res.json();
+        invoices ? State.storeStateToLocalStorage('invoices', invoices) : null;
+
         const res2: Response = await Api.findBookings(profileId);
         const bookings: Array<Booking> = await res2.json();
         bookings ? State.storeStateToLocalStorage('bookings', bookings) : null;
@@ -48,7 +52,10 @@ const ProfileHeader = () => {
         </div>
         <div>
           <VscAccount style={{ color: 'white', fontSize: '1.8rem', marginRight: '0.5rem' }} />
-          <button style={{ color: 'white' }} onClick={() => refreshBookingsState()}>Refresh the state</button>
+          <button 
+            title='Refreshes the state for bookings and invoices' 
+            style={{ color: 'black' }} 
+            onClick={() => refreshProfileState()}>Refresh profile data</button>
         </div>
       </div>
       <div className='profile_header_search'></div>

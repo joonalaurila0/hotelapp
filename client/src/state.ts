@@ -16,8 +16,8 @@ class State {
    * meaning there is no need to turn the objects into strings unless multiple passes is needed.
    * THIS OVERWRITES THE CURRENT STATE ON PURPOSE (TO REFRESH THE STATE).
    * @see [Storage.setItem()](https://html.spec.whatwg.org/multipage/webstorage.html#dom-storage-setitem-dev)
-   * @param key keyName for Storage.getItem()
-   * @param value keyValue for Storage.setItem()
+   * @param {string} key keyName for Storage.getItem()
+   * @param {any} value keyValue for Storage.setItem()
    */
   public static storeStateToLocalStorage(key: string, value: any) {
     window.localStorage.setItem(key, JSON.stringify(value));
