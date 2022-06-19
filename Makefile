@@ -108,11 +108,44 @@ hcpvault-local:
 	sh vault/startup.sh -c -i
 	@echo "Vault deployed."
 
+configuration-server:
+	cd config-server && gradle clean build
+	$(MAKE) build -C config-server
+	cd config-server && $(MAKE) import
+	@echo "Configuration Server built and imported."
+	$(MAKE) deploy -C config-server
+
+discovery:
+	cd discovery && gradle clean build
+	$(MAKE) build -C discovery
+	cd discovery && $(MAKE) import
+	@echo "Service Discovery built and imported."
+	$(MAKE) deploy -C discovery
+
+gateway:
+	cd gateway && gradle clean build
+	$(MAKE) build -C gateway
+	cd gateway && $(MAKE) import
+	@echo "Gateway built and imported."
+	$(MAKE) deploy -C gateway
+
+services:
+	cd customer-service && gradle clean build
+	$(MAKE) build deploy -C customer-service
+	@echo "Customer service built."
+	cd hotel-service && gradle clean build
+	$(MAKE) build deploy -C hotel-service
+	@echo "Hotel service built."
+
+client:
+	$(MAKE) build deploy -C client
+	@echo "Client built and deployed."
+
 casinit:
 	$(MAKE) volume network -C cassandra
 
 casmaster:
-	@echo "Initializing cassandra..."
+	@echo "Initializing master node for cassandra..."
 	$(MAKE) master -C cassandra
 	@echo "Sleeping 10 seconds so Swarm can converge its state..."
 	sleep 10
@@ -140,5 +173,9 @@ clean:
 clear:
 	docker secret rm $(STACK_NAME)-CASSANDRA_PASSWORD
 	docker network prune -f
+	docker image prune -f
 
-.PHONY: clean clear initialize deploy build build-java load install secret deploy-vault keycloak
+.PHONY: clean clear initialize deploy build build-java load \
+	install secret deploy-vault keycloak discovery casinit \
+	casmaster caspair discovery configuration-server services \
+	gateway client

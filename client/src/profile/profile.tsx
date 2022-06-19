@@ -22,7 +22,7 @@ const Profile = () => {
     const res2: Response = await Api.findBookings(profileId);
     const bookings: Array<Booking> = await res2.json();
     bookings ? State.storeStateToLocalStorage('bookings', bookings) : null;
-  }
+  };
 
   // Replace this with this instead:
   //
@@ -30,13 +30,10 @@ const Profile = () => {
   // visiting this page, IF IT IS, run all the requests, IF IT IS NOT
   // then do not run the requests.
   //
-  // This could also have some kind of cooldown to clear the state 
+  // This could also have some kind of cooldown to clear the state
   // to make sure it does not get stale all the time.
-  if (
-    profile &&
-    profile.id
-  ) {
-    // NOTE: This function checks for the time difference 
+  if (profile && profile.id) {
+    // NOTE: This function checks for the time difference
     // to be greater than or equal to 5 minutes for the state refresh/fetch.
     ((profileId) => {
       let lastVisit: string | null = window.localStorage.getItem('profile_lastVisited');
@@ -49,11 +46,11 @@ const Profile = () => {
 
       if (lastVisit != null) {
         // Get the time difference of now and last visit in seconds.
-        const timeDifference = ((Date.now() - JSON.parse(lastVisit)) / 1000);
-        console.debug("Current time difference in seconds: ", timeDifference);
-        timeDifference >= 300 
+        const timeDifference = (Date.now() - JSON.parse(lastVisit)) / 1000;
+        console.debug('Current time difference in seconds: ', timeDifference);
+        timeDifference >= 300
           ? fetchProfileData(profileId) // Time difference is equal to or greater than 5 minutes, perform state refresh for the profile page.
-          : null // Time difference is less than 5 minutes, then do nothing.
+          : null; // Time difference is less than 5 minutes, then do nothing.
       }
     })(profile.id);
   }

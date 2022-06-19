@@ -23,9 +23,12 @@ const ProfileHeader = () => {
         const res2: Response = await Api.findBookings(profileId);
         const bookings: Array<Booking> = await res2.json();
         bookings ? State.storeStateToLocalStorage('bookings', bookings) : null;
+
+        // Refresh the page
+        window.location.reload();
       })(state.id);
     }
-  }
+  };
   return (
     <div className='profile_header'>
       <div className='profile_header_info'>
@@ -52,10 +55,13 @@ const ProfileHeader = () => {
         </div>
         <div>
           <VscAccount style={{ color: 'white', fontSize: '1.8rem', marginRight: '0.5rem' }} />
-          <button 
-            title='Refreshes the state for bookings and invoices' 
-            style={{ color: 'black' }} 
-            onClick={() => refreshProfileState()}>Refresh profile data</button>
+          <button
+            title='Refreshes the page and the state for bookings and invoices'
+            style={{ color: 'black' }}
+            onClick={() => refreshProfileState()}
+          >
+            Refresh profile data
+          </button>
         </div>
       </div>
       <div className='profile_header_search'></div>

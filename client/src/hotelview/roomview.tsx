@@ -46,37 +46,23 @@ const RoomView = () => {
           }).then((res) =>
             res
               .json()
-              .then((invoice) => {
+              .then((booking) => {
                 /*
-                 * NOTE: This evaluates whether there is invoices are more than,
-                 *        one, by evaluating whether it is an array, if it is,
+                 * NOTE: This evaluates whether there are more than one booking,
+                 *        by evaluating whether it is an array, if it is,
                  *        set the new invoice into an array with the old ones.
                  *        Otherwise, the single invoice is pushed to state.
                  */
                 try {
-                  const invoices = State.fetchStateByKey('invoices');
-                  Array.isArray(invoices)
-                    ? State.storeStateToLocalStorage('invoices', [...invoices, invoice])
-                    : State.storeStateToLocalStorage('invoices', invoice);
+                  const bookings = State.fetchStateByKey('bookings');
+                  Array.isArray(bookings)
+                    ? State.storeStateToLocalStorage('bookings', [...bookings, booking])
+                    : State.storeStateToLocalStorage('bookings', booking);
                 } catch (e) {
                   console.error(e);
                 }
               })
-            .then(() => {
-              alert('Booking made.')
-              // Ductaping the bookings fetch here too, 
-              // so that the state gets the bookings too.
-              Api.findBookings(profileid).then(res => res.json().then(booking => {
-                try {
-                  const bookings = State.fetchStateByKey('bookings');
-                  Array.isArray(bookings)
-                    ? State.storeStateToLocalStorage('invoices', [...bookings, booking])
-                    : State.storeStateToLocalStorage('invoices', booking);
-                } catch (e) {
-                  console.error(e);
-                }
-              }))
-            })
+              .then(() => alert('Booking made.'))
           )
         );
       })(profile.id);

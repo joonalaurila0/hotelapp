@@ -1,10 +1,18 @@
 # How do I deploy this application?
 
-1. `$ make initialize` or `$ make network && make secret && make casinit`
-2. `$ make casmaster`
-3. `$ make caspair`
-4. `$ make hcpvault`
+1. `$ make initialize`
+2. `$ make casmaster caspair hcpvault keycloak`
+3. `$ make configuration-server discovery`
+4. `$ make services`
+5. `$ make gateway`
+6. `$ make client`
 
+1. Initializes necessary volumes, networks and secrets.
+2. Deploys cassandra instances, HCP Vault and Redhat Keycloak (all the "external" applications)
+3. Builds and deploys the configuration server and discovery.
+4. Builds and deploys all the services being used by the client.
+5. Builds and deploys the Gateway, reserved as the second last operation so it access all the services immediately.
+6. Builds and deploys the client, reserved as the last operation so it access the gateway, although this is not strictly necessary until request to services are made.
 
 Gateway guards the microservices and uses Keycloak as the STS into the application.
 

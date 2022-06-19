@@ -56,6 +56,10 @@ class Api {
 
   /* The parameters are generally specified in snake_case for the Java API
    * especially when using application/json  */
+  /**
+   * @param {Booking} booking
+   * @returns Response<Booking>
+   */
   public static async createBooking(booking: Booking) {
     return fetch(this.GatewayURI + '/hotel-service/bookings/create-and-invoice', {
       method: 'POST',
@@ -76,6 +80,10 @@ class Api {
 
   /* The parameters are generally specified in snake_case for the Java API,
    * especially when using application/json  */
+  /**
+   * @param {Invoice} invoice
+   * @returns Response<Invoice>
+   */
   public static async createInvoice(invoice: Invoice) {
     return fetch(this.GatewayURI + '/customer-service/invoices/create', {
       method: 'POST',

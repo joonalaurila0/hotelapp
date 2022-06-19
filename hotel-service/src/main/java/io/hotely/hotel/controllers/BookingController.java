@@ -80,7 +80,7 @@ public class BookingController {
   /** @return {@link InvoiceEntity} 
    * Creates a booking and calls web client to create a invoice for the customer. */
   @PostMapping("/create-and-invoice")
-  public InvoiceEntity 
+  public Booking
     bookingWithInvoice(
         @RequestHeader(value = "Authorization") 
         String authHeader, @RequestBody Booking newBooking
@@ -97,10 +97,10 @@ public class BookingController {
           new Timestamp(new Date().getTime()), 
           false, newBooking.getEndDate().plusMonths(1), 
           false);
-      return customerProxy.createInvoice(authHeader, invoiceEntity);
+      customerProxy.createInvoice(authHeader, invoiceEntity);
     }
 
-    return null;
+    return result;
   }
 
   @PutMapping("/update/{id}")
