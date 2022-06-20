@@ -8,7 +8,7 @@ TIME := 3
 
 # This variable is used for the import recipe.
 # Specify the host you wish to import the image into.
-REMOTE_HOST := efc@192.168.1.103
+REMOTE_HOST := $(MULTIHOST_TWO)
 
 # This specifies the location that will be used to import the image
 REMOTE_HOST_LOCATION := /home/efc/docker-images/

@@ -4,7 +4,7 @@
 
 Hotel booking application demo project, books hotel rooms to the clients of the hotels. Meant to act as a simple microservices deployment project. 
 
-Configuration server segregates and centralizes the application configuration data from the services and maintains the application properties for them, acting as a centralized configuration. Configuration server uses HashiCorp Vault configuration repository to store the application properties that are sensitive. HashiCorp Vault is itself the backend for the configuration server to securely access the properties. Service Registry is implemented by Spring Cloud Eureka built in the `discovery` directory. Services register themselves to the registry, other services can obtain the location of a service instance by querying the service registry, which knows the locations of all service instances. This is further utilized by the Gateway, which does the esrvice routing, to provide a single entry point for all the services. It implements API Gateway pattern, all teh traffic routes through API Gateway and the gateway will route the requests to the appropriate services. Redhat Keycloak acts as an STS/Authorization server for the gateway and the client, handling user authenticatino and authorization. Persistence is handled through Apache Cassandra, which deploys two nodes by default. Comes with built-in cluster, eventual consistency and linear write scalability, making it decent fit for the service oriented structure of project, although the deployment model itself is contrived for the sake of learning.
+Configuration server segregates and centralizes the application configuration data from the services and maintains the application properties for them, acting as a centralized configuration. Configuration server uses HashiCorp Vault configuration repository to store the application properties that are sensitive. HashiCorp Vault is itself the backend for the configuration server to securely access the properties. Service Registry is implemented by Spring Cloud Eureka built in the discovery directory. Services register themselves to the registry, other services can obtain the location of a service instance by querying the service registry, which knows the locations of all service instances. This is further utilized by the Gateway, which does the esrvice routing, to provide a single entry point for all the services. It implements API Gateway pattern, all teh traffic routes through API Gateway and the gateway will route the requests to the appropriate services. Redhat Keycloak acts as an STS/Authorization server for the gateway and the client, handling user authenticatino and authorization. Persistence is handled through Apache Cassandra, which deploys two nodes by default. Comes with built-in cluster, eventual consistency and linear write scalability, making it decent fit for the service oriented structure of project, although the deployment model itself is contrived for the sake of learning.
 
 The services themselves are implemented in the customer-service and hotel-service directories, both which interface with Apache Cassandra instances. Hotel-service is the handles giving out the hotels, cities, bookings and rooms for the client and customer-service handles user data like keeping user data and invoices.
 
@@ -17,6 +17,27 @@ The services themselves are implemented in the customer-service and hotel-servic
 5. `$ make gateway`, builds and deploys the Gateway, reserved as the second last operation so it access all the services immediately.
 6. `$ make client`, builds and deploys the client, reserved as the last operation so it access the gateway, although this is not strictly necessary until request to services are made.
 
+**NOTE: Current setup has config-server, discovery and gateway using image-importer.sh script to update images on the other host. To put this off the current build cycle, you only need to take off the $(MAKE) import invocation on the recipes in question.**
+
+# Multihost or single host deployment?
+
+If you're using a multihost deployment, you can define environment variables, for example: `$ export MULTIHOST_ONE=myuser@192.168.239.133` and these will be subsequently be used in the Makefile up to two, because thats how many I used myself excluding the local host.
+
+* `MULTIHOST_<number>` environment variables are used in some of the Makefiles and scripts to perform deployment onto other remote hosts.
+
+* `DOCKERHOST_<number>` environment variables define remote docker contexts used in cassandra deployment.
+
+It is also possible to run this application on a singlehost, if you have computer that has required memory and processing power. Currently however this deployment is tuned for multihost setup.
+*NOTE: I have not tried single host deployment with all the applications running, only multihost, so I cannot say how runnable it actually is, but with little tweaks it should not be hard to come by.*
+
+# Client
+
+The client for the application is a runnign on TypeScript 4.5.4, React 17.0.2 and the application running on Webpack 5 for module bundling and Babel 7 for polyfilling. The deployment happens through NodeJS express server, using webpack-dev-middleware. To change the deployment variables, you can use an .env file.
+
+To run the client: `$ make build deploy`
+
+Running the client by itself: `$ npm i && npm run serve`
+
 # HashiCorp Vault
 
 Vault can be deployed and initialized with data from commandline arguments and vault/vault directory by running: `$ make hcpvault`.
@@ -26,6 +47,8 @@ Vault can also be optionally deployed using docker-compose with `$ sh vault/star
 The sensitive data is in the `vault/vault/data` directory, where you can store data to. `vault/vault` directory also contains configuration for the vault and policies.
 
 NOTE: `$ make hcpvault` uses predefined arguments to run the vault/startup.sh script, you can change these arguments in the Makefile yourself if you wish or just run the script yourself with arguments `$ sh vault/startup.sh --help` for more.
+
+Because this is ridicously sluggish deployment already, I keep .envs file in this directory to define the environmental variables used in the make recipes, so I can set them fast. The .envs file is just a simple bash script that sets the environmental variables.
 
 # Redhat Keycloak
 

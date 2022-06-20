@@ -45,7 +45,8 @@ help_text() {
     Running the program without arguments defaults to help text seen here.
     Options:
   --help                          Display this help and exit.
-  -h, --host                      Define host to use.
+  -h, --host                      Defines host to use, this means ssh host e.g. "myuser@192.168.239.133".
+  --docker-host                   Defines docker context to switch to.
   -c, --compose                   Run with docker-compose.
   -s, --swarm                     Run as part of a swarm.
   -i, --image                     Define image to use.
@@ -75,6 +76,10 @@ parse_args() {
       "--host" | "-h")
         echo "Setting host to $2 ..." \
           && host="$2"
+        ;;
+      "--docker-host")
+        echo "Setting docker_host to $2 ..." \
+          && docker_host="$2"
         ;;
 			"--compose" | "-c")
 				echo "Initializing Cassandra with docker-compose..." \
@@ -190,12 +195,18 @@ prog_exists ssh
 if [ "$(get_current_ctx)" != "$host" ]; then
   echo "Host is different from current context"
   echo "Switching host to $host..."
-  docker context use $host >/dev/null 2>&1
+  docker context use $docker_host >/dev/null 2>&1
   echo "Waiting a moment for the state to converge..."
   sleep 3
 fi
 
+sleep 5
+echo "CURRENT HOST IS $(get_current_ctx)"
+echo "DOCKER_HOST IS $docker_host"
+sleep 5
+
 # Test that host was succesfully changed and that connection can be made.
+# NOTE: This uses ssh directly instead of docker context, this is testing ssh connection.
 if [ "$host" != "default" ]; then
   test_host_connection $host
 fi
@@ -212,15 +223,15 @@ count=0
 wait_until_healthy $cid 2 
 
 import_file() {
-  ctx=$host
-  og_ctx=$original_host
+  ctx=$docker_host # refers to remote host context
+  og_ctx=$original_host # refers to local host context
   schema_file_with_location=$schema_file
   data_file_with_location=$data_file
   schema_file_bare=$(basename $schema_file)
   data_file_bare=$(basename $data_file)
   cid=$cid
   db=$database
-  [ $(get_current_ctx) != "$host" ] && echo "Host is incorrect, aborting.." && exit 1;
+  [ $(get_current_ctx) != "$ctx" ] && echo "Host is incorrect, aborting.." && exit 1;
   if [ "$(docker inspect $cid --format "{{ .State.Health.Status }}")" = "healthy" ]; then
     docker cp $schema_file_with_location $cid:/ >/dev/null 2>&1 \
       && docker cp $data_file_with_location $cid:/ >/dev/null 2>&1 \

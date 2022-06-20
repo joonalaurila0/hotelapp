@@ -4,9 +4,13 @@ IMAGES := cassandra:4.0.1 quay.io/keycloak/keycloak:17.0.0 vault:1.9.2
 SERVICES := config-server customer-service hotel-service
 SLEEP_TIME := 3
 
-# Possible host machines used for deployment
-REMOTE_HOST_ONE := x220
-REMOTE_HOST_TWO := x200
+# Possible host used for deployment
+# Define these as environment variables
+MULTIHOST_ONE := $(MULTIHOST_ONE)
+MULTIHOST_TWO := $(MULTIHOST_TWO)
+
+DOCKER_ONE := $(DOCKER_CTX_ONE)
+DOCKER_TWO := $(DOCKER_CTX_TWO)
 
 # Executes secret and network recipes
 initialize: network secret casinit
@@ -76,9 +80,10 @@ casmaster:
 	$(MAKE) master -C cassandra
 	@echo "Sleeping 10 seconds so Swarm can converge its state..."
 	sleep 10
-	sh cassandra/startup.sh -h $(REMOTE_HOST_ONE) --swarm --stack $(STACK) \
-		--name cas-master --schema ${PWD}/cassandra/schema-init/schema.cql \
-		--data ${PWD}/cassandra/schema-init/data.cql --database hotelapp \
+	sh cassandra/startup.sh -h $(MULTIHOST_ONE) --docker-host $(DOCKER_ONE) \
+		--swarm --stack $(STACK) --name cas-master --database hotelapp \
+		--schema ${PWD}/cassandra/schema-init/schema.cql \
+		--data ${PWD}/cassandra/schema-init/data.cql \
 		--root ${PWD}
 
 caspair:
@@ -86,10 +91,18 @@ caspair:
 	$(MAKE) pair -C cassandra
 	@echo "Sleeping 10 seconds so Swarm can converge its state..."
 	sleep 10
-	sh cassandra/startup.sh -h $(REMOTE_HOST_ONE) --swarm --stack $(STACK) \
-		--name cas-slave --schema ${PWD}/cassandra/schema-init/schema2.cql \
-		--data ${PWD}/cassandra/schema-init/data2.cql --database hotelapp2 \
+	sh cassandra/startup.sh -h $(MULTIHOST_ONE) --docker-host $(DOCKER_ONE) \
+		--swarm --stack $(STACK) --name cas-slave --database hotelapp2 \
+		--schema ${PWD}/cassandra/schema-init/schema2.cql \
+		--data ${PWD}/cassandra/schema-init/data2.cql\
 		--root ${PWD}
+
+# Prints environment variables for the remote hosts
+inspect:
+	@echo "MULTIHOST_ONE: $(MULTIHOST_ONE)"
+	@echo "MULTIHOST_TWO: $(MULTIHOST_TWO)"
+	@echo "DOCKER CTX ONE: $(DOCKER_ONE)"
+	@echo "DOCKER CTX TWO: $(DOCKER_TWO)"
 
 clean:
 	@echo "Removing $(STACK_NAME) stack..."
