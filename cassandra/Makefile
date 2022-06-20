@@ -1,8 +1,7 @@
 STACK := hotelapp
 IMAGE := cassandra:4.0.1
-TAG := 1.0
 NET := perunanetti
-SWARMHOST := 192.168.1.107
+TAG := 1.0
 
 network:
 	docker network create -d overlay --attachable perunanetti \

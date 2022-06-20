@@ -5,14 +5,12 @@
 set -e
 set -u
 set -o pipefail
+
+# DEBUG
 #set -x
 
 # load library for dealing with vault
 . ./vault/libvault.sh
-
-echo "----------DEBUG----------"
-echo "CURRENT LOCATION: ${PWD}"
-echo "----------DEBUG----------"
 
 status=$?
 

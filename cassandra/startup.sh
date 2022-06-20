@@ -1,10 +1,16 @@
 #!/bin/sh
+# cassandra/startup.sh 2022-03-15
+# For initializing Apache Cassandra 4.0.1
 #
-# For initializing cassandra 4.0.1
-# Example 1: sh cassandra/startup.sh -h myuser@192.168.239.133 -i cassandra:4.0.1 -f ${PWD}/cassandra/schema-init/init.cql -c
-# Example 2: sh cassandra/startup.sh -h myuser@192.168.239.133 --stack cluster-test --swarm \
-#                 --name cas-master --schema ${PWD}/cassandra/schema-init/schema.cql \
-#                 --data ${PWD}/cassandra/schema-init/data.cql --database hotelapp
+# Example 1: sh cassandra/startup.sh -h myuser@192.168.239.133 \
+#               -i cassandra:4.0.1 -f ${PWD}/cassandra/schema-init/init.cql -c \
+#               --root $PWD
+#
+# Example 2: sh cassandra/startup.sh -h myuser@192.168.239.133 \
+#                 --stack hotelapp --swarm --name cas-master \
+#                 --schema ${PWD}/cassandra/schema-init/schema.cql \
+#                 --data ${PWD}/cassandra/schema-init/data.cql --database hotelapp \
+#                 --root $PWD
 #
 # Cluster service naming convention: <cluster name>_<service_name>
 # Example: Cluster: test-cluster, service: cas-master. Service name in stack: test-cluster_cas-master
@@ -15,21 +21,9 @@ set -u
 set -o pipefail
 
 # DEBUG
-# set -x
+#set -x
 
 command -v find >/dev/null 2>&1 || { echo >&2 "find is required for this script to run, but it's not installed. Aborting."; exit 1; }
-
-# Defines project root
-project_root="/home/$USER/Desktop/projects/java/hotelapp-final"
-
-# locates libinit.sh
-libinit_location=$(find $project_root -type f -iname '*.sh' -regex '.*libinit.*')
-
-# Bring in common initialization utilities
-. $libinit_location
-
-# Move shell execution environment to the directory where shell script is being executed.
-localize_to_dir
 
 debug_img() {
   echo "------------------DEBUG------------------"
@@ -43,7 +37,7 @@ help_text() {
 
     [ Apache Cassandra Autosetup ]
 
-    Usage: Please select a mode for the startup initialization of the Hashicorp Vault.
+    Usage: Please select a mode for the startup initialization of the Apache Cassandra.
     run: sh startup.sh --help for more help
     Usage: sh startup.sh [OPTION...]
     To run the program, you must define either local or swarm mode with the flags -c or -s.
@@ -59,7 +53,7 @@ help_text() {
   --database                      Define database for the data and/or schema file (used by import_file function).
   --schema                        Define schema.cql file to feed to the cassandra database.
   --data                          Define data.cql file to feed to the cassandra database (Insertation data).
-  --stack                         Specifies the stack.
+  --stack                         Specifies the stack name, this parameter is necessary for swarm deployments.
   --name                          Specifies the name of a container. Note: You should use context-local names, script changes contexts.
 EOF
 exit 0
@@ -75,6 +69,9 @@ parse_args() {
 		case "$1" in
 			"--help") help_text && exit 0
         ;;
+      "--root" | "-r") 
+        echo "Setting the project root to $2" && project_root="$2" # Defines the root for the project (used for moving files)
+				;;
       "--host" | "-h")
         echo "Setting host to $2 ..." \
           && host="$2"
@@ -120,6 +117,8 @@ parse_args $# $@
 
 sleep 2 # Wait a moment for the state to converge.
 
+
+## Bunch of checks for parameters
 if [ -z "${image-}" ] && [ -z "${name-}" ]; then
   echo "WARNING! Image or name must be defined for this program to be run, as there is no default image nor name set. Aborting..."
   exit 1
@@ -145,12 +144,47 @@ if [ $# -eq 0 ]; then
   help_text && exit 0
 fi
 
+if [ -z $project_root ]; then
+  echo "You need to define the project_root to start the initialization!"
+  exit 1
+fi
+
+
+
+# #################################################
+# Locates libinit in strangely obtuse manner,     #
+# sources libinit once it is found and runs       #
+# the "localize_to_dir" function from libinit     #
+# to move the shell execution environment to      #
+# the directory where shell script is being       #
+# executed. This is done to move files around     #
+#                                                 #
+# NOTE: It is important that we first initialize  #
+#       this variable and source libinit.sh,      #
+#       this is needed for localize_to_dir.       #
+###################################################
+
+# locates libinit.sh
+libinit_location=$(find $project_root -type f -iname '*.sh' -regex '.*libinit.*')
+
+# Bring in common initialization utilities
+. $libinit_location
+
+# Move shell execution environment to the directory where shell script is being executed.
+localize_to_dir
+
+
 # Queries for localhost as the "master node".
 original_host="$(get_current_ctx)"
 
-# Check for prerequisite programs.
+
+# ###############################
+# Checks for necessary programs #
+#################################
 prog_exists docker
 prog_exists ssh
+
+
 
 # Changes to the host that is set from the command line arguments.
 if [ "$(get_current_ctx)" != "$host" ]; then
@@ -174,10 +208,8 @@ cache=$container_health
 count=0
 
 # args: container_id, wait_time
+# Wait until cassandra instance is ready.
 wait_until_healthy $cid 2 
-
-# Switch back to master node.
-#[ "$(get_current_ctx)" != $host ] && docker context use $original_host
 
 import_file() {
   ctx=$host
@@ -190,7 +222,6 @@ import_file() {
   db=$database
   [ $(get_current_ctx) != "$host" ] && echo "Host is incorrect, aborting.." && exit 1;
   if [ "$(docker inspect $cid --format "{{ .State.Health.Status }}")" = "healthy" ]; then
-    #cid=$(resolve_cid $name)
     docker cp $schema_file_with_location $cid:/ >/dev/null 2>&1 \
       && docker cp $data_file_with_location $cid:/ >/dev/null 2>&1 \
       && docker exec -t $cid cqlsh -f "$schema_file_bare" >/dev/null 2>&1 \

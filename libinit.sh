@@ -1,4 +1,5 @@
 #!/bin/sh
+# libinit.sh 2022-04-02
 # Provides functions for checking container health and initialization process.
 
 set -e

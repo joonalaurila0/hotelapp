@@ -1,8 +1,9 @@
 #!/bin/bash
+# clean.sh 2022-03-13
 # Script for cleaning some docker volumes, secrets, networks and containers
 
 ns=hotelapp
-v="1.0"
+v=1.0
 
 secretclr() {
   for secret in $(docker secret ls -q); do
