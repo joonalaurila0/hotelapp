@@ -20,7 +20,8 @@ The services themselves are implemented in the customer-service and hotel-servic
 **NOTE: Current setup uses environment variables, make sure you have defined these beforehand!**
 
 I am using .envs file where I set SWARMHOST, DOCKER\_CTX\_<number> for the deployment, 
-    only thing I need to do is to source the file: ```$ source .envs```.
+    only thing I need to do is to source the file: 
+      ```$ source .envs```.
     
   These environment variables are mainly used for cassandra, importing docker images onto other hosts and in the client deployment.
 
