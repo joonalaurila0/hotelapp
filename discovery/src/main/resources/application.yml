@@ -7,6 +7,7 @@ server:
   port: 8761
 
 #------#
+# Defines the master node ip
 swarmhost: 192.168.1.107
 
 #------#

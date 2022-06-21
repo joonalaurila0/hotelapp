@@ -5,6 +5,7 @@ server:
   port: 8001
 
 #--------------------------#
+# Defines the master node ip
 swarmhost: 192.168.1.107
 
 #--------------------------#
@@ -15,23 +16,6 @@ spring:
     name: hotel-service
   profiles:
     active: "default"
-# TEMPORARY FOR TESTING
-#  data:
-#    cassandra:
-#      local-datacenter: "datacenter1"
-#      port: 9042
-#     contact-points: 192.168.1.105:9042
-#      contact-points: ${swarmhost}:9042
-#      schema-action: "CREATE_IF_NOT_EXISTS"
-#      username: "cassandra"
-#      password: "cassandra"
-#      keyspace-name: "hotelapp"
-#      request:
-#        timeout: 10s
-#      connection:
-#        connect-timeout: 10s
-#        init-query-timeout: 10s
-
 #--------------------------#
 #  config:
 #    import: "configserver:http://localhost:8888"

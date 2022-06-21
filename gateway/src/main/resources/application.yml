@@ -6,7 +6,9 @@ server:
 # https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
 kc-provider-conf: 'http://192.168.1.107:8080/realms/master/.well-known/openid-configuration'
 
+# Defines the master node ip
 swarmhost: 192.168.1.107
+
 spring:
 #  config:
 #    import: configserver:http://${swarmhost}:8888/
