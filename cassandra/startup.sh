@@ -2,11 +2,11 @@
 # cassandra/startup.sh 2022-03-15
 # For initializing Apache Cassandra 4.0.1
 #
-# Example 1: sh cassandra/startup.sh -h myuser@192.168.239.133 \
+# Example 1: sh cassandra/startup.sh --docker-ctx my-remote-ctx \
 #               -i cassandra:4.0.1 -f ${PWD}/cassandra/schema-init/init.cql -c \
 #               --root $PWD
 #
-# Example 2: sh cassandra/startup.sh -h myuser@192.168.239.133 \
+# Example 2: sh cassandra/startup.sh --docker-ctx my-remote-ctx \
 #                 --stack hotelapp --swarm --name cas-master \
 #                 --schema ${PWD}/cassandra/schema-init/schema.cql \
 #                 --data ${PWD}/cassandra/schema-init/data.cql --database hotelapp \
@@ -14,6 +14,10 @@
 #
 # Cluster service naming convention: <cluster name>_<service_name>
 # Example: Cluster: test-cluster, service: cas-master. Service name in stack: test-cluster_cas-master
+#
+# NOTE: This script does not explicitly check that the connection can be made, 
+#       but just assumes it. Make sure you can actually form the ssh connection 
+#       before running.
 
 
 set -e
@@ -37,16 +41,14 @@ help_text() {
 
     [ Apache Cassandra Autosetup ]
 
-    Usage: Please select a mode for the startup initialization of the Apache Cassandra.
+    Usage: Please select a mode for the startup initialization of the Apache Cassandra for the Hotelapp application.
     run: sh startup.sh --help for more help
     Usage: sh startup.sh [OPTION...]
     To run the program, you must define either local or swarm mode with the flags -c or -s.
-    Defining the image is also mandatory.
-    Running the program without arguments defaults to help text seen here.
+    Defining the image is also mandatory. Running the program without arguments defaults to help text seen here.
     Options:
   --help                          Display this help and exit.
-  -h, --host                      Defines host to use, this means ssh host e.g. "myuser@192.168.239.133".
-  --docker-host                   Defines docker context to switch to.
+  --docker-ctx                    Defines docker context to switch to.
   -c, --compose                   Run with docker-compose.
   -s, --swarm                     Run as part of a swarm.
   -i, --image                     Define image to use.
@@ -73,11 +75,7 @@ parse_args() {
       "--root" | "-r") 
         echo "Setting the project root to $2" && project_root="$2" # Defines the root for the project (used for moving files)
 				;;
-      "--host" | "-h")
-        echo "Setting host to $2 ..." \
-          && host="$2"
-        ;;
-      "--docker-host")
+      "--docker-ctx")
         echo "Setting docker_host to $2 ..." \
           && docker_host="$2"
         ;;
@@ -191,24 +189,14 @@ prog_exists ssh
 
 
 
-# Changes to the host that is set from the command line arguments.
-if [ "$(get_current_ctx)" != "$host" ]; then
+# Changes to the necessary docker context that is set from the command line arguments.
+if [ "$(get_current_ctx)" != "$docker_host" ]; then
   echo "Host is different from current context"
-  echo "Switching host to $host..."
+  echo "Switching host to $docker_host..."
   docker context use $docker_host >/dev/null 2>&1
   echo "Waiting a moment for the state to converge..."
+  echo -n -e "Current host changed to $(get_current_ctx)\n"
   sleep 3
-fi
-
-sleep 5
-echo "CURRENT HOST IS $(get_current_ctx)"
-echo "DOCKER_HOST IS $docker_host"
-sleep 5
-
-# Test that host was succesfully changed and that connection can be made.
-# NOTE: This uses ssh directly instead of docker context, this is testing ssh connection.
-if [ "$host" != "default" ]; then
-  test_host_connection $host
 fi
 
 sleep 2
@@ -243,7 +231,7 @@ import_file() {
 
 [ ! -z "${database-}" ] && import_file
 
-# Switch back to master node.
+# Switch back to default docker context.
 if [ "$(get_current_ctx)" != "default" ]; then
   echo "Setting host back to the original..."
   docker context use $original_host

@@ -3,7 +3,9 @@ OG_TAG := 17.0.0
 IMAGE := hotelapp/keycloak
 TAG := 1.0
 NET := perunanetti
-SWARMHOST := 192.168.1.107
+
+# ENV VAR defined as the IP of the main host
+SWARMHOST := $(SWARMHOST)
 
 network:
 	docker network create -d overlay --attachable perunanetti \

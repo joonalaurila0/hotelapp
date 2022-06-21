@@ -8,8 +8,8 @@ set -o pipefail
 # kcadm executable path
 kcadm="/opt/keycloak/bin/kcadm.sh"
 
-# Master node
-swarmhost="192.168.1.107"
+# first arg defines main host ip
+swarmhost=$1
 
 login() {
   local url="http://localhost:8080"

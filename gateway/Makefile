@@ -8,7 +8,10 @@ TIME := 3
 
 # This variable is used for the import recipe.
 # Specify the host you wish to import the image into.
-REMOTE_HOST := $(MULTIHOST_TWO)
+# It is an environment variable, you can define it as 
+# the remote host ip you wish to use, if you're doing
+# a multihost deployment.
+REMOTE_HOST := $(REMOTEHOST_TWO)
 
 # This specifies the location that will be used to import the image
 REMOTE_HOST_LOCATION := /home/efc/docker-images/

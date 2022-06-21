@@ -11,7 +11,7 @@ volume:
 	docker volume create cass_data
 
 local:
-	docker-compose -d -f cassandra.yml up
+	docker-compose -f cassandra.yml up
 
 master:
 	docker stack deploy --compose-file cassandra.yml $(STACK)

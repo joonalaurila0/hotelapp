@@ -17,7 +17,13 @@ The services themselves are implemented in the customer-service and hotel-servic
 5. `$ make gateway`, builds and deploys the Gateway, reserved as the second last operation so it access all the services immediately.
 6. `$ make client`, builds and deploys the client, reserved as the last operation so it access the gateway, although this is not strictly necessary until request to services are made.
 
-**NOTE: Current setup has config-server, discovery and gateway using image-importer.sh script to update images on the other host. To put this off the current build cycle, you only need to take off the $(MAKE) import invocation on the recipes in question.**
+**NOTE: Current setup uses environment variables, make sure you have defined these beforehand!**
+
+I am using .envs file where I set SWARMHOST, DOCKER\_CTX\_<number> for the deployment, only thing I need to do is to source the file: `$ source .envs`. These environment variables are mainly used for cassandra, importing docker images onto other hosts and in the client deployment.
+
+**NOTE on building config-server, gateway and discovery: Current setup has config-server, discovery and gateway using image-importer.sh script to update images on the other host. To put this off the current build cycle, you only need to take off the $(MAKE) import invocation on the recipes in question.**
+
+Deployment has only been tested on x86_64 GNU/Linux, 5.10.0-13-amd64 and subsequent remote machines are assumed to have x86_64 GNU/Linux with **required software**.
 
 # Multihost or single host deployment?
 
@@ -89,3 +95,22 @@ To view secrets you can use `$ docker secret ls`
 * Client 8081
 * Customer-service 8000
 * Hotel-service 8001
+
+# Required software
+
+Go compiler +go1.15.15
+Docker +20.10.5
+GCC +10.2
+GNU bash, version 5.1.4(1)-release 
+OpenSSH\_8.4p1
+find (GNU findutils) 4.9.0
+GNU Make 4.3
+sed (GNU sed) 4.7
+jq-1.6
+yq 4.25.1
+openjdk 17.0.3 2022-04-19
+OpenJDK Runtime Environment (build 17.0.3+7)
+OpenJDK 64-Bit Server VM (build 17.0.3+7, mixed mode)
+Gradle 7.4.2
+Node v18.1.0
+npm 8.5.5

@@ -37,7 +37,7 @@ services:
 #      CASSANDRA_DC: 'datacenter1'
 #      # This sets BROADCAST_ADDRESS and BROADCAST_RPC_ADDRESS in cassandra.yaml
 #      # Set this to the Private IP of the host machine
-#      CASSANDRA_BROADCAST_ADDRESS: "192.168.1.105"
+#      CASSANDRA_BROADCAST_ADDRESS: "${SWARMHOST}"
 #      # simple db init: bash -c 'cqlsh -e "$CASSANDRA_KEYSPACE_CQL"'
 #      CASSANDRA_KEYSPACE_CQL: "CREATE KEYSPACE hotelapp WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1}"
 #    ports:
@@ -105,7 +105,7 @@ services:
 #    ports:
 #      - "3306:3306"
 #    environment:
-#      MARIADB_USER: 'eliza'
+#      MARIADB_USER: 'testuser'
 #      MARIADB_DATABASE: 'hotelapp'
 #      MARIADB_PASSWORD_FILE: '/run/secrets/MARIADB_PASSWORD'
 #      MARIADB_ROOT_PASSWORD_FILE: '/run/secrets/MARIADB_PASSWORD'

@@ -6,14 +6,13 @@ SLEEP_TIME := 3
 
 # Possible host used for deployment
 # Define these as environment variables
-MULTIHOST_ONE := $(MULTIHOST_ONE)
-MULTIHOST_TWO := $(MULTIHOST_TWO)
-
-DOCKER_ONE := $(DOCKER_CTX_ONE)
-DOCKER_TWO := $(DOCKER_CTX_TWO)
+# DOCKER_CTX_* variables are environment variables
+# that are used for the Apache Cassandra deployment.
+DOCKER_CTX_ONE := $(DOCKER_CTX_ONE)
+DOCKER_CTX_TWO := $(DOCKER_CTX_TWO)
 
 # Executes secret and network recipes
-initialize: network secret casinit
+initialize: secret casinit
 
 #  Creates the secrets
 secret:
@@ -80,8 +79,8 @@ casmaster:
 	$(MAKE) master -C cassandra
 	@echo "Sleeping 10 seconds so Swarm can converge its state..."
 	sleep 10
-	sh cassandra/startup.sh -h $(MULTIHOST_ONE) --docker-host $(DOCKER_ONE) \
-		--swarm --stack $(STACK) --name cas-master --database hotelapp \
+	sh cassandra/startup.sh --docker-ctx $(DOCKER_CTX_ONE) \
+		--swarm --stack $(STACK_NAME) --name cas-master --database hotelapp \
 		--schema ${PWD}/cassandra/schema-init/schema.cql \
 		--data ${PWD}/cassandra/schema-init/data.cql \
 		--root ${PWD}
@@ -91,18 +90,16 @@ caspair:
 	$(MAKE) pair -C cassandra
 	@echo "Sleeping 10 seconds so Swarm can converge its state..."
 	sleep 10
-	sh cassandra/startup.sh -h $(MULTIHOST_ONE) --docker-host $(DOCKER_ONE) \
-		--swarm --stack $(STACK) --name cas-slave --database hotelapp2 \
+	sh cassandra/startup.sh --docker-ctx $(DOCKER_CTX_ONE) \
+		--swarm --stack $(STACK_NAME) --name cas-slave --database hotelapp2 \
 		--schema ${PWD}/cassandra/schema-init/schema2.cql \
 		--data ${PWD}/cassandra/schema-init/data2.cql\
 		--root ${PWD}
 
 # Prints environment variables for the remote hosts
 inspect:
-	@echo "MULTIHOST_ONE: $(MULTIHOST_ONE)"
-	@echo "MULTIHOST_TWO: $(MULTIHOST_TWO)"
-	@echo "DOCKER CTX ONE: $(DOCKER_ONE)"
-	@echo "DOCKER CTX TWO: $(DOCKER_TWO)"
+	@echo "DOCKER CTX ONE: $(DOCKER_CTX_ONE)"
+	@echo "DOCKER CTX TWO: $(DOCKER_CTX_TWO)"
 
 clean:
 	@echo "Removing $(STACK_NAME) stack..."

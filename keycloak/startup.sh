@@ -25,6 +25,9 @@ kcadm="/opt/keycloak/bin/kcadm.sh"
 # Defaults to 0 = false
 swarm_mode=0
 
+# Master node, defined as env variable
+swarmhost="$SWARMHOST"
+
 help_text() {
  cat << EOF
 
@@ -73,6 +76,10 @@ parse_args() {
 			"--swarm" | "-s") 
 				echo "Initializing Keycloak as part of a swarm service..." \
 					&& swarm_mode=1
+				;;
+			"--swarmhost") 
+				echo "Main host IP set to $2" \
+					&& swarmhost=$2
 				;;
       "") help_text && exit 0
         ;;
@@ -178,7 +185,8 @@ wait_until_healthy $cid 2
 if [ "$container_health" = "healthy" ]; then
   cid=$(docker ps --filter "ancestor=$image" -q)
   docker cp setup.sh $cid:/opt/keycloak/bin/
-  docker exec -t $cid sh /opt/keycloak/bin/setup.sh
+  # First arg is the main host ip
+  docker exec -t $cid sh /opt/keycloak/bin/setup.sh $swarmhost
 fi
 
 # Switch back to master node.

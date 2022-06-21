@@ -63,9 +63,9 @@ const keycloakInit = () => {
             /* Test what the customer-service returned,
              * creates the customer for the customer-service
              * incase it does not already exists in there. */
-            console.log('Response from doesCustomerExists :: ', body);
+            //console.debug('Response from doesCustomerExists :: ', body);
             body == 1
-              ? console.debug('Customer exists.')
+              ? null // console.debug('Customer exists.')
               : body == 0 && profile.id && profile.email
               ? Api.createCustomer(profile.id, profile.email)
               : console.error('Something went wrong', body);

@@ -30,6 +30,7 @@ test_host_connection() {
   fi
 }
 
+# Outputs the current docker context to stdin
 get_current_ctx() {
   docker context inspect --format '{{ .Name }}'
 }

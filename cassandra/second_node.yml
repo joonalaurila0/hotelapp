@@ -4,6 +4,7 @@ networks:
   perunanetti:
     attachable: true
 
+# NOTE: Make sure you have defined the SWARMHOST environment variable to main host ip.
 services:
   cas-slave:
     image: cassandra:4.0.1
@@ -15,8 +16,8 @@ services:
       CASSANDRA_USER: 'cassandra'
       CASSANDRA_PASSWORD: 'cassandra'
       CASSANDRA_DC: 'datacenter1'
-      CASSANDRA_BROADCAST_ADDRESS: '192.168.1.107'
-      CASSANDRA_SEEDS: '192.168.1.107'
+      CASSANDRA_BROADCAST_ADDRESS: "${SWARMHOST}"
+      CASSANDRA_SEEDS: "${SWARMHOST}"
       CASSANDRA_KEYSPACE_CQL: "CREATE KEYSPACE hotelapp2 WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1}"
     ports:
       - "9043:9042"
