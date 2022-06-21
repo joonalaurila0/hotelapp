@@ -19,7 +19,9 @@ The services themselves are implemented in the customer-service and hotel-servic
 
 **NOTE: Current setup uses environment variables, make sure you have defined these beforehand!**
 
-I am using .envs file where I set SWARMHOST, DOCKER\_CTX\_<number> for the deployment, only thing I need to do is to source the file: `$ source .envs`. These environment variables are mainly used for cassandra, importing docker images onto other hosts and in the client deployment.
+I am using .envs file where I set SWARMHOST, DOCKER\_CTX\_<number> for the deployment, only thing I need to do is to source the file: ```$ source .envs```.
+    
+  These environment variables are mainly used for cassandra, importing docker images onto other hosts and in the client deployment.
 
 **NOTE on building config-server, gateway and discovery: Current setup has config-server, discovery and gateway using image-importer.sh script to update images on the other host. To put this off the current build cycle, you only need to take off the $(MAKE) import invocation on the recipes in question.**
 
