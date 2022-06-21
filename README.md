@@ -19,7 +19,8 @@ The services themselves are implemented in the customer-service and hotel-servic
 
 **NOTE: Current setup uses environment variables, make sure you have defined these beforehand!**
 
-I am using .envs file where I set SWARMHOST, DOCKER\_CTX\_<number> for the deployment, only thing I need to do is to source the file: ```$ source .envs```.
+I am using .envs file where I set SWARMHOST, DOCKER\_CTX\_<number> for the deployment, 
+    only thing I need to do is to source the file: ```$ source .envs```.
     
   These environment variables are mainly used for cassandra, importing docker images onto other hosts and in the client deployment.
 
@@ -69,7 +70,7 @@ You can change these arguments to your liking by changing the Makefile or just u
 You can deploy cassandra instance using `$ make casmaster`.
 This deploys and initializes Apache Cassandra instance with predefined scheme and data for the hotelapp application. Note that the cassandra/startup.sh is merely for initialization and the actual deployment is done by a make recipe -> `make master` or `make pair`
 
-You can change these arguments to your liking by changing the Makefile or just using the script yourself: 
+You can change these arguments to your liking by changing the Makefile or just using the script yourself:   
 ```$ sh casssandra/startup.sh --help```.
 
 # Structure of the application
