@@ -67,8 +67,8 @@ You can change these arguments to your liking by changing the Makefile or just u
 You can deploy cassandra instance using `$ make casmaster`.
 This deploys and initializes Apache Cassandra instance with predefined scheme and data for the hotelapp application. Note that the cassandra/startup.sh is merely for initialization and the actual deployment is done by a make recipe -> `make master` or `make pair`
 
-You can change these arguments to your liking by changing the Makefile 
-or just using the script yourself: `$ sh casssandra/startup.sh --help`.
+You can change these arguments to your liking by changing the Makefile or just using the script yourself: 
+`$ sh casssandra/startup.sh --help`.
 
 # Structure of the application
 
