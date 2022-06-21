@@ -48,8 +48,8 @@ Running the client by itself: `$ npm i && npm run serve`
 
 # Running HashiCorp Vault
 
-Vault can be deployed and initialized with: ```$ make hcpvault```.
-Vault can also be optionally deployed using docker-compose with ```$ sh vault/startup.sh -c -i --root ${PWD}```.
+Vault can be deployed and initialized with: ```$ make hcpvault```.  
+Vault can also be optionally deployed using docker-compose with ```$ sh vault/startup.sh -c -i --root ${PWD}```.  
 
 The sensitive data is in the `vault/vault/data` directory, where you can store data to. `vault/vault` directory also contains configuration for the vault and policies. Because this is ridicously sluggish deployment already, I keep .envs file in this directory to define the environmental variables used in the make recipes, so I can set them fast. The .envs file is just a simple bash script that sets the environmental variables.
 
