@@ -48,19 +48,19 @@ Running the client by itself: `$ npm i && npm run serve`
 
 # Running HashiCorp Vault
 
-Vault can be deployed and initialized with: `$ make hcpvault`.
-Vault can also be optionally deployed using docker-compose with `$ sh vault/startup.sh -c -i --root ${PWD}`
+Vault can be deployed and initialized with: ```$ make hcpvault```.
+Vault can also be optionally deployed using docker-compose with ```$ sh vault/startup.sh -c -i --root ${PWD}```.
 
 The sensitive data is in the `vault/vault/data` directory, where you can store data to. `vault/vault` directory also contains configuration for the vault and policies. Because this is ridicously sluggish deployment already, I keep .envs file in this directory to define the environmental variables used in the make recipes, so I can set them fast. The .envs file is just a simple bash script that sets the environmental variables.
 
-NOTE: `$ make hcpvault` uses predefined arguments to run the vault/startup.sh script, you can change these arguments in the Makefile yourself if you wish or just run the script yourself with arguments `$ sh vault/startup.sh --help` for more.
+NOTE: ```$ make hcpvault``` uses predefined arguments to run the vault/startup.sh script, you can change these arguments in the Makefile yourself if you wish or just run the script yourself with arguments ```$ sh vault/startup.sh --help``` for more.
 
 # Running Redhat Keycloak
 
 Keycloak can be deployed and initialized with: `$ make keycloak`. 
 This deployes and initializes vault with predefined arguments in the make recipe.
 
-You can change these arguments to your liking by changing the Makefile or just using the script yourself: `$ sh keycloak/startup.sh --help`.
+You can change these arguments to your liking by changing the Makefile or just using the script yourself: ```$ sh keycloak/startup.sh --help```.
 
 # Running Apache Cassandra
 
@@ -68,7 +68,7 @@ You can deploy cassandra instance using `$ make casmaster`.
 This deploys and initializes Apache Cassandra instance with predefined scheme and data for the hotelapp application. Note that the cassandra/startup.sh is merely for initialization and the actual deployment is done by a make recipe -> `make master` or `make pair`
 
 You can change these arguments to your liking by changing the Makefile or just using the script yourself: 
-`$ sh casssandra/startup.sh --help`.
+```$ sh casssandra/startup.sh --help```.
 
 # Structure of the application
 
