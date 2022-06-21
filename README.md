@@ -101,19 +101,19 @@ To view secrets you can use `$ docker secret ls`
 
 # Required software
 
-Go compiler +go1.15.15
-Docker +20.10.5
-GCC +10.2
-GNU bash, version 5.1.4(1)-release 
-OpenSSH\_8.4p1
-find (GNU findutils) 4.9.0
-GNU Make 4.3
-sed (GNU sed) 4.7
-jq-1.6
-yq 4.25.1
-openjdk 17.0.3 2022-04-19
-OpenJDK Runtime Environment (build 17.0.3+7)
-OpenJDK 64-Bit Server VM (build 17.0.3+7, mixed mode)
-Gradle 7.4.2
-Node v18.1.0
-npm 8.5.5
+Go compiler +go1.15.15  
+Docker +20.10.5  
+GCC +10.2  
+GNU bash, version 5.1.4(1)-release   
+OpenSSH\_8.4p1  
+find (GNU findutils) 4.9.0  
+GNU Make 4.3  
+sed (GNU sed) 4.7  
+jq-1.6  
+yq 4.25.1  
+openjdk 17.0.3 2022-04-19  
+OpenJDK Runtime Environment (build 17.0.3+7)   
+OpenJDK 64-Bit Server VM (build 17.0.3+7, mixed mode)  
+Gradle 7.4.2  
+Node v18.1.0  
+npm 8.5.5  
