@@ -9,6 +9,11 @@ server:
 swarmhost: 192.168.1.107
 
 #--------------------------#
+# redis
+redis:
+  hostname: ${swarmhost}
+  port: 6379
+#--------------------------#
 spring:
   config:
     import: configserver:http://${swarmhost}:8888/
@@ -16,9 +21,21 @@ spring:
     name: hotel-service
   profiles:
     active: "default"
-#--------------------------#
-#  config:
-#    import: "configserver:http://localhost:8888"
+  data:
+    redis:
+      repositories:
+        enabled: false
+  kafka:
+    consumer:
+      bootstrap-servers: ${swarmhost}:9092
+      group-id: group_id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstrap-servers: ${swarmhost}:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
   cloud:
     config:
       enabled: true

@@ -85,25 +85,6 @@ public class HotelApplication {
   @Bean
   CommandLineRunner testingDB(Environment env) {
     return args -> {
-
-      Date today = new Date();
-
-      Calendar calendar = Calendar.getInstance();
-      calendar.add(Calendar.DAY_OF_MONTH, 7);
-      Date endDate = calendar.getTime();
-      LocalDate endDateLocal = endDate.toInstant()
-        .atZone(ZoneId.systemDefault())
-        .toLocalDate();
-
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      String todayFormatted = sdf.format(new Date());
-
-      Booking newBooking = new Booking(UUID.fromString("e279449-eea0-427c-9707-77a7346ae53d"), Long.valueOf(5), Long.valueOf(20), BookingStatus.Pending, LocalDate.now(), endDateLocal);
-      newBooking.setId(UUID.randomUUID());
-      System.out.println("New booking: \n");
-      System.out.println(newBooking);
-      //bookingRepository.insert();
-      
       System.out.println("/* ***************************************** */");
       System.out.println("   App: " + env.getProperty("spring.application.name"));
       System.out.println("   Profile: " + env.getProperty("spring.profiles.active"));

@@ -1,6 +1,7 @@
 package io.hotely.hotel.entities;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -62,7 +63,7 @@ public class Booking {
   @Column(value = "start_date")
   @CassandraType(type = CassandraType.Name.DATE)
   @JsonProperty("start_date")
-  private LocalDate startDate;
+  private Date startDate;
 
   @NonNull
   @Column(value = "end_date")

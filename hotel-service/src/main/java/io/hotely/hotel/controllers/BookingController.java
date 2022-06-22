@@ -63,11 +63,18 @@ public class BookingController {
   /* Uses a record to create a Booking type with ID, 
    * that can easily be fed to application/json parameters */
   @PostMapping("/createwid")
-  public Booking createWithID(@RequestBody BookingEntity booking) {
+  public Booking createWithID(@RequestBody Booking booking) {
     log.debug("Here's the object: " + booking);
-    Booking newBooking = new Booking(booking.customer_id(), booking.hotel_id(), booking.room_id(), booking.booking_status(), booking.start_date(), booking.end_date());
-    newBooking.setId(booking.id());
-    return bookingRepository.save(newBooking);
+    //Booking newBooking = new Booking(
+    //    booking.customer_id(), 
+    //    booking.hotel_id(), 
+    //    booking.room_id(), 
+    //    booking.booking_status(), 
+    //    booking.start_date(), 
+    //    booking.end_date()
+    //    );
+    //newBooking.setId(booking.id());
+    return bookingRepository.save(booking);
   }
 
   @PostMapping("/create")
@@ -104,7 +111,15 @@ public class BookingController {
   }
 
   @PutMapping("/update/{id}")
-  public Booking update(@RequestParam("id") UUID id, @RequestParam("customer_id") UUID customerId, @RequestParam("room_id") Long roomId, @RequestParam("hotel_id") Long hotelId, @RequestParam("bookingStatus") BookingStatus bookingStatus, @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate) {
+  public Booking update(
+      @RequestParam("id") UUID id, 
+      @RequestParam("customer_id") UUID customerId, 
+      @RequestParam("room_id") Long roomId, 
+      @RequestParam("hotel_id") Long hotelId, 
+      @RequestParam("bookingStatus") BookingStatus bookingStatus, 
+      @RequestParam("startDate") Date startDate, 
+      @RequestParam("endDate") LocalDate endDate
+      ) {
     Booking res = bookingRepository.findById(id)
       .orElseThrow(() -> new BookingNotFoundException(id));
     res.setHotelId(hotelId);
