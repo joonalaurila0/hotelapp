@@ -19,11 +19,7 @@ spring:
         enabled: true
         lowerCaseServiceId: true
     vault:
-<<<<<<< HEAD
       token: s.6cJrk6VbDvHzdpgflQAQgvdi
-=======
-      token: s.YYNCvN6yyWQiVK76xdk8wC5d
->>>>>>> gradleBuild
 #      routes:
 #        - id: customer
 #          uri: lb://customer
