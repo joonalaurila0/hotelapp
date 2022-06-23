@@ -20,8 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.hotely.customer.queue.Producer;
+import io.hotely.customer.services.InvoiceService;
 import io.hotely.customer.entities.Invoice;
-import io.hotely.customer.repositories.InvoiceRepository;
 import io.hotely.customer.controllers.exceptions.InvoiceNotFoundException;
 
 @RestController
@@ -29,48 +30,43 @@ import io.hotely.customer.controllers.exceptions.InvoiceNotFoundException;
 public class InvoiceController {
 
   private static final Logger log = LoggerFactory.getLogger(InvoiceController.class);
+  private final Producer producer;
+  private final InvoiceService invoiceService;
 
   @Autowired
-  private InvoiceRepository invoiceRepository;
+  InvoiceController(Producer producer, InvoiceService invoiceService) {
+    this.producer = producer;
+    this.invoiceService = invoiceService;
+  }
 
   @GetMapping("/all")
-  public ResponseEntity<List<Invoice>> fetchAll() {
-    List<Invoice> res = invoiceRepository.findAll();
-    return new ResponseEntity<>(res, HttpStatus.OK);
+  public List<Invoice> fetchAll() {
+    this.producer.sendMessage("Sending all invoices to the client");
+    return invoiceService.findAll();
   }
 
   @GetMapping("/{id}")
   public Invoice fetchById(@PathVariable("id") UUID id) {
-    return invoiceRepository.findById(id)
-      .orElseThrow(() -> new InvoiceNotFoundException(id));
-  }
-
-  @GetMapping("/customer/{id}")
-  public Iterable<Invoice> fetchByCustomerId(@PathVariable("id") UUID customerId) {
-    return invoiceRepository.findCustomerInvoces(customerId);
+    this.producer.sendMessage("Searching for a invoice by the id of " + id);
+    return invoiceService.findById(id);
   }
 
   @PostMapping("/create")
   public Invoice create(@RequestBody Invoice invoice) {
-    log.debug("Here's the object: " + invoice);
-    invoice.setId(UUID.randomUUID());
-    return invoiceRepository.save(invoice);
+    log.debug("InvoiceController.create called with -> {}", invoice);
+    this.producer.sendMessage("Invoice added " + invoice.toString());
+    return invoiceService.addInvoice(invoice);
   }
 
   @PutMapping("/update/{id}")
-  public Invoice update(@RequestParam("id") UUID id, @RequestParam("total") Float total, @RequestParam("issued") Timestamp issued, @RequestParam("paid") Boolean paid, @RequestParam("paymentDate") LocalDate paymentDate, @RequestParam("cancelled") Boolean cancelled) {
-    Invoice res = invoiceRepository.findById(id)
-      .orElseThrow(() -> new InvoiceNotFoundException(id));
-    res.setTotal(total);
-    res.setIssued(issued);
-    res.setPaid(paid);
-    res.setPaymentDate(paymentDate);
-    res.setCancelled(cancelled);
-    return invoiceRepository.save(res);
+  public Invoice update(@RequestBody Invoice invoice) {
+    this.producer.sendMessage("Searching for a invoice by the id of " + invoice.getId());
+    return invoiceService.updateInvoice(invoice);
   }
 
   @DeleteMapping("/delete/{id}")
   public void deleteById(@PathVariable("id") UUID id) {
-    invoiceRepository.deleteById(id);
+    this.producer.sendMessage("Removing a invoice by the id of " + id);
+    invoiceService.destroyInvoice(id);
   }
 }

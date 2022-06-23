@@ -19,10 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.hotely.customer.queue.Producer;
 import io.hotely.customer.entities.Customer;
 import io.hotely.customer.entities.enums.Role;
 import io.hotely.customer.entities.enums.UserStatus;
-import io.hotely.customer.repositories.CustomerRepository;
+import io.hotely.customer.services.CustomerService;
 import io.hotely.customer.controllers.exceptions.CustomerNotFoundException;
 
 @RestController
@@ -30,64 +31,50 @@ import io.hotely.customer.controllers.exceptions.CustomerNotFoundException;
 public class CustomerController {
 
   private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
+  private final Producer producer;
+  private final CustomerService customerService;
 
   @Autowired
-  private CustomerRepository customerRepository;
+  CustomerController(Producer producer, CustomerService customerService) {
+    this.producer = producer;
+    this.customerService = customerService;
+  }
 
   @GetMapping("/all")
-  public ResponseEntity<List<Customer>> fetchAll() {
-    List<Customer> res = customerRepository.findAll();
-    return new ResponseEntity<>(res, HttpStatus.OK);
+  public List<Customer> fetchAll() {
+    this.producer.sendMessage("Sending all customers to the client");
+    return customerService.findAll();
   }
 
   @GetMapping("/{id}")
   public Customer fetchById(@PathVariable("id") UUID id) {
-    return customerRepository.findById(id)
-      .orElseThrow(() -> new CustomerNotFoundException(id));
+    this.producer.sendMessage("Searching for a customer by the id of " + id);
+    return customerService.findById(id);
   }
 
   // Explicitly meant not to fail
   /** @return 0 if empty, 1 if not empty. */
   @GetMapping("/ask/{id}")
   public int askCustomerById(@PathVariable("id") UUID id) {
-    Optional<Customer> customer = customerRepository.findById(id);
-    if (customer.isEmpty())
-      return 0;
-
-    return 1;
+    return customerService.askCustomerById(id);
   }
 
-  // with id
-  @PostMapping("/createwid")
-  public Customer create_with_id(@RequestParam("id") UUID id, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("role") Role role, @RequestParam("userstatus") UserStatus userstatus) {
-    Customer obj = new Customer(email, password, role, userstatus);
-    obj.setId(id);
-    log.debug("Here's the object: " + obj);
-    return customerRepository.save(obj);
-  }
-
-  // without id
   @PostMapping("/create")
-  public Customer create(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("role") Role role, @RequestParam("userstatus") UserStatus userstatus) {
-    Customer obj = new Customer(email, password, role, userstatus);
-    log.debug(this.getClass().getSimpleName());
-    log.debug("Here's the object: " + obj);
-    return customerRepository.save(obj);
+  public Customer create(@RequestBody Customer customer) {
+    log.debug("CustomerController.create called with -> {}", customer);
+    this.producer.sendMessage("Customer added " + customer.toString());
+    return customerService.addCustomer(customer);
   }
 
   @PutMapping("/update/{id}")
-  public Customer update(@RequestParam("id") UUID id, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("role") Role role, @RequestParam("userstatus") UserStatus userstatus) {
-    Customer res = customerRepository.findById(id)
-      .orElseThrow(() -> new CustomerNotFoundException(id));
-    res.setEmail(email);
-    res.setPassword(password);
-    res.setRole(role);
-    res.setUserstatus(userstatus);
-    return customerRepository.save(res);
+  public Customer update(@RequestBody Customer customer) {
+    this.producer.sendMessage("Searching for a customer by the id of " + customer.getId());
+    return customerService.updateCustomer(customer);
   }
 
   @DeleteMapping("/delete/{id}")
   public void deleteById(@PathVariable("id") UUID id) {
-    customerRepository.deleteById(id);
+    this.producer.sendMessage("Removing a customer by the id of " + id);
+    customerService.destroyCustomer(id);
   }
 }

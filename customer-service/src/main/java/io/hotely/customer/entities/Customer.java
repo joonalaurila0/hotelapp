@@ -10,6 +10,8 @@ import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.cql.Ordering;
 import org.springframework.data.cassandra.core.mapping.Table;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.annotation.Id;
 
 import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,6 +22,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+@RedisHash(value = "Customer", timeToLive = 300000)
 @Table(value = "customers")
 @Getter
 @Setter
@@ -27,6 +30,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public class Customer {
 
+  @Id
   @PrimaryKey
   @PrimaryKeyColumn(name = "id", ordinal = 2, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
   @CassandraType(type = CassandraType.Name.UUID)

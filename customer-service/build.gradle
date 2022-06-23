@@ -31,6 +31,12 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-config")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 
+    implementation("org.springframework.kafka:spring-kafka")
+    implementation("org.springframework.data:spring-data-redis")
+
+    // Redis Client
+    implementation("redis.clients:jedis:3.7.1")
+
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
     testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
