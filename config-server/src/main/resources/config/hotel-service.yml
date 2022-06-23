@@ -10,7 +10,11 @@ spring:
       uri: http://localhost:8200
       scheme: http
       authentication: TOKEN
+<<<<<<< HEAD
       token: s.6cJrk6VbDvHzdpgflQAQgvdi
+=======
+      token: s.eFykp4q7Aj3SXQgrxoC4Uizw
+>>>>>>> gradleBuild
       defaultKey: application
   data:
     # Casandra configuration

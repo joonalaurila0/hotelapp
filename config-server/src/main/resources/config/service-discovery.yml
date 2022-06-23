@@ -17,7 +17,11 @@ spring:
     config:
       enabled: false
     vault:
+<<<<<<< HEAD
       token: s.6cJrk6VbDvHzdpgflQAQgvdi
+=======
+      token: s.eFykp4q7Aj3SXQgrxoC4Uizw
+>>>>>>> gradleBuild
 #-----------------------------------------------#
 eureka:
   datacenter: cloud
