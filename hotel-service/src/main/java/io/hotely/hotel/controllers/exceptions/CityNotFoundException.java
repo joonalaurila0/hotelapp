@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class CityNotFoundException extends RuntimeException {
-  public CityNotFoundException(Long id) {
+  public CityNotFoundException(Integer id) {
     super("Could not find city with id: " + id);
   }
 }

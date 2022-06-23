@@ -24,7 +24,7 @@ public class CityController {
 
   private static Logger log = LoggerFactory.getLogger(CityController.class);
   private final Producer producer;
-  private CityService cityService;
+  private final CityService cityService;
 
   @Autowired
   CityController(CityService cityService, Producer producer) {

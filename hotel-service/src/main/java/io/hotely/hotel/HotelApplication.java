@@ -78,7 +78,7 @@ public class HotelApplication {
         if (file.exists())
           Files.write(Paths.get(filePath), bean.concat("\n").getBytes(), StandardOpenOption.APPEND);
       } catch (IOException e) { e.printStackTrace(); }
-      System.out.println("Bean initialized: " + bean); 
+      //System.out.println("Bean initialized: " + bean); 
     }
   }
 

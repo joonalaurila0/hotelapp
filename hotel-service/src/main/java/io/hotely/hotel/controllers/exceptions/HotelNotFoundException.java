@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class HotelNotFoundException extends RuntimeException {
-  public HotelNotFoundException(Long id) {
+  public HotelNotFoundException(Integer id) {
     super("Could not find Hotel with id: " + id);
   }
 }

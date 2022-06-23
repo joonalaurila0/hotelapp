@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
+import io.hotely.hotel.queue.Producer;
+import io.hotely.hotel.services.BookingService;
 import io.hotely.hotel.controllers.exceptions.BookingNotFoundException;
-import io.hotely.hotel.controllers.json.BookingEntity;
 import io.hotely.hotel.controllers.json.InvoiceEntity;
 import io.hotely.hotel.entities.Booking;
 import io.hotely.hotel.entities.BookingStatus;
@@ -37,51 +37,40 @@ public class BookingController {
 
   private static Logger log = LoggerFactory.getLogger(BookingController.class);
 
-  @Autowired
-  private BookingRepository bookingRepository;
+  private final Producer producer;
+  private final BookingService bookingService;
+  private final CustomerProxy customerProxy;
 
   @Autowired
-  private CustomerProxy customerProxy;
+  BookingController(BookingService bookingService, CustomerProxy customerProxy, Producer producer) {
+    this.bookingService = bookingService;
+    this.customerProxy = customerProxy;
+    this.producer = producer;
+  }
 
   @GetMapping("/all")
-  public ResponseEntity<List<Booking>> fetchAll() {
-    List<Booking> res = bookingRepository.findAll();
-    return new ResponseEntity<>(res, HttpStatus.OK);
+  public List<Booking> fetchAll() {
+    this.producer.sendMessage("Sending all bookings to client");
+    return bookingService.findAll();
   }
 
   @GetMapping("/{id}")
   public Booking fetchById(@PathVariable("id") UUID id) {
-    return bookingRepository.findById(id)
-      .orElseThrow(() -> new BookingNotFoundException(id));
+    this.producer.sendMessage("Searching for booking by the id of " + id);
+    return bookingService.findById(id);
   }
   
   @GetMapping("/customer/{id}")
   public Iterable<Booking> findCustomerBookings(@PathVariable("id") UUID customerId) {
-    return bookingRepository.findCustomerBookings(customerId);
-  }
-
-  /* Uses a record to create a Booking type with ID, 
-   * that can easily be fed to application/json parameters */
-  @PostMapping("/createwid")
-  public Booking createWithID(@RequestBody Booking booking) {
-    log.debug("Here's the object: " + booking);
-    //Booking newBooking = new Booking(
-    //    booking.customer_id(), 
-    //    booking.hotel_id(), 
-    //    booking.room_id(), 
-    //    booking.booking_status(), 
-    //    booking.start_date(), 
-    //    booking.end_date()
-    //    );
-    //newBooking.setId(booking.id());
-    return bookingRepository.save(booking);
+    this.producer.sendMessage("Searching for all customer bookings, customerId ->" + customerId);
+    return bookingService.findCustomerBookings(customerId);
   }
 
   @PostMapping("/create")
   public Booking create(@RequestBody Booking booking) {
-    log.debug("Here's the object: " + booking);
-    booking.setId(UUID.randomUUID());
-    return bookingRepository.save(booking);
+    log.debug("BookingController.create called with -> {}", booking);
+    this.producer.sendMessage("Creating a booking by the id of " + booking.getId());
+    return bookingService.addBooking(booking);
   }
 
   /** @return {@link InvoiceEntity} 
@@ -92,10 +81,9 @@ public class BookingController {
         @RequestHeader(value = "Authorization") 
         String authHeader, @RequestBody Booking newBooking
         ) {
-    // Creates a Booking class from the record BookingEntity class and sets the ID.
+    // Creates a Booking class from the record Booking class and sets the ID.
     log.debug("Booking made: {}", newBooking);
-    newBooking.setId(UUID.randomUUID());
-    Booking result = bookingRepository.save(newBooking);
+    Booking result = bookingService.addBooking(newBooking);
 
     if (result != null) {
       InvoiceEntity invoiceEntity = new InvoiceEntity(
@@ -111,27 +99,14 @@ public class BookingController {
   }
 
   @PutMapping("/update/{id}")
-  public Booking update(
-      @RequestParam("id") UUID id, 
-      @RequestParam("customer_id") UUID customerId, 
-      @RequestParam("room_id") Long roomId, 
-      @RequestParam("hotel_id") Long hotelId, 
-      @RequestParam("bookingStatus") BookingStatus bookingStatus, 
-      @RequestParam("startDate") Date startDate, 
-      @RequestParam("endDate") LocalDate endDate
-      ) {
-    Booking res = bookingRepository.findById(id)
-      .orElseThrow(() -> new BookingNotFoundException(id));
-    res.setHotelId(hotelId);
-    res.setRoomId(roomId);
-    res.setStartDate(startDate);
-    res.setEndDate(endDate);
-    res.setBookingStatus(bookingStatus);
-    return bookingRepository.save(res);
+  public Booking update(@RequestBody Booking booking) {
+    this.producer.sendMessage("Updating a booking by the id of " + booking.getId());
+    return bookingService.updateBooking(booking);
   }
 
   @DeleteMapping("/delete/{id}")
   public void deleteById(@PathVariable("id") UUID id) {
-    bookingRepository.deleteById(id);
+    this.producer.sendMessage("Removing a booking by the id of " + id);
+    bookingService.destroyBooking(id);
   }
 }

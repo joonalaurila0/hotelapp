@@ -17,51 +17,54 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.hotely.hotel.services.HotelService;
 import io.hotely.hotel.controllers.exceptions.HotelNotFoundException;
 import io.hotely.hotel.entities.Hotel;
 import io.hotely.hotel.repositories.HotelRepository;
+import io.hotely.hotel.queue.Producer;
 
 @RestController
 @RequestMapping(value = "/hotels")
 public class HotelController {
 
   private static Logger log = LoggerFactory.getLogger(HotelController.class);
+  private final Producer producer;
+  private final HotelService hotelService;
 
   @Autowired
-  private HotelRepository hotelRepository;
+  HotelController(Producer producer, HotelService hotelService) {
+    this.producer = producer;
+    this.hotelService = hotelService;
+  }
 
   @GetMapping("/all")
-  public ResponseEntity<List<Hotel>> fetchAll() {
-    List<Hotel> res = hotelRepository.findAll();
-    return new ResponseEntity<>(res, HttpStatus.OK);
+  public List<Hotel> fetchAll() {
+    this.producer.sendMessage("Sending all hotels to client");
+    return hotelService.findAll();
   }
 
   @GetMapping("/{id}")
-  public Hotel fetchById(@PathVariable("id") Long id) {
-    return hotelRepository.findById(id)
-      .orElseThrow(() -> new HotelNotFoundException(id));
+  public Hotel fetchById(@PathVariable("id") Integer id) {
+    this.producer.sendMessage("Searching for hotel by the id of " + id);
+    return hotelService.findById(id);
   }
 
   @PostMapping("/create")
   public Hotel create(@RequestBody Hotel hotel) {
-    log.debug("Here's the object: " + hotel);
-    return hotelRepository.save(hotel);
+    log.debug("HotelController.create called with -> {}", hotel);
+    this.producer.sendMessage("Hotel added " + hotel.toString());
+    return hotelService.addHotel(hotel);
   }
 
   @PutMapping("/update/{id}")
-  public Hotel update(@PathVariable("id") Long id, @RequestParam("img") String img, @RequestParam("location") String location, @RequestParam("name") String name, @RequestParam("email") String email, @RequestParam("phone") String phone) {
-    Hotel res = hotelRepository.findById(id)
-      .orElseThrow(() -> new HotelNotFoundException(id));
-    res.setImg(img);
-    res.setLocation(location);
-    res.setName(name);
-    res.setEmail(email);
-    res.setPhone(phone);
-    return hotelRepository.save(res);
+  public Hotel update(@RequestBody Hotel hotel) {
+    this.producer.sendMessage("Searching for hotel by the id of " + hotel.getId());
+    return hotelService.updateHotel(hotel);
   }
 
   @DeleteMapping("/delete/{id}")
-  public void deleteById(@PathVariable("id") Long id) {
-    hotelRepository.deleteById(id);
+  public void deleteById(@PathVariable("id") Integer id) {
+    this.producer.sendMessage("Removing a hotel by the id of " + id);
+    hotelService.destroyHotel(id);
   }
 }

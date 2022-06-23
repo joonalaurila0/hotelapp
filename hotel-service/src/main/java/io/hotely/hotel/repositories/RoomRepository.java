@@ -8,4 +8,4 @@ import io.hotely.hotel.entities.Room;
 
 @Transactional
 @Repository
-public interface RoomRepository extends CassandraRepository<Room, Long> {}
+public interface RoomRepository extends CassandraRepository<Room, Integer> {}

@@ -18,50 +18,51 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.hotely.hotel.controllers.exceptions.RoomNotFoundException;
 import io.hotely.hotel.entities.Room;
-import io.hotely.hotel.repositories.RoomRepository;
+import io.hotely.hotel.services.RoomService;
+import io.hotely.hotel.queue.Producer;
 
 @RestController
 @RequestMapping(value = "/rooms")
 public class RoomController {
 
   private static Logger log = LoggerFactory.getLogger(RoomController.class);
+  private final Producer producer;
+  private final RoomService roomService;
 
   @Autowired
-  private RoomRepository roomRepository;
+  RoomController(Producer producer, RoomService roomService) {
+    this.producer = producer;
+    this.roomService = roomService;
+  }
 
   @GetMapping("/all")
-  public ResponseEntity<List<Room>> fetchAll() {
-    List<Room> res = roomRepository.findAll();
-    return new ResponseEntity<>(res, HttpStatus.OK);
+  public List<Room> fetchAll() {
+    this.producer.sendMessage("Sending all rooms to client");
+    return roomService.findAll();
   }
 
   @GetMapping("/{id}")
-  public Room fetchById(@PathVariable("id") Long id) {
-    return roomRepository.findById(id)
-      .orElseThrow(() -> new RoomNotFoundException(id));
+  public Room fetchById(@PathVariable("id") Integer id) {
+    this.producer.sendMessage("Searching for room by the id of " + id);
+    return roomService.findById(id);
   }
 
   @PostMapping("/create")
   public Room create(@RequestBody Room room) {
-    log.debug("Here's the object: " + room);
-    return roomRepository.save(room);
+    log.debug("RoomController.create called with -> {}", room);
+    this.producer.sendMessage("Room added " + room.toString());
+    return roomService.addRoom(room);
   }
 
   @PutMapping("/update/{id}")
-  public Room update(@PathVariable("id") Long id, @RequestBody Room room) {
-    Room res = roomRepository.findById(id)
-      .orElseThrow(() -> new RoomNotFoundException(id));
-    res.setHotel_id(room.getHotel_id());
-    res.setRoom_area(room.getRoom_area());
-    res.setAvailability(room.getAvailability());
-    res.setBooking_price(room.getBooking_price());
-    res.setRoom_status(room.getRoom_status());
-    res.setCapacity(room.getCapacity());
-    return roomRepository.save(res);
+  public Room update(@PathVariable("id") Integer id, @RequestBody Room room) {
+    this.producer.sendMessage("Searching for Room by the id of " + room.getId());
+    return roomService.updateRoom(room);
   }
 
   @DeleteMapping("/delete/{id}")
-  public void deleteById(@PathVariable("id") Long id) {
-    roomRepository.deleteById(id);
+  public void deleteById(@PathVariable("id") Integer id) {
+    this.producer.sendMessage("Removing a hotel by the id of " + id);
+    roomService.destroyRoom(id);
   }
 }
