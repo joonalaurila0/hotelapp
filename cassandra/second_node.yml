@@ -1,0 +1,43 @@
+version: '3.9'
+
+networks:
+  perunanetti:
+    attachable: true
+
+# NOTE: Make sure you have defined the SWARMHOST environment variable to main host ip.
+services:
+  cas-slave:
+    image: cassandra:4.0.1
+    networks:
+      - perunanetti
+    environment:
+      MAX_HEAP_SIZE: '128m'
+      HEAP_NEWSIZE: '32m'
+      CASSANDRA_USER: 'cassandra'
+      CASSANDRA_PASSWORD: 'cassandra'
+      CASSANDRA_DC: 'datacenter1'
+      CASSANDRA_BROADCAST_ADDRESS: "${SWARMHOST}"
+      CASSANDRA_SEEDS: "${SWARMHOST}"
+      CASSANDRA_KEYSPACE_CQL: "CREATE KEYSPACE hotelapp2 WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1}"
+    ports:
+      - "9043:9042"
+    depends_on:
+      - cas-master
+    healthcheck:
+      test: ["CMD", "nodetool", "status"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    deploy:
+      placement:
+        constraints:
+          - node.labels.cass-node == true
+          - node.hostname == x220
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      update_config:
+        order: 'stop-first'
+      rollback_config:
+        order: 'stop-first'

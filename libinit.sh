@@ -1,9 +1,12 @@
 #!/bin/sh
+# libinit.sh 2022-04-02
 # Provides functions for checking container health and initialization process.
 
 set -e
 set -u
 set -o pipefail
+
+# DEBUG
 #set -x
 
 prog_exists() {
@@ -27,13 +30,27 @@ test_host_connection() {
   fi
 }
 
+# Outputs the current docker context to stdin
 get_current_ctx() {
   docker context inspect --format '{{ .Name }}'
 }
 
+# Notice: docker context has to be local for this to work!
 resolve_cid() {
   image=$1
   docker ps --filter "ancestor=$image" -q
+}
+
+# Notice: docker context has to be local for this to work!
+resolve_cid_by_name() {
+  name=$1
+  docker ps --filter "name=$name" -q
+}
+
+# Stack name $1
+# Name of the container $2
+resolve_cid_stack_by_name() {
+  docker stack ps $1 --filter "name=$2" -q
 }
 
 # Sleeps until container health is healthy

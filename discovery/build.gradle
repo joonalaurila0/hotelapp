@@ -1,0 +1,57 @@
+plugins {
+    id "application"
+    id "org.springframework.boot" version "2.6.7"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+    // id 'idea' // optional (to generate IntelliJ IDEA project files)
+}
+
+repositories {
+    mavenCentral()
+}
+
+project.ext.springVersion = "5.3.19"
+project.ext.springBootVersion = "2.6.7"
+project.ext.springCloudVersion = "2021.0.0"
+project.ext.lombokVersion = "1.18.24"
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    // Spring Boot Dependencies 
+    implementation('org.springframework.boot:spring-boot-starter-actuator')
+
+    // Spring Cloud Dependencies
+    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
+    implementation('org.springframework.cloud:spring-cloud-starter-config')
+
+    // https://projectlombok.org/download
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+}
+
+configurations.all {
+    resolutionStrategy {
+        failOnDynamicVersions()
+    }
+}
+
+application {
+    mainClass = "io.hotely.discovery.DiscoveryApplication"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    consistentResolution {
+        useCompileClasspathVersions()
+    }
+}
+
+wrapper.gradleVersion = "7.4.2"

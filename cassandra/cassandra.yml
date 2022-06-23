@@ -8,19 +8,19 @@ volumes:
   cass_data:
     external: true
 
+# NOTE: Make sure you have defined the SWARMHOST environment variable to main host ip.
 services:
-  cassandra:
+  cas-master:
     image: cassandra:4.0.1
     networks:
       - perunanetti
     environment:
-      MAX_HEAP_SIZE: '2G'
-      HEAP_NEWSIZE: '200M'
+      MAX_HEAP_SIZE: '128m'
+      HEAP_NEWSIZE: '32m'
       CASSANDRA_USER: 'cassandra'
       CASSANDRA_PASSWORD: 'cassandra'
       CASSANDRA_DC: 'datacenter1'
-      CASSANDRA_BROADCAST_ADDRESS: "192.168.1.107"
-#      CASSANDRA_BROADCAST_ADDRESS: "192.168.1.105"
+      CASSANDRA_BROADCAST_ADDRESS: "${SWARMHOST}"
       CASSANDRA_KEYSPACE_CQL: "CREATE KEYSPACE hotelapp WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1}"
     ports:
       - "9042:9042"

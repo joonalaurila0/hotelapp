@@ -1,6 +1,6 @@
 .contact {
-  max-height: 100vh;
-  height: 100vh;
+  max-height: 110vh;
+  height: 110vh;
   position: relative;
   display: grid;
   grid-template-rows: 17% 1fr;

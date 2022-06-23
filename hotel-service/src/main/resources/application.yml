@@ -1,0 +1,71 @@
+test:
+  test: 100
+#--------------------------#
+server:
+  port: 8001
+
+#--------------------------#
+# Defines the master node ip
+swarmhost: 192.168.1.107
+
+#--------------------------#
+# redis
+redis:
+  hostname: ${swarmhost}
+  port: 6379
+#--------------------------#
+spring:
+  config:
+    import: configserver:http://${swarmhost}:8888/
+  application:
+    name: hotel-service
+  profiles:
+    active: "default"
+  data:
+    redis:
+      repositories:
+        enabled: false
+  kafka:
+    consumer:
+      bootstrap-servers: ${swarmhost}:9092
+      group-id: group_id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstrap-servers: ${swarmhost}:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  cloud:
+    config:
+      enabled: true
+      profile: "default"
+      uri: http://${swarmhost}:8888
+      import: configserver:http://${swarmhost}:8888
+
+#--------------------------#
+
+eureka:
+  client:
+    preferIpAddress: true
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://${swarmhost}:8761/eureka/
+  instance:
+    hostname: ${swarmhost}
+    #preferIpAddress: true
+    lease-renewal-interval-in-seconds: 120
+    lease-expiration-duration-in-seconds: 240
+#--------------------------#
+management:
+  endpoints:
+  restart:
+    enabled: true
+    web:
+      exposure:
+        include: "*"
+        exclude: "env,beans"
+endpoints:
+  restart:
+    enabled: true

@@ -1,21 +1,77 @@
+server:
+  port: 8072
+
+#-----------------------------------------------#
+
+# https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
+kc-provider-conf: 'http://192.168.1.107:8080/realms/master/.well-known/openid-configuration'
+
+# Defines the master node ip
 swarmhost: 192.168.1.107
+
 spring:
-  config:
-    import: configserver:http://${swarmhost}:8888/
+#  config:
+#    import: configserver:http://${swarmhost}:8888/
   application:
     name: gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://${swarmhost}:8080/realms/master
+          jwk-set-uri: http://${swarmhost}:8080/realms/master/protocol/openid-connect/certs 
   cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods: "*"
+      discovery.locator:
+        enabled: true
+        lowerCaseServiceId: true
+      routes:
+        - id: customer
+          uri: http://${swarmhost}:8000/
+          predicates:
+            - Path=/customer/**
+        - id: hotel
+          uri: http://${swarmhost}:8001/ 
+          predicates:
+            - Path=/hotel/**
     config:
+      enabled: false
+      fail-fast: true
+      profile: default
       uri: http://${swarmhost}:8888
-      #uri: http://${swarmhost}:8071
 #-----------------------------------------------#
+eureka:
+  instance:
+    hostname: ${swarmhost}
+    preferIpAddress: true
+  client:
+    preferIpAddress: true
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://${swarmhost}:8761/eureka/
+      #defaultZone: ${EUREKA_URI:http://${swarmhost}:8761/eureka}
+#-----------------------------------------------#
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 logging:
   level:
-    io.hotely: DEBUG
-    io.netflix: WARN
-    org.springframework.web: WARN
-    org.springframework.cloud.gateway: TRACE
-    org.springframework.http.server.reactive: DEBUG
-    org.springframework.web.reactive: DEBUG
-    reactor.ipc.netty: DEBUG
-    reactor.netty: DEBUG
+    io.hotely: TRACE
+    org.springframework.security.oauth2.jwt: TRACE
+#    reactor.netty: TRACE
+#    reactor.ipc.netty: DEBUG
+#    io.netflix: WARN
+#    org.springframework.web: WARN
+#    org.springframework.cloud.gateway: WARN
+#    org.springframework.security.web: WARN
+#    org.springframework.http.server.reactive: WARN
+#    org.springframework.web.reactive: WARN

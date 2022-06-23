@@ -1,0 +1,33 @@
+# Docker Compose file reference: https://docs.docker.com/compose/compose-file/
+version: '3.9'
+
+networks:
+  perunanetti:
+    driver: overlay
+    driver_opts:
+      encrypted: 'true'
+    attachable: true
+    external: true
+
+services:
+  client:
+    image: hotelapp/client:1.0
+    depends_on:
+      - gateway
+      - keycloak
+    networks:
+      - perunanetti
+    ports:
+      - "8081:8081"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == tau
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      update_config:
+        order: 'stop-first'
+      rollback_config:
+        order: 'stop-first'

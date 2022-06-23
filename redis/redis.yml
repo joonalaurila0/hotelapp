@@ -1,0 +1,33 @@
+version: "3.9"
+
+networks:
+  perunanetti:
+    driver: overlay
+    driver_opts:
+      encrypted: 'true'
+    attachable: true
+    external: true
+
+services:
+  redis:
+    container_name: redis
+    image: redis:7.0.2-bullseye
+    ports:
+      - "6379:6379"
+    networks:
+      - perunanetti
+    healthcheck:
+      test: redis-cli ping
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == tau
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure

@@ -4,15 +4,15 @@
   grid-template-columns: repeat(3, 1fr); 
   grid-template-rows: repeat(4, 1fr);
   height: 100vh;
-  background: rgb(249,244,239);
-  background: linear-gradient(90deg, rgba(249,244,239,1) 9%, rgba(249,244,239,1) 21%, rgba(249,244,239,1) 41%, rgba(249,244,239,1) 50%, rgba(175,167,162,1) 71%); 
+  background: rgb(47,32,18);
+  background: linear-gradient(90deg, rgb(47, 32, 18) 60%, rgb(175, 167, 162) 100%);
   z-index: -2;
 }
 
 .imageColumn {
   display: grid;
   grid-area: 1 / 3 / 6 / 4;
-  background-image: url("./../../../html/static/columndog.jpg");
+  background-image: url("./../../../public/static/column2.webp");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -20,48 +20,71 @@
   place-items: end end;
 }
 
-.imageColumn_LANG_SELECT {
-  padding: 0 2.5rem;
+.imageColumn_WRAPPER {
   display: flex;
-  align-content: center;
-  align-items: center;
-  flex-direction: row;
-  justify-content: center;
+  width: 100%;
 }
 
-.imageColumn_LANG_SELECT >* {
+.imageColumn_AUTH {
+  font-size: 1.8rem;
+  color: white;
+  font-style: italic;
+  font-weight: 300;
   display: flex;
-  font-size: 1.1rem;
-  margin: 1rem;
+  align-items: start;
+  justify-content: space-around;
+  display: flex;
+  flex-grow: 1;
+}
 
-  cursor: pointer;
+.imageColumn_AUTH > * {
   transition: ease-in-out .3s;
+}
+
+.imageColumn_AUTH > *:hover {
+  color: orange;
+}
+
+.imageColumn_LANG_SELECT {
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-around;
+}
+
+.imageColumn_LANG_SELECT > * {
+  font-size: 1.1rem;
+
+  transition: ease-in-out .3s;
+  padding-top: 0.5rem;
+  justify-content: center;
+
+  height: auto;
+  width: 35px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.85;
+  cursor: pointer;
 }
 
 .imageColumn_LANG_SELECT >*:hover {
   color: orange;
 }
 
-.imageColumn_LANG_SELECT >* >* {
-  margin-left: 0.5rem;
+.imageColumn_LANG_SELECT .langbox:hover p {
+  transition: all ease-in-out .5s;
+  color: orange;
+}
+
+.imageColumn_LANG_SELECT .langbox {
+  display: flex;
 }
 
 #finflag {
-  height: 25px;
-  width: 35px;
-  background-image: url("./../../../html/static/finland.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  opacity: 0.85;
+  background-image: url("./../../../public/static/finland.svg");
 }
 
 #enflag {
-  height: 25px;
-  width: 35px;
-  background-image: url("./../../../html/static/eng.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  opacity: 0.85;
+  background-image: url("./../../../public/static/eng.svg");
 }
 
 .imageColumn p {
@@ -89,7 +112,7 @@
   font-size: 2.6rem;
   font-style: italic;
   font-weight: 300;
-  color: #716040;
+  color: #c0af8f;
   height: 3.6rem;
 }
 

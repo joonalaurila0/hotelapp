@@ -1,0 +1,72 @@
+test:
+  data2: 421
+
+#-----------------------------------------------#
+server:
+  port: 8000
+#-----------------------------------------------#
+# Defines the master node ip
+swarmhost: 192.168.1.107
+#-----------------------------------------------#
+redis:
+  hostname: ${swarmhost}
+  port: 6379
+#-----------------------------------------------#
+spring:
+  config:
+    import: configserver:http://${swarmhost}:8888/
+  application:
+    name: customer-service
+  profiles:
+    active:
+      "default"
+  cloud:
+    config:
+      fail-fast: true
+      profile: default
+      enabled: true
+      uri: http://${swarmhost}:8888
+      import: configserver:http://${swarmhost}:8888
+  data:
+    redis:
+      repositories:
+        enabled: false
+  kafka:
+    consumer:
+      bootstrap-servers: ${swarmhost}:9092
+      group-id: group_id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstrap-servers: ${swarmhost}:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#-----------------------------------------------#
+
+eureka:
+  client:
+    preferIpAddress: true
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://${swarmhost}:8761/eureka/
+  instance:
+    hostname: ${swarmhost}
+    #preferIpAddress: true
+    lease-renewal-interval-in-seconds: 120
+    lease-expiration-duration-in-seconds: 240
+#-----------------------------------------------#
+clientSecret: zjpSKq1HEj2RRqiIpb
+#--------------------------#
+management:
+  endpoints:
+  restart:
+    enabled: true
+    web:
+      exposure:
+        include: "*"
+        exclude: "env,beans"
+endpoints:
+  restart:
+    enabled: true

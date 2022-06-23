@@ -1,0 +1,47 @@
+test:
+  data: 111
+  data2: 420
+#--
+spring:
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      uri: http://localhost:8200
+      scheme: http
+      authentication: TOKEN
+      token: s.6cJrk6VbDvHzdpgflQAQgvdi
+      defaultKey: application
+  data:
+    # Casandra configuration
+    cassandra:
+      local-datacenter: "datacenter1"
+      port: 9042
+      contact-points: ${swarmhost}:9042
+      schema-action: "CREATE_IF_NOT_EXISTS"
+      username: ${cassuser}
+      password: ${casspass}
+      keyspace-name: "hotelapp"
+      request:
+        timeout: 10s
+      connection:
+        connect-timeout: 10s
+        init-query-timeout: 10s
+#--------------------------------------#
+
+#eureka:
+#  instance:
+#    preferIpAddress: true
+#    leaseRenewalIntervalInSeconds: 120
+#    leaseExpirationDurationInSeconds: 240
+#  client:
+#    serviceUrl:
+#      defaultZone: http://${swarmhost}:8761/eureka/
+#    healthcheck:
+#      enabled: true
+#    lease:
+#      duration: 60
+#--------------------------------------#
+logging.level.root: "warn"
+logging.level.org.springframework.web: "DEBUG"
+logging.level.org.hibernate: "ERROR"

@@ -1,0 +1,45 @@
+test:
+  data: 111
+  data2: 420
+#-----------------------------------------------#
+swarmhost: 192.168.1.107
+#-----------------------------------------------#
+server:
+  port: 8761
+#-----------------------------------------------#
+spring:
+  profiles:
+    active: "default"
+  boot:
+    admin:
+      context-path: /admin
+  cloud:
+    config:
+      enabled: false
+    vault:
+      token: s.6cJrk6VbDvHzdpgflQAQgvdi
+#-----------------------------------------------#
+eureka:
+  datacenter: cloud
+  environment: prod
+  dashboard:
+    path: /dashboard
+    enabled: true
+  instance:
+    preferIpAddress: true
+    hostname: localhost
+    #hostname: ${swarmhost}
+  client:
+    preferIpAddress: true
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${swarmhost}:${server.port}/eureka/
+  server:
+    waitTimeInMsWhenSyncEmpty: 5
+#-----------------------------------------------#
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -1,0 +1,47 @@
+version: "3.9"
+
+networks:
+  perunanetti:
+    driver: overlay
+    driver_opts:
+      encrypted: 'true'
+    attachable: true
+    external: true
+
+services:
+  kafka:
+    container_name: kafka
+    image: quay.io/strimzi/kafka:0.29.0-kafka-3.2.0-amd64
+    command:
+      [
+        "sh",
+        "-c",
+        "export CLUSTER_ID=$$(bin/kafka-storage.sh random-uuid) && bin/kafka-storage.sh format -t $$CLUSTER_ID -c config/kraft/server.properties && bin/kafka-server-start.sh config/kraft/server.properties --override advertised.listeners=$${KAFKA_ADVERTISED_LISTENERS} --override listener.security.protocol.map=$${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP} --override listeners=$${KAFKA_LISTENERS}",
+      ]
+    ports:
+      - "9092:9092"
+    environment:
+      LOG_DIR: "/tmp/logs"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:29092,PLAINTEXT_HOST://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://192.168.1.107:9092
+    networks:
+      - perunanetti
+#    healthcheck:
+#      test: bin/kafka-topics.sh --bootstrap-server 127.0.0.1:9092 --list
+#      interval: 15s
+#      timeout: 10s
+#      retries: 10
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == tau
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      update_config:
+        order: 'stop-first'
+        delay: 10s
+      rollback_config:
+        order: 'stop-first' 

@@ -1,82 +1,73 @@
-import './contact.css'
-import { useFormik } from 'formik'
-import * as Yup from 'yup'
+import './contact.css';
 import { RowField, ColumnRow, InputField, TextareaField } from '../form-components/form-components';
 
-interface FormValues {
-  email: string;
-  name: string;
-  message: string;
-}
-
-const validationSchema = Yup.object({
-  name: Yup.string().required('Required'),
-  email: Yup.string().email('Invalid email').required('Required'),
-  message: Yup.string().required('Required')
-})
+// This was for form evaluation.
+//interface FormValues {
+//  firstname: string;
+//  lastname: string;
+//  email: string;
+//  street: string;
+//  zipcode: string;
+//  city: string;
+//  additionalinfo: string;
+//}
 
 const Contact = () => {
-  const formik = useFormik<FormValues>({
-    initialValues: {
-      email: '',
-      name: '',
-      message: ''
-    },
-    validationSchema: validationSchema,
-    onSubmit: (values: FormValues) => {
-      alert(JSON.stringify(values, null, 2));
-    },
-  })
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    alert('Submit succesful, thank you contact.');
+  };
   return (
     <div className='contact' id='contact'>
       <h1>Contact and Customer Support</h1>
       <div />
       <div className='contactform' style={{ justifySelf: 'center' }}>
         <div className='container'>
-          <form action=''>
+          <form onSubmit={onSubmit}>
             <RowField>
               <ColumnRow>
-                <InputField field={"First name"} />
+                <InputField field={'First name'} />
               </ColumnRow>
               <ColumnRow>
-                <InputField field={"Last name"} />
+                <InputField field={'Last name'} />
               </ColumnRow>
             </RowField>
             <RowField>
               <ColumnRow>
-                <InputField field={"Email"} />
+                <InputField field={'Email'} />
               </ColumnRow>
               <ColumnRow>
-                <InputField field={"Street"} />
+                <InputField field={'Street'} />
               </ColumnRow>
             </RowField>
             <RowField>
               <ColumnRow>
-                <InputField field={"Zip code"} />
+                <InputField field={'Zip code'} />
               </ColumnRow>
               <ColumnRow>
-                <InputField field={"City"} />
+                <InputField field={'City'} />
               </ColumnRow>
             </RowField>
             <RowField>
               <ColumnRow>
-                <TextareaField field={"Additional Info"} />
+                <TextareaField field={'Additional Info'} />
               </ColumnRow>
             </RowField>
-            <input 
+            <input
               className='container__submit'
-              type='submit' 
-              value='Submit' 
+              name='submit_button'
+              type='submit'
+              value='Submit'
               style={{
                 width: '90%',
-                alignSelf: 'center'
+                alignSelf: 'center',
               }}
             />
           </form>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Contact;

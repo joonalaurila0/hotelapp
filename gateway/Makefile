@@ -1,9 +1,20 @@
 APP := gateway
+STACK := hotelapp
 JAVA_IMAGE := hotelapp/gateway
-JAR_FILE := gateway-0.0.1-SNAPSHOT.jar
+JAR_FILE := gateway.jar
 IMAGES := openjdk:17-slim-bullseye
 TAG := 1.0
 TIME := 3
+
+# This variable is used for the import recipe.
+# Specify the host you wish to import the image into.
+# It is an environment variable, you can define it as 
+# the remote host ip you wish to use, if you're doing
+# a multihost deployment.
+REMOTE_HOST := $(REMOTEHOST_TWO)
+
+# This specifies the location that will be used to import the image
+REMOTE_HOST_LOCATION := /home/efc/docker-images/
 
 # see if directory has git by calling the branch
 ifeq ($(strip $(git branch --show-current 2> /dev/null)),)
@@ -24,6 +35,15 @@ endif
 
 .PHONY: metadata
 
+findjar:
+	find build/ -iname '*.jar'
+
+classpath:
+	ag -G .java 'public static void main' src 
+
+jarinfo:
+	debugfs -R 'stat <$(shell stat -c %i build/libs/$(JAR_FILE))>' /dev/sdb2
+
 metadata:
 	@echo Git is $(GIT_STATUS)
 	@echo BUILD_TIME_EPOCH: $(BUILD_TIME_EPOCH)
@@ -37,14 +57,14 @@ install:
 
 load:
 	@echo "Exporting image from tar file..."
-	docker load < $(JAVA_IMAGE).tar
+	docker load < $(APP).tar
 
 save:
 	@echo "Saving image into a tar file..."
-	docker save $(JAVA_IMAGE):$(TAG) -o $(JAVA_IMAGE).tar
+	docker save $(JAVA_IMAGE):$(TAG) -o $(APP).tar
 
-build: target/$(JAR_FILE)
-	docker build -t $(JAVA_IMAGE):$(TAG) --build-arg JAR_FILE=target/$(JAR_FILE) .
+build: build/libs/$(JAR_FILE)
+	docker build -t $(JAVA_IMAGE):$(TAG) --build-arg JAR_FILE=build/libs/$(JAR_FILE) .
 	@echo "Removing dangling images"
 	docker image prune -f
 
@@ -59,7 +79,7 @@ build-with-metadata: $(GIT_PRESENT)
 
 build-debug:
 	docker build -t $(JAVA_IMAGE)-debug:$(TAG) \
-		--build-arg JAR_FILE=target/$(JAR_FILE) \
+		--build-arg JAR_FILE=build/libs/$(JAR_FILE) \
 		--target=debug-image .
 	@echo "Debug image for the $(JAVA_IMAGE):$(TAG) built: $(JAVA_IMAGE)-debug:$(TAG)"
 
@@ -69,7 +89,7 @@ mvnbuild:
 run:
 	@echo "Running a testing container for the $(APP)..."
 	docker run --rm --name $(APP) -p 8072:8072 --network perunanetti \
-		--health-cmd='curl http://127.0.0.1:8072/actuator/health' \
+		--health-cmd='curl http://127.0.0.1:8072/actuator/health || exit 1' \
 		--health-interval=15s \
 		--health-timeout=10s \
 		--health-retries=10 \
@@ -87,19 +107,20 @@ runtime-debug:
 run-detached:
 	@echo "Running a testing container for the $(APP)..."
 	docker run -d --rm --name $(APP) -p 8072:8072 --network perunanetti \
-		--health-cmd='curl http://127.0.0.1:8072/actuator/health' \
+		--health-cmd='curl http://127.0.0.1:8072/actuator/health || exit 1' \
 		--health-interval=15s \
 		--health-timeout=10s \
 		--health-retries=10 \
 		--health-start-period=5s \
 		$(JAVA_IMAGE):$(TAG)
 
-
-
 stop-detached:
 	docker stop $(shell docker ps -f ancestor=hotelapp/gateway:1.0 -q)
 
 deploy:
+	docker stack deploy --compose-file $(APP).yml $(STACK)
+
+deploy-with-time:
 	docker stack deploy --compose-file $(APP).yml \
 		$(APP)-$(shell date +"%Y%m%d_%H_%M")
 
@@ -110,6 +131,15 @@ deploy-local:
 inspect:
 	docker image inspect --format '{{ json .Config.Labels }}' $(JAVA_IMAGE):$(TAG)
 
+# NOTE: APP variable is named like the jar by convention, which is why it is used
+# 			in the tar argument. If you do not follow similar convention, take note.
+import:
+	sh ../image-importer.sh \
+		-h $(REMOTE_HOST) \
+		-l $(REMOTE_HOST_LOCATION) \
+		-t $(APP).tar \
+		-i $(JAVA_IMAGE):$(TAG)
+
 # lints the Dockerfile in the current directory
 .PHONY: lint
 lint:
@@ -118,7 +148,6 @@ lint:
 
 clean:
 	docker rmi $(JAVA_IMAGE):$(TAG)
-	docker rmi $(JAVA_IMAGE)-debug:$(TAG)
 
 .PHONY: clean lint inspect runtime-debug run-debug run build-debug \
 	build-with-metadata build save load install metadata

@@ -5,14 +5,12 @@
 set -e
 set -u
 set -o pipefail
+
+# DEBUG
 #set -x
 
 # load library for dealing with vault
 . ./vault/libvault.sh
-
-echo "----------DEBUG----------"
-echo "CURRENT LOCATION: ${PWD}"
-echo "----------DEBUG----------"
 
 status=$?
 
@@ -26,7 +24,7 @@ root_token=$(jq '.root_token' $token_dir | sed 's/"//g')
 unseal_progress=0
 
 image="vault:1.9.2"
-cid=$(docker ps --filter "ancestor=vault:1.9.2" -q)
+cid=$(resolve_cid $image)
 
 # takes keys and container id
 unseal_vault $keys $cid
@@ -50,8 +48,7 @@ login_with_root_token "vault/data/login.json" $token_dir $cid
 docker exec -t $cid vault secrets enable database \
   && docker exec -t $cid vault secrets enable -path=kv -version=2 kv \
   && docker exec -t $cid vault secrets list \
-  && docker cp vault/policies/test-policy.hcl $cid:/ \
-  && docker cp vault/data/data.json $cid:/
+  && docker cp vault/policies/test-policy.hcl $cid:/
 
 #  && docker exec -t $cid vault secrets enable -path=secret/ kv \
 if [ $status -ne 0 ]; then
@@ -63,7 +60,7 @@ fi
 docker exec -t $cid vault secrets enable -path=secret -version=2 kv
 docker exec -t $cid vault secrets list
 
-copy_to_vault "vault/data/mariadb.json" "/" $cid
+copy_to_vault "vault/data/cass2.json" "/" $cid
 copy_to_vault "vault/data/cassandra.json" "/" $cid
 copy_to_vault "vault/policies/test-policy.hcl" "/" $cid
 
@@ -73,10 +70,18 @@ private_ip=$(/sbin/ip -o -4 addr list eno1 | awk '{print $4}' | cut -d/ -f1)
 #configure_dbrole_vault "hotelapp" "my-role" "1h" "24h" $cid
 
 ## put in data.json file in kv/application
-import_data_to_vault "secret" "customer" "@mariadb.json" $cid
-import_data_to_vault "secret" "hotel" "@cassandra.json" $cid
+## secrets are created based on application naming scheme
+import_data_to_vault "secret" "customer-service" "@cass2.json" $cid
+import_data_to_vault "secret" "hotel-service" "@cassandra.json" $cid
 
-# overwrites the tokens for the yaml files
+# Overwrites the tokens for the yaml files.
 import_tokens "../config-server/src/main/resources" $root_token
+
+# Overwrites the current build's resources for the jar.
+# This assures the application wont have to be rebuild each time tokens are changed.
+# Unfortunately this only goes for the local deployment, since if the deployment
+# is across multiple hosts, the application jar needs to be rebuilt for the
+# docker images that get deployed to the other hosts.
+import_tokens "../config-server/build/resources/main" $root_token
 
 docker ps -a && echo "Succesful deployment of Vault :)"

@@ -1,26 +1,33 @@
 #!/bin/sh
+# cassandra/startup.sh 2022-03-15
+# For initializing Apache Cassandra 4.0.1
 #
-# For initializing cassandra 4.0.1
-# Example: sh cassandra/startup.sh -h x220 -i cassandra:4.0.1 -f ${PWD}/cassandra/schema-init/init.cql
+# Example 1: sh cassandra/startup.sh --docker-ctx my-remote-ctx \
+#               -i cassandra:4.0.1 -f ${PWD}/cassandra/schema-init/init.cql -c \
+#               --root $PWD
+#
+# Example 2: sh cassandra/startup.sh --docker-ctx my-remote-ctx \
+#                 --stack hotelapp --swarm --name cas-master \
+#                 --schema ${PWD}/cassandra/schema-init/schema.cql \
+#                 --data ${PWD}/cassandra/schema-init/data.cql --database hotelapp \
+#                 --root $PWD
+#
+# Cluster service naming convention: <cluster name>_<service_name>
+# Example: Cluster: test-cluster, service: cas-master. Service name in stack: test-cluster_cas-master
+#
+# NOTE: This script does not explicitly check that the connection can be made, 
+#       but just assumes it. Make sure you can actually form the ssh connection 
+#       before running.
+
 
 set -e
 set -u
 set -o pipefail
-set -x
+
+# DEBUG
+#set -x
 
 command -v find >/dev/null 2>&1 || { echo >&2 "find is required for this script to run, but it's not installed. Aborting."; exit 1; }
-
-# Defines project root
-project_root="/home/$USER/Desktop/projects/java/hotelapp"
-
-# locates libinit.sh
-libinit_location=$(find $project_root -type f -iname '*.sh' -regex '.*libinit.*')
-
-# Bring in common initialization utilities
-. $libinit_location
-
-# Move shell execution environment to the directory where shell script is being executed.
-localize_to_dir
 
 debug_img() {
   echo "------------------DEBUG------------------"
@@ -34,19 +41,23 @@ help_text() {
 
     [ Apache Cassandra Autosetup ]
 
-    Usage: Please select a mode for the startup initialization of the Hashicorp Vault.
+    Usage: Please select a mode for the startup initialization of the Apache Cassandra for the Hotelapp application.
     run: sh startup.sh --help for more help
     Usage: sh startup.sh [OPTION...]
     To run the program, you must define either local or swarm mode with the flags -c or -s.
-    Defining the image is also mandatory.
-    Running the program without arguments defaults to help text seen here.
+    Defining the image is also mandatory. Running the program without arguments defaults to help text seen here.
     Options:
   --help                          Display this help and exit.
-  -h, --host                      Define host to use.
+  --docker-ctx                    Defines docker context to switch to.
   -c, --compose                   Run with docker-compose.
   -s, --swarm                     Run as part of a swarm.
   -i, --image                     Define image to use.
   -f, --file                      Define file to feed to cassandra.
+  --database                      Define database for the data and/or schema file (used by import_file function).
+  --schema                        Define schema.cql file to feed to the cassandra database.
+  --data                          Define data.cql file to feed to the cassandra database (Insertation data).
+  --stack                         Specifies the stack name, this parameter is necessary for swarm deployments.
+  --name                          Specifies the name of a container. Note: You should use context-local names, script changes contexts.
 EOF
 exit 0
 }
@@ -61,9 +72,12 @@ parse_args() {
 		case "$1" in
 			"--help") help_text && exit 0
         ;;
-      "--host" | "-h")
-        echo "Setting host to $2 ..." \
-          && host="$2"
+      "--root" | "-r") 
+        echo "Setting the project root to $2" && project_root="$2" # Defines the root for the project (used for moving files)
+				;;
+      "--docker-ctx")
+        echo "Setting docker_host to $2 ..." \
+          && docker_host="$2"
         ;;
 			"--compose" | "-c")
 				echo "Initializing Cassandra with docker-compose..." \
@@ -79,7 +93,23 @@ parse_args() {
 			"--file" | "-f") 
         file="$2"
 				;;
-                    "") help_text && exit 0
+			"--stack")
+        stack=$2
+				;;
+			"--name")
+        [ -z "$stack" ] && echo "Error: --stack argument must be set for --name to work, aborting..." && exit 1;
+        name=$2
+				;;
+			"--schema")
+        schema_file=$2
+				;;
+			"--data")
+        data_file=$2
+				;;
+			"--database")
+        database=$2
+				;;
+      "") help_text && exit 0
         ;;
 		esac
 		shift
@@ -90,8 +120,10 @@ parse_args $# $@
 
 sleep 2 # Wait a moment for the state to converge.
 
-if [ -z "${image-}" ]; then
-  echo "WARNING! Image must be defined for this program to be run, as there is no default image set. Aborting..."
+
+## Bunch of checks for parameters
+if [ -z "${image-}" ] && [ -z "${name-}" ]; then
+  echo "WARNING! Image or name must be defined for this program to be run, as there is no default image nor name set. Aborting..."
   exit 1
 fi
 
@@ -115,72 +147,91 @@ if [ $# -eq 0 ]; then
   help_text && exit 0
 fi
 
-# Queries for localhost as the "master node".
-original_host="$(get_current_ctx)"
-
-echo "------------------DEBUG------------------"
-echo "CURRENT CONTEXT: $original_host"
-echo "------------------DEBUG------------------"
-
-echo "------------------DEBUG------------------"
-echo "HOST: $host"
-echo "------------------DEBUG------------------"
-
-# Check for prerequisite programs.
-prog_exists docker
-prog_exists ssh
-
-# Changes to the host that is set from the command line arguments.
-if [ "$(get_current_ctx)" != "$host" ]; then
-  echo "Host is different from current context"
-  echo "Switching host to $host..."
-  docker context use $host >/dev/null 2>&1
-  echo "Waiting a moment for the state to converge..."
-  sleep 3
-fi
-
-# Test that host was succesfully changed and that connection can be made.
-if [ "$host" != "default" ]; then
-  test_host_connection $host
-fi
-
-if [ $? -ne 0 ]; then
-  echo "Host could not be reached"
+if [ -z $project_root ]; then
+  echo "You need to define the project_root to start the initialization!"
   exit 1
 fi
 
-echo "------------------DEBUG------------------"
-echo "CURRENT CONTEXT AFTER SSH: $(get_current_ctx)"
-echo "------------------DEBUG------------------"
 
-echo "------------------DEBUG------------------"
-echo "CURRENT CONTEXT: $(docker ps -f "ancestor=$image" -q)"
-echo "------------------DEBUG------------------"
+
+# #################################################
+# Locates libinit in strangely obtuse manner,     #
+# sources libinit once it is found and runs       #
+# the "localize_to_dir" function from libinit     #
+# to move the shell execution environment to      #
+# the directory where shell script is being       #
+# executed. This is done to move files around     #
+#                                                 #
+# NOTE: It is important that we first initialize  #
+#       this variable and source libinit.sh,      #
+#       this is needed for localize_to_dir.       #
+###################################################
+
+# locates libinit.sh
+libinit_location=$(find $project_root -type f -iname '*.sh' -regex '.*libinit.*')
+
+# Bring in common initialization utilities
+. $libinit_location
+
+# Move shell execution environment to the directory where shell script is being executed.
+localize_to_dir
+
+
+# Queries for localhost as the "master node".
+original_host="$(get_current_ctx)"
+
+
+# ###############################
+# Checks for necessary programs #
+#################################
+prog_exists docker
+prog_exists ssh
+
+
+
+# Changes to the necessary docker context that is set from the command line arguments.
+if [ "$(get_current_ctx)" != "$docker_host" ]; then
+  echo "Host is different from current context"
+  echo "Switching host to $docker_host..."
+  docker context use $docker_host >/dev/null 2>&1
+  echo "Waiting a moment for the state to converge..."
+  echo -n -e "Current host changed to $(get_current_ctx)\n"
+  sleep 3
+fi
 
 sleep 2
 
-#cid=$(docker ps -f "ancestor=$image" -q)
-cid=$(resolve_cid $image)
+cid=$(resolve_cid_by_name $name)
 container_health=$(docker inspect $cid --format "{{ .State.Health.Status }}")
 cache=$container_health
 count=0
 
+# args: container_id, wait_time
+# Wait until cassandra instance is ready.
 wait_until_healthy $cid 2 
 
-# Switch back to master node.
-#[ "$(get_current_ctx)" != $host ] && docker context use $original_host
+import_file() {
+  ctx=$docker_host # refers to remote host context
+  og_ctx=$original_host # refers to local host context
+  schema_file_with_location=$schema_file
+  data_file_with_location=$data_file
+  schema_file_bare=$(basename $schema_file)
+  data_file_bare=$(basename $data_file)
+  cid=$cid
+  db=$database
+  [ $(get_current_ctx) != "$ctx" ] && echo "Host is incorrect, aborting.." && exit 1;
+  if [ "$(docker inspect $cid --format "{{ .State.Health.Status }}")" = "healthy" ]; then
+    docker cp $schema_file_with_location $cid:/ >/dev/null 2>&1 \
+      && docker cp $data_file_with_location $cid:/ >/dev/null 2>&1 \
+      && docker exec -t $cid cqlsh -f "$schema_file_bare" >/dev/null 2>&1 \
+      && docker exec -t $cid cqlsh -f "$data_file_bare" >/dev/null 2>&1 \
+      && docker exec -t $cid cqlsh -e "describe keyspaces; use $db; describe tables;"
+  fi
+}
 
-# Import schema
-# sh init.sh -h x220 -i cassandra:4.0.1 -f ${PWD}/cassandra/schema-init/init.cq
-if [ "$container_health" = "healthy" ]; then
-  cid=$(resolve_cid $image)
-  echo "Copying init.cql from local directory into other container root..."
-  docker cp $file $(docker ps -f "ancestor=$image" -q):/ >/dev/null 2>&1 \
-    && docker exec -t $(docker ps -f "ancestor=$image" -q) cqlsh -f 'init.cql' >/dev/null 2>&1 \
-    && docker exec -t $(docker ps -f "ancestor=$image" -q) cqlsh -e 'describe keyspaces; use hotelapp; describe tables;'
-fi
+[ ! -z "${database-}" ] && import_file
 
-# Switch back to master node.
+# Switch back to default docker context.
 if [ "$(get_current_ctx)" != "default" ]; then
   echo "Setting host back to the original..."
   docker context use $original_host

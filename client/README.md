@@ -1,15 +1,15 @@
-<p align="center">
-  <img src="https://i.imgur.com/SWs77TE.png" width="625" alt="front page" />
-</p>
+# How to run
 
-## Hotely, <i>Client for the Hotely application with React.</i>
+`$ npm run build && node server.js`
 
-## Quick setup
+# How to deploy
 
-To build:
-```console
-$ npm i
-$ npm build
-```
+`$ make build deploy`
 
-* You can run development server using webpack-dev-server by just using `npm run dev` or by using express server setup with webpack-dev-middleware by using `npm run server`
+# To sign in to the application
+
+You can use an existing user: 
+  email: `testuser@meow.com` 
+  password: `meow123` 
+
+By pressing at the 'sign in' link, you will be directed to keycloak's login page to perform the authentication.

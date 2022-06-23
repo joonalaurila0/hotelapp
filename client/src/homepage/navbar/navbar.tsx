@@ -1,4 +1,4 @@
-import './navbar.css'
+import './navbar.css';
 
 const Navbar = () => {
   return (
@@ -8,7 +8,7 @@ const Navbar = () => {
       <a href='#about'>About Hotely</a>
       <a href='#contact'>Help</a>
     </div>
-  )
-}
+  );
+};
 
 export default Navbar;

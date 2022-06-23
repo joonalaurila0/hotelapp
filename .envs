@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export SWARMHOST="192.168.1.107"
+
+export REMOTEHOST_ONE="efc@192.168.1.105"
+export REMOTEHOST_TWO="efc@192.168.1.103"
+
+export DOCKER_CTX_ONE="x220"
+export DOCKER_CTX_TWO="x200"

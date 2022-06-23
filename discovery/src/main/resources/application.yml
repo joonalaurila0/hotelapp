@@ -2,37 +2,76 @@ test:
   data: 222
   data2: 987 
 #------#
+
 server:
   port: 8761
+
 #------#
+# Defines the master node ip
 swarmhost: 192.168.1.107
+
 #------#
+
 spring:
   application:
-    name: eureka
-  config:
-    import: configserver:http://${swarmhost}:8888
+    name: service-discovery
+#  config:
+#    import: configserver:http://${swarmhost}:8888
   profiles:
     active: "default"
   cloud:
     config:
-      enabled: true
-      profile: "default"
-      uri: ${swarmhost}:8888
-      import: config:http://${swarmhost}:8888
+      enabled: false
+#      profile: "default"
+#      uri: ${swarmhost}:8888
+#      import: config:http://${swarmhost}:8888
 #------#
+
 eureka:
+  datacenter: hotely
+  environment: production
+  instance:
+    preferIpAddress: true
+    hostname: ${swarmhost} # Sets the Eureka instance hostname for the Eureka service.
   client:
+    preferIpAddress: true
     registerWithEureka: false
     fetchRegistry: false
-  server:
-    waitTimeInMsWhenSyncEmpty: 0
+    serviceUrl:
+      defaultZone:
+        http://${swarmhost}:${server.port}/eureka/ # http://192.168.1.107:8761/eureka/
+
+#eureka:
+#  instance:
+#    hostname: eurekaserver # Sets the Eureka instance hostname for the Eureka service.
+#  renewalPercentThreshold: 0.85
+#  client:
+#    registerWithEureka: false
+#    fetchRegistry: false
+#    serviceUrl:
+#      defaultZone:
+#        http://${eureka.instance.hostname}:${server.port}/eureka/
+#  server:
+#    eviction-interval-timer-in-ms: 1000
+#    waitTimeInMsWhenSyncEmpty: 5
+#    enableSelfPreservation: true
+
 #------#
 logging.level.com.netflix.eureka: OFF
 logging.level.com.netflix.discovery: OFF
+
 #------#
+
+#management:
+#  endspoints:
+#    web:
+#      exposure:
+#        include: "*"
 management:
-  endspoints:
+  endpoints:
+  restart:
+    enabled: true
     web:
       exposure:
         include: "*"
+        exclude: "env,beans"

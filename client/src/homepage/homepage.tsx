@@ -15,7 +15,7 @@ const Homepage = () => {
       <Contact />
       <Footer />
     </>
-  )
-}
+  );
+};
 
 export default Homepage;
