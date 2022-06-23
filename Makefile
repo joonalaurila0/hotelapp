@@ -12,7 +12,9 @@ DOCKER_CTX_ONE := $(DOCKER_CTX_ONE)
 DOCKER_CTX_TWO := $(DOCKER_CTX_TWO)
 
 # Executes secret and network recipes
+# NOTE: REMEMBER TO SOURCE .envs
 initialize: secret casinit
+	@echo "Remember to source the env vars!"
 
 #  Creates the secrets
 secret:
@@ -27,6 +29,20 @@ network:
 # Pulls all the images
 install:
 	docker pull $(IMAGES)
+
+# Deploys and initializes Redis
+redis:
+	docker stack deploy --compose-file redis/redis.yml $(STACK_NAME)
+	sh redis/redis-init.sh --docker-ctx default --swarm \
+		--image redis:7.0.2-bullseye \
+		--stack $(STACK_NAME) --name redis \
+		--root $(PWD)
+
+# Deploys and initializes Apache Kafka
+kafka:
+	docker stack deploy --compose-file kafka/kafka.yml $(STACK_NAME)
+	sleep 10
+	$(MAKE) init -C kafka
 
 # Deploys and initializes Redhat Keycloak
 keycloak:
@@ -117,4 +133,4 @@ clear:
 .PHONY: clear clean caspair casmaster casinit \
 	client services gateway discovery cfg \
 	hcpvault keycloak hcpvault-local install \
-	network secret initialize
+	network secret initialize redis kafka

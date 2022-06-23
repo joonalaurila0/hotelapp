@@ -53,7 +53,7 @@ public class CityController {
 
   @PutMapping("/update/{id}")
   public City update(@RequestBody City city) {
-    this.producer.sendMessage("Searching for city by the id of " + city.getId());
+    this.producer.sendMessage("Searching for a city by the id of " + city.getId());
     return cityService.updateCity(city);
   }
 

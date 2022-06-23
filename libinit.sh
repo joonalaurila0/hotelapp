@@ -35,11 +35,13 @@ get_current_ctx() {
   docker context inspect --format '{{ .Name }}'
 }
 
+# Notice: docker context has to be local for this to work!
 resolve_cid() {
   image=$1
   docker ps --filter "ancestor=$image" -q
 }
 
+# Notice: docker context has to be local for this to work!
 resolve_cid_by_name() {
   name=$1
   docker ps --filter "name=$name" -q
