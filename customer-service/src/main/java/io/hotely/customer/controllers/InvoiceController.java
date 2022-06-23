@@ -51,6 +51,11 @@ public class InvoiceController {
     return invoiceService.findById(id);
   }
 
+  @GetMapping("/customer/{id}")
+  public Iterable<Invoice> fetchByCustomerId(@PathVariable("id") UUID customerId) {
+    return invoiceService.findCustomerInvoices(customerId);
+  }
+
   @PostMapping("/create")
   public Invoice create(@RequestBody Invoice invoice) {
     log.debug("InvoiceController.create called with -> {}", invoice);

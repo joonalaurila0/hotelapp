@@ -83,7 +83,7 @@ public class BookingController {
         ) {
     // Creates a Booking class from the record Booking class and sets the ID.
     log.debug("Booking made: {}", newBooking);
-    Booking result = bookingService.addBooking(newBooking);
+    Booking result = bookingService.addBookingNoId(newBooking);
 
     if (result != null) {
       InvoiceEntity invoiceEntity = new InvoiceEntity(

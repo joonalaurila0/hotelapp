@@ -59,7 +59,7 @@ parse_args() {
 parse_args $# $@
 
 # Waiting a bit for the state to converge
-sleep 2
+sleep 10
 
 # Show help text if no arguments are given.
 if [ $# -eq 0 ]; then

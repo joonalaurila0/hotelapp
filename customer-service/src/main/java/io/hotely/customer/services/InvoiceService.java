@@ -142,6 +142,10 @@ public class InvoiceService {
     return invoicelist;
   }
 
+  public Iterable<Invoice> findCustomerInvoices(UUID customerId) {
+    return invoiceRepository.findCustomerInvoices(customerId);
+  }
+
   public Invoice updateInvoice(Invoice invoice) {
     log.info("Updating invoice by the id of {}", invoice.getId());
     Invoice updatableInvoice = invoiceRepository.findById(invoice.getId()).orElse(null);

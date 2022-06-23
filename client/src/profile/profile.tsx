@@ -47,7 +47,7 @@ const Profile = () => {
       if (lastVisit != null) {
         // Get the time difference of now and last visit in seconds.
         const timeDifference = (Date.now() - JSON.parse(lastVisit)) / 1000;
-        console.debug('Current time difference in seconds: ', timeDifference);
+        //console.debug('Current time difference in seconds: ', timeDifference);
         timeDifference >= 300
           ? fetchProfileData(profileId) // Time difference is equal to or greater than 5 minutes, perform state refresh for the profile page.
           : null; // Time difference is less than 5 minutes, then do nothing.

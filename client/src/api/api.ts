@@ -49,8 +49,8 @@ class Api {
         email: email,
         password: 'meow',
         userstatus: 'ACTIVE',
-        role: 'USER'
-      })
+        role: 'USER',
+      }),
     });
   }
 
@@ -68,6 +68,7 @@ class Api {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        id: booking.id,
         customer_id: booking.customer_id,
         hotel_id: booking.hotel_id,
         room_id: booking.room_id,

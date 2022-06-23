@@ -16,7 +16,7 @@ public interface InvoiceRepository extends CassandraRepository<Invoice, UUID> {
 
   @Transactional
   @Query("SELECT * FROM invoices where customer_id = ?0 ALLOW FILTERING")
-  public Iterable<Invoice> findCustomerInvoces(UUID customerId);
+  public Iterable<Invoice> findCustomerInvoices(UUID customerId);
 
   //@Transactional
   //@Query(value = "SELECT u FROM Invoice u WHERE u.customer.id = :customerId")

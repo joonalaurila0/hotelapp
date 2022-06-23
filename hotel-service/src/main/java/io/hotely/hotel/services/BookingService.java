@@ -87,6 +87,16 @@ public class BookingService {
     return bookingRepository.save(booking);
   }
 
+  /** Adds the {@link Booking} to the storage and 
+   * if it is not in the cache already, adds it to cache as well
+   * Does not require ID to be inputted, generates itself. */
+  public Booking addBookingNoId(Booking booking) {
+    booking.setId(UUID.randomUUID());
+    log.info("Adding booking to the database -> {}", booking);
+    this.saveToCache(booking); // Cache the booking if possible.
+    return bookingRepository.save(booking);
+  }
+
   /** 
    * Peeks cache first, if cache is not empty returns the {@link Booking},
    * If cache is empty, gets the booking from storage, if storage
