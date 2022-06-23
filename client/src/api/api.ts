@@ -38,19 +38,19 @@ class Api {
   }
 
   public static async createCustomer(id: string, email: string) {
-    return fetch(this.GatewayURI + `/customer-service/customers/createwid`, {
+    return fetch(this.GatewayURI + `/customer-service/customers/create`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${this.authToken()}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
-      body: new URLSearchParams({
+      body: JSON.stringify({
         id: id,
         email: email,
         password: 'meow',
         userstatus: 'ACTIVE',
-        role: 'USER',
-      }),
+        role: 'USER'
+      })
     });
   }
 

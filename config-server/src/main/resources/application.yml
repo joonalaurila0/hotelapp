@@ -19,8 +19,8 @@ spring:
           searchLocations: ['classpath:/config']
         vault:
           authentication: TOKEN
-          token: "s.Or2DJDHgUG0umKS3P9VYnMOf"
-          host: 192.168.1.107
+          token: "s.6cJrk6VbDvHzdpgflQAQgvdi"
+          host: ${swarmhost}
           port: 8200
           scheme: http
           backend: secret
