@@ -19,12 +19,20 @@ import Api, { BookingStatus } from '../api/api';
 import { useParams } from 'react-router';
 import { ISO8601Date } from '../util';
 import { Link } from 'react-router-dom';
+import Notify from '../homepage/notifier/notifier';
+import React from 'react';
+
+interface StateHook {
+  called: boolean;
+  msg: string;
+}
 
 /* View of the rooms */
 const RoomView = () => {
   const rooms: Room[] | null = State.fetchStateByKey('rooms');
   const profile: KeycloakProfile = State.fetchStateByKey('profile');
   const { hotelid } = useParams(); // Get URL Param
+  const [ notifyState, setNotifyState ] = React.useState<StateHook>({ called: false, msg: "" })
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -62,7 +70,10 @@ const RoomView = () => {
                   console.error(e);
                 }
               })
-              .then(() => alert('Booking made.'))
+              .then(() => {
+                setNotifyState({ called: true, msg: "Booking succesfully made!" });
+                setTimeout(() => setNotifyState({ msg: "", called: false },), 8000) // cleanup
+              })
           )
         );
       })(profile.id);
@@ -87,6 +98,9 @@ const RoomView = () => {
   ];
   return (
     <div className='results_container'>
+      {notifyState.called 
+        ? (<Notify called={notifyState.called} message={notifyState.msg} />) 
+        : (null)}
       <ResultHeader results={rooms ? rooms.length : 0} description='Rooms' />
       <div className='results_sidebar'>
         <h1 className='logo' style={{ justifyContent: 'center', fontWeight: 300 }}>
@@ -151,7 +165,7 @@ const RoomView = () => {
                 </p>
               </div>
               <div className='results_main_frame_last'>
-                <button>Book now</button>
+                <button disabled={notifyState.called ? true : false}>Book now</button>
               </div>
             </form>
           );

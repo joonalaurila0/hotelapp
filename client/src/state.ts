@@ -1,6 +1,7 @@
 /** Used to manage state from localStorage */
 class State {
   private static instance: State;
+
   private constructor() {}
 
   public static getInstance(): State {

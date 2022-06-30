@@ -2,6 +2,7 @@ import './main.css';
 import Header from '../header/header';
 import Search from '../../search/search';
 import { keycloak } from '../../keycloak';
+
 const Main = () => {
   return (
     <div className='main'>
