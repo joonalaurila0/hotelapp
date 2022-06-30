@@ -13,6 +13,29 @@ set -o pipefail
 # DEBUG
 #set -x
 
+help_text() {
+ cat << EOF
+
+    [ Apache Kafka Initializer ]
+
+    Usage: Please select a mode for the startup initialization of the Apache Kafka for the Hotelapp application.
+    run: sh startup.sh --help for more help
+    Usage: sh startup.sh [OPTION...]
+    To run the program, you must define either local or swarm mode with the flags -c or -s.
+    Defining the image is also mandatory. Running the program without arguments defaults to help text seen here.
+    Options:
+  --help                          Display this help and exit.
+  -r, --root                      Define the project root (Remember to set this!).
+  --docker-ctx                    Defines docker context to switch to.
+  -s, --swarm                     Run as part of a swarm.
+  --swarmhost                     Defines the master/main node ip.
+  -i, --image                     Define image to use.
+  --stack                         Specifies the stack name, this parameter is necessary for swarm deployments.
+  --name                          Specifies the name of a container. Note: You should use context-local names, script changes contexts.
+EOF
+exit 0
+}
+
 # Checks for commandline arguments.
 parse_args() {
   local argc=$#
@@ -37,6 +60,10 @@ parse_args() {
 			"--swarm" | "-s") 
 				echo "Initializing Vault as part of a swarm service..." \
 					&& swarm_mode=1
+				;;
+			"--swarmhost") 
+				echo "Setting swarmhost to $2" \
+					&& SWARMHOST=$2
 				;;
       "--image" | "-i") 
         image="$2"
@@ -132,9 +159,9 @@ count=0
 wait_until_healthy $cid 2
 
 docker exec -t $cid ./bin/kafka-topics.sh \
-  --bootstrap-server=192.168.1.107:9092 \
+  --bootstrap-server=$(SWARMHOST):9092 \
   --create --topic hotel-service --replication-factor 1 --partitions 2
 
 docker exec -t $cid ./bin/kafka-topics.sh \
-  --bootstrap-server=192.168.1.107:9092 \
+  --bootstrap-server=$(SWARMHOST):9092 \
   --create --topic customer-service --replication-factor 1 --partitions 2
