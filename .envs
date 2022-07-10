@@ -1,9 +1,14 @@
 #!/bin/bash
 
-export SWARMHOST="192.168.1.107"
+# Environment variables used throughout the deployment files.
 
-export REMOTEHOST_ONE="efc@192.168.1.105"
-export REMOTEHOST_TWO="efc@192.168.1.103"
+# Master node
+export SWARMHOST="set me to private ip of the host"
 
-export DOCKER_CTX_ONE="x220"
-export DOCKER_CTX_TWO="x200"
+# Other remote host(s)
+export REMOTEHOST_ONE="set me to remotehost@remotehost_ip"
+export REMOTEHOST_TWO="set me to remotehost@remotehost_ip"
+
+# Other docker context(s)
+export DOCKER_CTX_ONE="set me to the docker context name"
+export DOCKER_CTX_TWO="set me to the docker context name"

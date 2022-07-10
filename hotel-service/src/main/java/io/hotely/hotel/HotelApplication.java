@@ -60,7 +60,7 @@ public class HotelApplication {
 	public static void main(String[] args) {
 		ApplicationContext ctx = SpringApplication.run(HotelApplication.class, args);
 
-      LocalDateToDate localDateToDate = new LocalDateToDate();
+     LocalDateToDate localDateToDate = new LocalDateToDate();
       
      GenericConversionService genericConversionService = ctx.getBean(GenericConversionService.class);
      genericConversionService.addConverter(localDateToDate);
