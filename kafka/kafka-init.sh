@@ -131,13 +131,8 @@ localize_to_dir
 # which will result in the whole script not working.
 sleep 5
 
-
-cid=$(resolve_cid_by_name $name)
-
-if [ -z $cid ]; then
-  echo "CID could not be found!"
-  exit 1
-fi
+# Queries for localhost as the "master node".
+original_host="$(get_current_ctx)"
 
 # Changes to the necessary docker context that is set from the command line arguments.
 if [ "$(get_current_ctx)" != "$docker_host" ]; then
@@ -149,7 +144,12 @@ if [ "$(get_current_ctx)" != "$docker_host" ]; then
   sleep 3
 fi
 
+cid=$(resolve_cid_by_name $name)
 
+if [ -z $cid ]; then
+  echo "CID could not be found!"
+  exit 1
+fi
 
 cid=$(resolve_cid_by_name $name)
 container_health=$(docker inspect $cid --format "{{ .State.Health.Status }}")
@@ -159,9 +159,9 @@ count=0
 wait_until_healthy $cid 2
 
 docker exec -t $cid ./bin/kafka-topics.sh \
-  --bootstrap-server=$(SWARMHOST):9092 \
+  --bootstrap-server=$SWARMHOST:9092 \
   --create --topic hotel-service --replication-factor 1 --partitions 2
 
 docker exec -t $cid ./bin/kafka-topics.sh \
-  --bootstrap-server=$(SWARMHOST):9092 \
+  --bootstrap-server=$SWARMHOST:9092 \
   --create --topic customer-service --replication-factor 1 --partitions 2
