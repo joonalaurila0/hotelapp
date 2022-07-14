@@ -28,6 +28,10 @@ metadata:
 	@echo BUILD_TIME_UTC: $(BUILD_TIME_UTC)
 	@echo BUILD_ID: $(BUILD_ID)
 
+# Substitutes environment variables for values
+setenvs:
+	envsubst '"$SWARMHOST"' < conf/conf.d/default.conf > conf/conf.d/default.conf
+
 # Creates the network for the stack
 network:
 	docker network create -d overlay --attachable perunanetti \
