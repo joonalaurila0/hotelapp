@@ -11,14 +11,14 @@ interface inputField {
  * uses it the "for" attribute to match the id.
  */
 const InputField = ({ field }: inputField) => {
-  const [state, setState] = React.useState<{ active: Boolean; input: string }>({
+  const [state, setState] = React.useState<{ active: boolean; input: string }>({
     active: false,
     input: '',
   });
   const onType = (event: React.ChangeEvent<HTMLInputElement>) =>
     setState({ ...state, input: event.target.value });
   /* removes whitespace and lowercases */
-  let fieldStr = field.replace(/\s+/, '').toLowerCase();
+  const fieldStr = field.replace(/\s+/, '').toLowerCase();
   return (
     <div
       className={
@@ -51,14 +51,14 @@ const InputField = ({ field }: inputField) => {
  * Argument in form "First Name", gets processed to id "firstname"
  */
 const TextareaField = ({ field }: inputField) => {
-  const [state, setState] = React.useState<{ active: Boolean; input: string }>({
+  const [state, setState] = React.useState<{ active: boolean; input: string }>({
     active: false,
     input: '',
   });
   const onType = (event: React.ChangeEvent<HTMLTextAreaElement>) =>
     setState({ ...state, input: event.target.value });
   /* removes whitespace and lowercases */
-  let fieldStr = field.replace(/\s+/, '').toLowerCase();
+  const fieldStr = field.replace(/\s+/, '').toLowerCase();
   return (
     <div
       className={
