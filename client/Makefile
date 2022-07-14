@@ -28,7 +28,7 @@ metadata:
 	@echo BUILD_TIME_UTC: $(BUILD_TIME_UTC)
 	@echo BUILD_ID: $(BUILD_ID)
 
-# Substitutes environment variables for values
+# Substitutes environment "SWARMHOST" variable for it's value.
 setenvs:
 	envsubst '"$SWARMHOST"' < conf/conf.d/default.conf > conf/conf.d/default.conf
 
