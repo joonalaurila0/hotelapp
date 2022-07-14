@@ -30,7 +30,8 @@ metadata:
 
 # Substitutes environment "SWARMHOST" variable for it's value.
 setenvs:
-	envsubst '"$SWARMHOST"' < conf/conf.d/default.conf > conf/conf.d/default.conf
+	envsubst '"$$SWARMHOST"' < conf/conf.d/default.conf > default.conf \
+		&& mv -vf default.conf conf/conf.d/default.conf
 
 # Creates the network for the stack
 network:
