@@ -2,8 +2,6 @@
 class State {
   private static instance: State;
 
-  private constructor() {}
-
   public static getInstance(): State {
     if (!State.instance) {
       State.instance = new State();
@@ -31,7 +29,7 @@ class State {
    * @param key keyName for Storage.getItem()
    */
   public static fetchStateByKey(key: string) {
-    let item = window.localStorage.getItem(key) || null;
+    const item = window.localStorage.getItem(key) || null;
     if (item) {
       return JSON.parse(item);
     }

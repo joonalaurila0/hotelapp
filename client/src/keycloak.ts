@@ -18,12 +18,12 @@ const keycloakInit = () => {
   keycloak
     .init({
       onLoad: 'check-sso',
-      silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
+      silentCheckSsoRedirectUri: window.location.origin + ':443/silent-check-sso.html',
       flow: 'standard',
       adapter: 'default',
       enableLogging: true,
       useNonce: true,
-      redirectUri: `http://${process.env.swarmhost}:8081`,
+      redirectUri: `https://${process.env.swarmhost}`,
       pkceMethod: 'S256',
     })
     .then((auth) => {

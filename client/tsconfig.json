@@ -17,6 +17,7 @@
     "removeComments": true,
     "isolatedModules": true,
     "sourceMap": true,
+    "types": ["react", "react-dom", "node"],
     "rootDir": "src",
     "outDir": "./dist"
   },

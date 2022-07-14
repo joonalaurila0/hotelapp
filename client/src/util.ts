@@ -5,7 +5,7 @@
 /**
  * @returns Short ISO8601 Date string.
  */
-const ISO8601Date = (day: number = 0, month: number = 0, year: number = 0): string => {
+const ISO8601Date = (day = 0, month = 0, year = 0): string => {
   const now = new Date();
   return new Date(now.getFullYear() + year, now.getMonth() + month, now.getDate() + day)
     .toISOString()

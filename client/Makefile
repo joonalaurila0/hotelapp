@@ -21,7 +21,6 @@ else
 	GIT_STATUS := "is not present"
 endif
 
-.PHONY: metadata
 metadata:
 	@echo Git is $(GIT_STATUS)
 	@echo BUILD_TIME_EPOCH: $(BUILD_TIME_EPOCH)
@@ -29,22 +28,29 @@ metadata:
 	@echo BUILD_TIME_UTC: $(BUILD_TIME_UTC)
 	@echo BUILD_ID: $(BUILD_ID)
 
-.PHONY: build
+# Creates the network for the stack
+network:
+	docker network create -d overlay --attachable perunanetti \
+		--opt encrypted=true
+
 build:
-	npm run clean && npm run build
-	docker build -t $(IMAGE_NAME):$(TAG) .
+	docker build -t $(IMAGE_NAME):$(TAG) --no-cache .
 	@echo "Removing dangling images"
 	docker image prune -f
 
-.PHONY: run
 run:
 	docker run --rm --name $(APP)-$(shell date "+%F") \
-		-p 8081:8081 --network perunanetti \
-		-d $(IMAGE_NAME):$(TAG)
+		-p 80:80 -p 443:443 --network perunanetti \
+		$(IMAGE_NAME):$(TAG)
 
 deploy:
 	docker stack deploy --compose-file $(APP).yml $(STACK)
 
-.PHONY: clean
+cert:
+	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ssl/private-key.key -out ssl/cert.crt
+	openssl dhparam -out ssl/dhparam.pem 2048
+
 clean:
 	docker rmi $(IMAGE_NAME):$(TAG)
+
+.PHONY: clean deploy run build metadata cert network
