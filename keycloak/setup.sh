@@ -20,8 +20,8 @@ login() {
   $kcadm config credentials --server $url --realm master --user $user --password $password
 }
 
-redirectVar="[\"http://${swarmhost}:8080/*\", \"http://${swarmhost}:8081/*\"]"
-webOrigins="[\"http://${swarmhost}:8081\", \"http://${swarmhost}:8072\"]"
+redirectVar="[\"http://${swarmhost}:8080/*\", \"http://${swarmhost}:443/*\", \"http://${swarmhost}:80/*\"]"
+webOrigins="[\"http://${swarmhost}:80\", \"http://${swarmhost}:443\", \"http://${swarmhost}:8072\"]"
 
 # Master realm setup with one user for testing, uses email for usernames and public client
 login && $kcadm create roles -r master -s name=hotelapp-user -s 'description=Regular user with a limited set of permissions' \
