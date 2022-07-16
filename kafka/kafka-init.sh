@@ -165,3 +165,10 @@ docker exec -t $cid ./bin/kafka-topics.sh \
 docker exec -t $cid ./bin/kafka-topics.sh \
   --bootstrap-server=$SWARMHOST:9092 \
   --create --topic customer-service --replication-factor 1 --partitions 2
+
+# Switch back to default docker context.
+if [ "$(get_current_ctx)" != "default" ]; then
+  echo "Setting host back to the original..."
+  docker context use $original_host
+  exit 0
+fi
