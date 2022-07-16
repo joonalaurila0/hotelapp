@@ -77,6 +77,6 @@ make save
 # Copy the image over to another host.
 rsync -avz -P -e 'ssh' $tar $host:$location
 
-# Go to the host, remove the old archive of the image from the repository, 
+# Go to the host, prunes possible old images from the repository, 
 # then load the new image from current directory of the new archive with docker load.
-ssh -t $host "cd $location && docker rmi $image && docker load < $tar"
+ssh -t $host "cd $location && docker load < $tar && docker image prune -f"
