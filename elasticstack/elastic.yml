@@ -1,0 +1,122 @@
+version: '3.9'
+
+volumes:
+  esdata:
+    driver: local
+  kibanadata:
+    driver: local
+
+networks:
+  perunanetti:
+    driver: overlay
+    driver_opts:
+      encrypted: 'true'
+    attachable: true
+    external: true
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.3.2-amd64
+    container_name: elasticsearch
+    environment:
+      - node.name=elastisearch
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-}"
+      - "xpack.security.enabled=false"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - type: volume
+        source: esdata
+        target: /usr/share/elasticsearch/data
+    ports:
+      - 9300:9300
+      - 9200:9200
+    networks:
+      - perunanetti
+    healthcheck:
+      test: curl --silent --fail localhost:9200/_cluster/health || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == tau
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      update_config:
+        order: 'stop-first'
+        delay: 10s
+      rollback_config:
+        order: 'stop-first' 
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.3.2-amd64
+    container_name: logstash
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: -Xms256m -Xmx256m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+    networks:
+      - perunanetti
+    depends_on:
+      - elasticsearch
+    healthcheck:
+      test: bin/logstash -t
+      interval: 60s
+      timeout: 50s
+      retries: 3
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == tau
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      update_config:
+        order: 'stop-first'
+        delay: 10s
+      rollback_config:
+        order: 'stop-first' 
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.3.2-amd64
+    container_name: kibana
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9300"
+      NODE_OPTIONS: "--max-old-space-size=2048"
+    ports:
+      - 5601:5601
+    volumes:
+      - kibanadata:/usr/share/kibana/data
+    networks:
+      - perunanetti
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == tau
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      update_config:
+        order: 'stop-first'
+        delay: 10s
+      rollback_config:
+        order: 'stop-first' 

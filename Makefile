@@ -52,6 +52,10 @@ hcpvault:
 	@echo "Initializing HashiCorp Vault..."
 	sh vault/startup.sh --stack $(STACK_NAME) --swarm --auto-init --root $(PWD)
 
+# Deploys elasticstack
+elasticstack:
+	$(MAKE) deploy -C elasticstack
+
 cfg:
 	cd config-server && gradle clean build
 	$(MAKE) build -C config-server
@@ -131,4 +135,4 @@ clear:
 .PHONY: clear clean caspair casmaster casinit \
 	client services gateway discovery cfg \
 	hcpvault keycloak hcpvault-local install \
-	network secret initialize redis kafka
+	network secret initialize redis kafka elasticstack
