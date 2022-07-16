@@ -14,7 +14,7 @@ TIME := 3
 REMOTE_SSH_HOST := $(REMOTEHOST_TWO)
 
 # This specifies the location that will be used to import the image
-REMOTE_SSH_HOST_LOCATION := /home/efc/docker-images/
+REMOTE_SSH_HOST_LOCATION := $(REMOTEHOST_LOCATION_TWO)
 
 # see if directory has git by calling the branch
 ifeq ($(strip $(git branch --show-current 2> /dev/null)),)

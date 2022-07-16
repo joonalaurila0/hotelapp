@@ -8,10 +8,10 @@ TIME := 3
 
 # This variable is used for the import recipe.
 # Specify the host you wish to import the image into.
-REMOTE_HOST :=
+REMOTE_SSH_HOST := $(REMOTEHOST_TWO)
 
 # This specifies the location that will be used to import the image
-REMOTE_HOST_LOCATION :=
+REMOTE_HOST_LOCATION := $(REMOTEHOST_LOCATION_TWO)
 
 # see if directory has git by calling the branch
 ifeq ($(strip $(git branch --show-current 2> /dev/null)),)
@@ -128,8 +128,8 @@ inspect:
 # 			in the tar argument. If you do not follow similar convention, take note.
 import:
 	sh ../image-importer.sh \
-		-h $(REMOTE_HOST) \
-		-l $(REMOTE_HOST_LOCATION) \
+		-h $(REMOTE_SSH_HOST) \
+		-l $(REMOTE_SSH_HOST_LOCATION) \
 		-t $(APP).tar \
 		-i $(JAVA_IMAGE):$(TAG)
 

@@ -10,6 +10,8 @@ The services themselves are implemented in the customer-service and hotel-servic
 
 # How do I run this application?
 
+**NOTE: Remember to source .envs!**
+
 1. `$ make initialize`, initializes necessary volumes, networks and secrets.
 2. `$ make casmaster caspair hcpvault keycloak kafka redis`, deploys cassandra instances, HCP Vault, Redhat Keycloak, Apache Kafka and Redis (all the "external" applications).
 3. `$ make cfg discovery`, builds and deploys the configuration server and discovery.

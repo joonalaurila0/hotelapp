@@ -27,7 +27,7 @@ services:
       mode: global
       placement:
         constraints:
-          - node.hostname == tau
+          - node.hostname == peruna
       restart_policy:
         condition: on-failure
         max_attempts: 3

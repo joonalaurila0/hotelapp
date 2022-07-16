@@ -14,7 +14,7 @@ DOCKER_CTX_TWO := $(DOCKER_CTX_TWO)
 # Executes secret and network recipes
 # NOTE: REMEMBER TO SOURCE .envs
 initialize: secret casinit
-	@echo "Remember to source the env vars!"
+	@echo "Remember to source .envs!"
 
 #  Creates the secrets
 secret:
@@ -33,10 +33,8 @@ install:
 # Deploys and initializes Redis
 redis:
 	docker stack deploy --compose-file redis/redis.yml $(STACK_NAME)
-	sh redis/redis-init.sh --docker-ctx default --swarm \
-		--image redis:7.0.2-bullseye \
-		--stack $(STACK_NAME) --name redis \
-		--root $(PWD)
+	sleep 2
+	$(MAKE) init -C redis
 
 # Deploys and initializes Apache Kafka
 kafka:
@@ -77,11 +75,11 @@ gateway:
 
 services:
 	cd customer-service && gradle clean build
-	$(MAKE) build deploy -C customer-service
-	@echo "Customer service built."
+	$(MAKE) build import deploy -C customer-service
+	@echo "Customer service built, imported and deployed."
 	cd hotel-service && gradle clean build
-	$(MAKE) build deploy -C hotel-service
-	@echo "Hotel service built."
+	$(MAKE) build import deploy -C hotel-service
+	@echo "Hotel service built, imported and deployed."
 
 client:
 	$(MAKE) build deploy -C client
