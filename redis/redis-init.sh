@@ -14,6 +14,29 @@ set -o pipefail
 # DEBUG
 #set -x
 
+help_text() {
+ cat << EOF
+
+    [ Redis Initializer ]
+
+    Usage: Please select a mode for the startup initialization of Redis for the application.
+    run: sh startup.sh --help for more help
+    Usage: sh startup.sh [OPTION...]
+    To run the program, you must define either local or swarm mode with the flags -c or -s.
+    Defining the image is also mandatory. Running the program without arguments defaults to help text seen here.
+    Options:
+  --help                          Display this help and exit.
+  -r, --root                      Define the project root (Remember to set this!).
+  --docker-ctx                    Defines docker context to switch to.
+  -s, --swarm                     Run as part of a swarm.
+  --swarmhost                     Defines the master/main node ip.
+  -i, --image                     Define image to use.
+  --stack                         Specifies the stack name, this parameter is necessary for swarm deployments.
+  --name                          Specifies the name of a container. Note: You should use context-local names, script changes contexts.
+EOF
+exit 0
+}
+
 # Checks for commandline arguments.
 parse_args() {
   local argc=$#
@@ -105,13 +128,9 @@ localize_to_dir
 # which will result in the whole script not working.
 sleep 10
 
+# Queries for localhost as the "master node".
+original_host="$(get_current_ctx)"
 
-cid=$(resolve_cid_by_name $name)
-
-if [ -z $cid ]; then
-  echo "CID could not be found!"
-  exit 1
-fi
 
 # Changes to the necessary docker context that is set from the command line arguments.
 if [ "$(get_current_ctx)" != "$docker_host" ]; then
@@ -123,6 +142,12 @@ if [ "$(get_current_ctx)" != "$docker_host" ]; then
   sleep 3
 fi
 
+cid=$(resolve_cid_by_name $name)
+
+if [ -z $cid ]; then
+  echo "CID could not be found!"
+  exit 1
+fi
 
 
 cid=$(resolve_cid_by_name $name)
@@ -134,3 +159,10 @@ wait_until_healthy $cid 2
 
 docker exec -t $cid redis-cli config set maxmemory 500mb
 docker exec -t $cid redis-cli config set maxmemory-policy allkeys-lru
+
+# Switch back to default docker context.
+if [ "$(get_current_ctx)" != "default" ]; then
+  echo "Setting host back to the original..."
+  docker context use $original_host
+  exit 0
+fi

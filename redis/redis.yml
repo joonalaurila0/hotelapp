@@ -24,7 +24,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.hostname == tau
+          - node.hostname == x220
       replicas: 1
       update_config:
         parallelism: 1
