@@ -14,6 +14,9 @@ initialize:
 	@echo "Remember to source .envs!"
 	$(MAKE) secret volume network -C cassandra
 
+# Deploys Cassandra instances, HCP Vault, Redhat Keycloak, Apache Kafka, Redis and the Elasticstack (all the "external" applications).
+external: casmaster caspair hcpvault keycloak kafka redis elasticstack
+
 # Creates the network for the stack
 network:
 	docker network create -d overlay --attachable perunanetti \

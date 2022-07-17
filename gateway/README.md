@@ -8,7 +8,7 @@ Acts as the centralized Policy Enforment Point of the project, that handles inbo
 
 Gateway enforces OAuth 2.0 as the security protocol to secure the APIs it exposes at the edge. Only authenticated clients are granted access to the services.
 
-Note that gateway creates automated route mappings based on the eureka service ids, but if no service instances are running, teh gateway will not exposes the routes.
+Note that gateway creates automated route mappings based on the eureka service ids, but if there are no service instances are running, the gateway will not exposes the routes.
 [More about automated mappings](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#the-discoveryclient-route-definition-locator)
 
 [Actuator API](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#actuator-api)
