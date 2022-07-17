@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
 @SpringBootApplication
@@ -16,6 +17,7 @@ public class DiscoveryApplication {
 	}
 
   @Bean
+  @Profile("dev") // Only runs on development profile
   ApplicationRunner applicationRunner(Environment env) {
     return args -> {
       System.out.println("/* ***************************************** */");
@@ -24,9 +26,6 @@ public class DiscoveryApplication {
       System.out.println("   Eureka instance hostname: " + env.getProperty("eureka.instance.hostname"));
       System.out.println("   Eureka default zone: " + env.getProperty("eureka.client.serviceUrl.defaultZone"));
       System.out.println("   Eureka dashboard: " + "http://" + env.getProperty("swarmhost") + ":" + env.getProperty("server.port"));
-      System.out.println("/* ***************************************** */");
-      System.out.println("   Test for config values: " + env.getProperty("test.data"));
-      System.out.println("   Test for config values: " + env.getProperty("test.data2"));
       System.out.println("/* ***************************************** */");
     };
   }

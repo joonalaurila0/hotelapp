@@ -2,23 +2,12 @@ package io.hotely.hotel.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 @Configuration
-//@EnableRedisRepositories(
-//  excludeFilters = @ComponentScan.Filter(
-//    type = FilterType.ASSIGNABLE_TYPE, 
-//    classes = CassandraRepository.class
-//    ),
-//  basePackages = "io.hotely.hotel.repositories.redis"
-//  )
 public class RedisConfig {
 
   @Value("${redis.hostname}")

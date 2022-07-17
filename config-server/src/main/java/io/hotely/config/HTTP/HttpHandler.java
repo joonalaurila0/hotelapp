@@ -4,7 +4,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
 
 import org.apache.http.HttpException;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.net.http.HttpResponse;
 import java.net.http.HttpClient;

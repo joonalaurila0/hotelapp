@@ -12,11 +12,8 @@ import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.stereotype.Service;
 
 import io.hotely.hotel.entities.Booking;
-import io.hotely.hotel.entities.Hotel;
 import io.hotely.hotel.repositories.BookingRepository;
-import io.hotely.hotel.repositories.HotelRepository;
 import io.hotely.hotel.repositories.redis.BookingRedisRepository;
-import io.hotely.hotel.repositories.redis.HotelRedisRepository;
 
 @Service
 public class BookingService {
