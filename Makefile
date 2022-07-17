@@ -1,7 +1,4 @@
 STACK_NAME := hotelapp
-IMAGE_REPOSITORY := peruna/testi
-IMAGES := cassandra:4.0.1 quay.io/keycloak/keycloak:17.0.0 vault:1.9.2
-SERVICES := config-server customer-service hotel-service
 SLEEP_TIME := 3
 
 # Possible host used for deployment
@@ -11,24 +8,16 @@ SLEEP_TIME := 3
 DOCKER_CTX_ONE := $(DOCKER_CTX_ONE)
 DOCKER_CTX_TWO := $(DOCKER_CTX_TWO)
 
-# Executes secret and network recipes
+# Executes secret, volume and network recipes for Apache Cassandra
 # NOTE: REMEMBER TO SOURCE .envs
-initialize: secret casinit
+initialize:
 	@echo "Remember to source .envs!"
-
-#  Creates the secrets
-secret:
-	echo '32' | docker secret create $(STACK_NAME)-MARIADB_PASSWORD - \
-		&& echo 'cassandra' | docker secret create $(STACK_NAME)-CASSANDRA_PASSWORD -
+	$(MAKE) secret volume network -C cassandra
 
 # Creates the network for the stack
 network:
 	docker network create -d overlay --attachable perunanetti \
 		--opt encrypted=true
-
-# Pulls all the images
-install:
-	docker pull $(IMAGES)
 
 # Deploys and initializes Redis
 redis:
@@ -56,6 +45,7 @@ hcpvault:
 elasticstack:
 	$(MAKE) deploy -C elasticstack
 
+# Builds, imports and deploys the configuration server
 cfg:
 	cd config-server && gradle clean build
 	$(MAKE) build -C config-server
@@ -63,6 +53,7 @@ cfg:
 	@echo "Configuration Server built and imported."
 	$(MAKE) deploy -C config-server
 
+# Builds, imports and deploys the service registry
 discovery:
 	cd discovery && gradle clean build
 	$(MAKE) build -C discovery
@@ -70,6 +61,7 @@ discovery:
 	@echo "Service Discovery built and imported."
 	$(MAKE) deploy -C discovery
 
+# Builds, imports and deploys the API Gateway
 gateway:
 	cd gateway && gradle clean build
 	$(MAKE) build -C gateway
@@ -77,6 +69,7 @@ gateway:
 	@echo "Gateway built and imported."
 	$(MAKE) deploy -C gateway
 
+# Builds, imports and deploys the services (customer-service and hotel-service)
 services:
 	cd customer-service && gradle clean build
 	$(MAKE) build import deploy -C customer-service
@@ -85,12 +78,10 @@ services:
 	$(MAKE) build import deploy -C hotel-service
 	@echo "Hotel service built, imported and deployed."
 
+# Builds and deploys the client
 client:
 	$(MAKE) build deploy -C client
 	@echo "Client built and deployed."
-
-casinit:
-	$(MAKE) volume network -C cassandra
 
 casmaster:
 	@echo "Initializing master node for cassandra..."
@@ -116,8 +107,12 @@ caspair:
 
 # Prints environment variables for the remote hosts
 inspect:
+	@echo "SWARMHOST: $(SWARMHOST)"
+	@echo "REMOTEHOST ONE: $(REMOTEHOST_ONE)"
+	@echo "REMOTEHOST TWO: $(REMOTEHOST_TWO)"
 	@echo "DOCKER CTX ONE: $(DOCKER_CTX_ONE)"
 	@echo "DOCKER CTX TWO: $(DOCKER_CTX_TWO)"
+	@echo "REMOTEHOST_LOCATION_TWO: $(REMOTEHOST_LOCATION_TWO)"
 
 clean:
 	@echo "Removing $(STACK_NAME) stack..."

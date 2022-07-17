@@ -4,6 +4,10 @@ networks:
   perunanetti:
     attachable: true
 
+secrets:
+  hotelapp-CASSANDRA_PASSWORD_PAIR: 
+    external: true
+
 # NOTE: Make sure you have defined the SWARMHOST environment variable to main host ip.
 services:
   cas-slave:
@@ -11,6 +15,7 @@ services:
     networks:
       - perunanetti
     environment:
+      CASSANDRA_PASSWORD_FILE: '/run/secrets/CASSANDRA_PASSWORD'
       MAX_HEAP_SIZE: '128m'
       HEAP_NEWSIZE: '32m'
       CASSANDRA_USER: 'cassandra'
@@ -23,6 +28,12 @@ services:
       - "9043:9042"
     depends_on:
       - cas-master
+    secrets:
+      - source: hotelapp-CASSANDRA_PASSWORD_PAIR
+        target: CASSANDRA_PASSWORD
+        uid: '999'
+        gid: '999'
+        mode: 0400
     healthcheck:
       test: ["CMD", "nodetool", "status"]
       interval: 15s
