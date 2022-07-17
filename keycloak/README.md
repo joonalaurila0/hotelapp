@@ -1,4 +1,9 @@
-# Running
+# Running Redhat Keycloak
+
+Keycloak can be deployed and initialized with: `$ make keycloak`. 
+This deployes and initializes vault with predefined arguments in the make recipe.
+
+You can change these arguments to your liking by changing the Makefile or just using the script yourself: `$ sh keycloak/startup.sh --help`.
 
 Running:
 ```bash
@@ -11,43 +16,6 @@ will deploy and initialize the vault with data and premade configuration.
 # Initialization
 
 Initialization happens through the startup.sh script that also calls the setup.sh script inside the container to initialize default values.
-
-# Enabling SSL/HTTPS for the Keycloak server
-
-```
-curl -X POST "http://localhost:8080/realms/master/protocol/openid-connect/token" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  --data-urlencode "grant_type=password" \
-  --data-urlencode "username=test@user.com" \
-  --data-urlencode "password=123" \
-  --data-urlencode "scope=hotelapp" \
-  --data-urlencode "client_id=hotelapp"
-```
-
-* [Sauce](https://linuxconfig.org/how-to-generate-a-self-signed-ssl-certificate-on-linux)
-
-If you're not using a reverse proxy or load balancer to handle HTTPS traffic for you, you'll need to enable HTTPS for the Keycloak server.
-
-1. Obtain or generate a keystore that contains the private key and certificate for SSL/HTTP traffic.
-2. Configure the Keycloak server to use this keypair and certificate.
-
-## Creating the Certificate and Java Keystore
-
-In order to allow HTTPS connections, you need to obtain a self signed or third-party signed certificate and import it into a Java keystore before you can enable HTTPS in the web container where you are deploying the Keycloak Server.
-
-* To generate our certificate, together with a private key, we need to run req with the -newkey.
-
-Run: `$ openssl req -newkey rsa:4096  -x509  -sha512  -days 365 -nodes -out certificate.pem -keyout privatekey.pem`
-
-This creates an RSA key of 4096 bits. If we omit key size, it defaults to 2048. The '-x509' flag specifies a standard format for public key certificates, this enables us to create self-signed certificate instead of a certificate request.
-
-The '-sha512' is the message digest [Message Digest](https://www.techopedia.com/definition/4024/message-digest).
-
-The '-days 365' specifies the validity period in days (30 is the default), so this makes the certificate value for a whole year.
-
-With the '-nodes' option we specified that we don’t want to encrypt the generated private key. Encrypting the private key is without doubts useful: this can be intended as a security measure in case someone stoles it, since to use it, a passphrase should be provided. Just as an example, if we use a private key with Apache, we must provide the passphrase to decrypt it each time we restart the daemon. In this case, since we are generating a self sign certificate, which we will use for testing, therefore we can avoid encrypting the private key.
-
-Finally, we used the -out and -keyout options to specify the filenames to write the certificate and the key to, respectively. In this case the certificate will be saved into the certificate.pem file, and the private key into the privatekey.pem file. Why did we use “.pem” as the file names suffix? This is because both the certificate and key will be created in PEM format. PEM stands for “Privacy Enhanced Mail”: it is basically a container which includes base64 formatted data.
 
 # kcadm / admin-cli for keycloak -- CLI for keycloak
 
@@ -105,7 +73,6 @@ So to get particular fields from a nested object, you'd write it like so:
 ```bash
 $ /opt/keycloak/bin/kcadm.sh get clients/ad30971c-c3a2-4e82-82dc-81d8477708de -r master --fields 'attributes(pkce.code.challenge.method)' | jq
 ```
-
 
 ## Updating a nested value in an object and to see the result:
 

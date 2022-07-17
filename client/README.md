@@ -1,6 +1,10 @@
 # How to run
 
-`$ npm run build && node server.js`
+`$ npm run serve`
+
+# How to build
+
+`$ npm run build`
 
 # How to deploy
 
@@ -13,3 +17,7 @@ You can use an existing user:
   password: `meow123` 
 
 By pressing at the 'sign in' link, you will be directed to keycloak's login page to perform the authentication.
+
+# About
+
+The client for the application is a running on TypeScript 4.5.4, React 17.0.2 and the application running on Webpack 5 for module bundling and Babel 7 for polyfilling. The deployment happens through nginx web server. To change the deployment variables, you can use an .env file, webpack.config.js and conf/nginx.conf.
