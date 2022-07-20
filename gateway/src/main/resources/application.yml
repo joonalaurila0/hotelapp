@@ -1,17 +1,14 @@
 server:
   port: 8072
-
 #-----------------------------------------------#
 
 # https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
-kc-provider-conf: 'http://192.168.1.107:8080/realms/master/.well-known/openid-configuration'
-
+kc-provider-conf: 'http://${swarmhost}:8080/realms/master/.well-known/openid-configuration'
 # Defines the master node ip
-swarmhost: 192.168.1.107
-
+swarmhost: ${SWARMHOST}
 spring:
-#  config:
-#    import: configserver:http://${swarmhost}:8888/
+  #  config:
+  #    import: configserver:http://${swarmhost}:8888/
   application:
     name: gateway
   security:
@@ -19,7 +16,7 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://${swarmhost}:8080/realms/master
-          jwk-set-uri: http://${swarmhost}:8080/realms/master/protocol/openid-connect/certs 
+          jwk-set-uri: http://${swarmhost}:8080/realms/master/protocol/openid-connect/certs
   cloud:
     gateway:
       globalcors:
@@ -37,7 +34,7 @@ spring:
           predicates:
             - Path=/customer/**
         - id: hotel
-          uri: http://${swarmhost}:8001/ 
+          uri: http://${swarmhost}:8001/
           predicates:
             - Path=/hotel/**
     config:
@@ -63,15 +60,3 @@ management:
     web:
       exposure:
         include: "*"
-logging:
-  level:
-    io.hotely: TRACE
-    org.springframework.security.oauth2.jwt: TRACE
-#    reactor.netty: TRACE
-#    reactor.ipc.netty: DEBUG
-#    io.netflix: WARN
-#    org.springframework.web: WARN
-#    org.springframework.cloud.gateway: WARN
-#    org.springframework.security.web: WARN
-#    org.springframework.http.server.reactive: WARN
-#    org.springframework.web.reactive: WARN

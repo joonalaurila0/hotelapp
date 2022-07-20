@@ -1,12 +1,11 @@
 test:
   data2: 421
-
 #-----------------------------------------------#
 server:
   port: 8000
 #-----------------------------------------------#
 # Defines the master node ip
-swarmhost: 192.168.1.107
+swarmhost: ${SWARMHOST}
 #-----------------------------------------------#
 redis:
   hostname: ${swarmhost}
@@ -18,8 +17,7 @@ spring:
   application:
     name: customer-service
   profiles:
-    active:
-      "default"
+    active: "default"
   cloud:
     config:
       fail-fast: true
@@ -53,7 +51,6 @@ eureka:
       defaultZone: http://${swarmhost}:8761/eureka/
   instance:
     hostname: ${swarmhost}
-    #preferIpAddress: true
     lease-renewal-interval-in-seconds: 120
     lease-expiration-duration-in-seconds: 240
 #-----------------------------------------------#

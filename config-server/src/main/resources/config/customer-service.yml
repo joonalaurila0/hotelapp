@@ -30,20 +30,6 @@ spring:
         connect-timeout: 10s
         init-query-timeout: 10s
 #--------------------------------------#
-
-#eureka:
-#  instance:
-#    preferIpAddress: true
-#    leaseRenewalIntervalInSeconds: 120
-#    leaseExpirationDurationInSeconds: 240
-#  client:
-#    serviceUrl:
-#      defaultZone: http://${swarmhost}:8761/eureka/
-#    healthcheck:
-#      enabled: true
-#    lease:
-#      duration: 60
-#--------------------------------------#
 logging.level.root: "warn"
 logging.level.org.springframework.web: "DEBUG"
 logging.level.org.hibernate: "ERROR"

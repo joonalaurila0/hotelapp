@@ -16,7 +16,7 @@ import io.hotely.hotel.controllers.json.InvoiceEntity;
 /** Web client for communicating with the customer-service. */
 @FeignClient(
   name = "customer-service-api", 	// Arbitrary client name
-  url = "http://192.168.1.107:8000"			// hostname
+  url = "${SWARMHOST}"			// hostname
 )
 public interface CustomerProxy {
   @RequestMapping(
