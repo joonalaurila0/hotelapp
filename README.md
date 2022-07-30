@@ -22,13 +22,20 @@ Elasticstack (Elasticsearch, Logstash and Kibana) is utilized for transforming, 
 
 **NOTE: Remember to set environmental variables!**
 
+After setting environmental variables, run:
+```bash
+$ sh startup.sh
+```
+*Note: this application is only a demo and is not meant for actual "real world" deployment, rather it is for local deployment.*
+
+## How do I set the environmental variables?
+
+Write the variables in file: `.envs`.
+  
+Then set them by running:
 ```bash
 $ source .envs
 ```
- 
-After setting environmental variables, run: `$ sh startup.sh`  
-
-*Note: this application is only a demo and is not meant for actual "real world" deployment, rather it is for local deployment.*
 
 ## What happens during startup.sh?
 
