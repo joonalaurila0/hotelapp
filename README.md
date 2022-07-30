@@ -20,7 +20,17 @@ Elasticstack (Elasticsearch, Logstash and Kibana) is utilized for transforming, 
 
 # How do I run this application?
 
-**NOTE: Remember to source .envs!**
+**NOTE: Remember to set environmental variables!**
+
+```bash
+$ source .envs
+```
+ 
+After setting environmental variables, run: `$ sh startup.sh`  
+
+*Note: this application is only a demo and is not meant for actual "real world" deployment, rather it is for local deployment.*
+
+## What happens during startup.sh?
 
 0. `$ source .envs`
 1. `$ make initialize`, initializes necessary volumes, networks and secrets.
@@ -32,12 +42,7 @@ Elasticstack (Elasticsearch, Logstash and Kibana) is utilized for transforming, 
 
 **NOTE: Current setup uses environment variables, make sure you have defined these beforehand!**
 
-I am using .envs file where I set SWARMHOST, DOCKER\_CTX\_<number> for the deployment, only thing I need to do is to source the file:  
-```bash
-$ source .envs
-```
-    
-These environment variables are mainly used for cassandra, importing docker images onto other hosts and in the client deployment.
+The environment variables are mainly used for cassandra, importing docker images onto other hosts and in the client deployment.
 
 **NOTE on building config-server, gateway and discovery: Current setup has config-server, discovery and gateway using image-importer.sh script to update images on the other host. To put this off the current build cycle, you only need to take off the $(MAKE) import invocation on the recipes in question.**
 

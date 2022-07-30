@@ -16,7 +16,7 @@ import io.hotely.hotel.controllers.json.InvoiceEntity;
 /** Web client for communicating with the customer-service. */
 @FeignClient(
   name = "customer-service-api", 	// Arbitrary client name
-  url = "${SWARMHOST}"			// hostname
+  url = "http://localhost:8000"			// hostname
 )
 public interface CustomerProxy {
   @RequestMapping(
@@ -38,7 +38,7 @@ public interface CustomerProxy {
     value="/customers/create",
     consumes="application/json"
   )
-  public CustomerEntity createUser(CustomerEntity customerEntity);
+  public CustomerEntity createUser(@RequestHeader(value = "Authorization", required = true) String authHeader, @RequestBody CustomerEntity customerEntity);
 
   @RequestMapping(
     method=RequestMethod.POST,
