@@ -37,6 +37,10 @@ Then set them by running:
 $ source .envs
 ```
 
+
+[![Demo of the client in action](./clientdemo.gif)]
+
+
 ## What happens during startup.sh?
 
 0. `$ source .envs`
