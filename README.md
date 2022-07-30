@@ -38,7 +38,9 @@ $ source .envs
 ```
 
 
-[![Demo of the client in action](./clientdemo.gif)]
+## Client preview
+
+![Demo of the client in action](./clientdemo.gif)
 
 
 ## What happens during startup.sh?
