@@ -1,6 +1,6 @@
 # About
 
-The client for the application is a running on TypeScript 4.5.4, React 17.0.2 and the application running on Webpack 5 for module bundling and Babel 7 for polyfilling. The deployment happens through nginx web server. To change the deployment variables, you can use an .env file, webpack.config.js and conf/nginx.conf.
+The client for the application is a running on TypeScript 4.5.4, React 17.0.2 and the application running on Webpack 5 for module bundling and Babel 7 for polyfilling (+ES6 to >=ES5) and more (jsx etc.). The deployment happens through nginx web server. To change the deployment variables, you can use an .env file, webpack.config.js and conf/nginx.conf.
 
 # How to run
 
